@@ -1,0 +1,1 @@
+Colab does not use a local .venv. Dependencies are installed at runtime inside the notebook.
