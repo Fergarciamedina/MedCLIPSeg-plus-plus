@@ -1,6 +1,5 @@
 # Track: Text-Prompt Robustness and Perturbation Analysis
 
-**Collaborator / Track Lead:** Ehsan
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026)
 **Baseline Model:** MedCLIPSeg (CVPR 2026, Koleilat et al.)
 **Status:** Planned / Documented Track
@@ -12,7 +11,7 @@
 This track represents an independent, complementary line of research within the group's evaluation of MedCLIPSeg. While the uncertainty rejection track investigates post-hoc failure detection and selective prediction via pixel-level entropy, the **prompt robustness track** evaluates the model's sensitivity to linguistic variations, phrasing styles, and perturbations in clinical text prompts.
 
 > [!NOTE]
-> This directory is reserved for Ehsan's experimental scripts, prompt configuration files, and robustness evaluation results. No existing code is overwritten during the project scaffolding refactor.
+> This directory is reserved for experimental scripts, prompt configuration files, and robustness evaluation results for the prompt perturbation track. No existing code is overwritten during the project scaffolding refactor.
 
 ---
 

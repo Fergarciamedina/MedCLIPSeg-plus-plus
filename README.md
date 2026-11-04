@@ -45,13 +45,13 @@ MedCLIPSeg-plus-plus/
 
 ---
 
-## 2. Research Contributions & Team Credits
+## 2. Research Contributions & Overview
 
-| Research Contribution | Module Path | Focus & Scope | Dedicated Branch | Module Guide | Contributor |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Uncertainty-Based Selective Prediction** | `uncertainty_rejection/` | Raw pixel-level entropy extraction, 5 aggregation metrics, validation threshold calibration, risk-coverage curves, control benchmarks, and domain shift evaluation. | `feature/uncertainty-rejection` | [`uncertainty_rejection/README.md`](uncertainty_rejection/README.md) | Fernando Garcia Medina |
-| **Text-Prompt Robustness** | `prompt_robustness/` | Prompt perturbation analysis, linguistic sensitivity, and cross-center phrasing evaluation. | `feature/prompt-robustness` | [`prompt_robustness/README.md`](prompt_robustness/README.md) | Ehsan |
-| **Common Baseline** | `shared/` | MedCLIPSeg neural network, datasets, consolidated configs, and common execution scripts. | Coordinated via PR | [`shared/README.md`](shared/README.md) | Team Shared |
+| Research Contribution | Module Path | Focus & Scope | Dedicated Branch | Module Guide |
+| :--- | :--- | :--- | :--- | :--- |
+| **Uncertainty-Based Selective Prediction** | `uncertainty_rejection/` | Raw pixel-level entropy extraction, 5 aggregation metrics, validation threshold calibration, risk-coverage curves, control benchmarks, and domain shift evaluation. | `feature/uncertainty-rejection` | [`uncertainty_rejection/README.md`](uncertainty_rejection/README.md) |
+| **Text-Prompt Robustness** | `prompt_robustness/` | Prompt perturbation analysis, linguistic sensitivity, and cross-center phrasing evaluation. | `feature/prompt-robustness` | [`prompt_robustness/README.md`](prompt_robustness/README.md) |
+| **Common Baseline** | `shared/` | MedCLIPSeg neural network, datasets, consolidated configs, and common execution scripts. | Coordinated via PR | [`shared/README.md`](shared/README.md) |
 
 ---
 
@@ -74,10 +74,12 @@ To maintain clean separation between research tracks:
 
 ---
 
-## 4. Attribution of Baseline Enhancements
+## 4. Shared Baseline Enhancements
 
-Although `shared/medclipseg/` serves as the common baseline, specific enhancements were authored by team members:
-- **Fernando Garcia Medina** implemented the raw `float32` `.npy` uncertainty extraction in `shared/medclipseg/test.py` (saving uncompressed entropy arrays prior to visualization normalization), dynamic `${MEDCLIPSEG_DATA}` resolution, and Apple Silicon MPS device support.
+Although `shared/medclipseg/` serves as the common baseline, specific enhancements were integrated for the research workflows:
+- Raw `float32` `.npy` uncertainty extraction in `shared/medclipseg/test.py` (saving uncompressed entropy arrays prior to visualization normalization).
+- Dynamic `${MEDCLIPSEG_DATA}` environment variable resolution.
+- Apple Silicon MPS device support and automated device fallback.
 
 ---
 

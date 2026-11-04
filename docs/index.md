@@ -6,7 +6,7 @@ title: MedCLIPSeg++ Project
 # MedCLIPSeg++: Uncertainty-Based Selective Prediction Under Domain Shift
 
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University
-**Authors:** Fernando Garcia Medina (Uncertainty & Selective Prediction Track), Ehsan (Prompt Robustness Track)
+**Project Tracks:** Uncertainty & Selective Prediction Track, Prompt Robustness Track
 **Supervision:** IMPACT Lab (Prof. Hassan Rivaz, Omid Nejati Manzari)
 
 ---
@@ -65,4 +65,4 @@ We propose a post-hoc **Uncertainty-Based Selective Prediction** framework requi
 ## 6. Reproducibility & Code
 
 All code, configurations, and evaluation scripts are available in the public repository:
-[GitHub: Fergarciamedina/MedCLIPSeg-plus-plus](https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus)
+[GitHub Repository](https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus)

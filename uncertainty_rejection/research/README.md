@@ -1,6 +1,5 @@
 # Track: Uncertainty-Based Selective Prediction
 
-**Track Lead:** Fernando Garcia Medina
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University
 **Supervisor / Lab:** IMPACT Lab (Prof. Hassan Rivaz, Omid Nejati Manzari)
 **Baseline:** MedCLIPSeg (CVPR 2026, Koleilat et al., arXiv:2602.20423)
