@@ -7,7 +7,7 @@
 
 ## 1. Overview & Principles
 
-The `shared/` directory contains the minimal, common foundation used by both team workstreams (**Fernando** and **Ehsan**). It strictly houses:
+The `shared/` directory contains the minimal, common foundation used by both research tracks (**Uncertainty Rejection** and **Prompt Robustness**). It strictly houses:
 1. **`shared/medclipseg/`**: The core vision-language neural network modules (CLIP, BiomedCLIP, OpenCLIP, variational adapters, dataloaders, and evaluation routines).
 2. **`shared/configs/`**: Consolidated dataset configuration YAML files (supporting Apple Silicon MPS and NVIDIA CUDA).
 3. **`shared/scripts/`**: Common workflow scripts for checkpoint downloading, baseline inference, and standard Dice/NSD ground-truth evaluation.

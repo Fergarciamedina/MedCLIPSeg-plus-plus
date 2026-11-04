@@ -1,15 +1,16 @@
-# Fernando's Subproject: Uncertainty Quantification & Selective Prediction
+# Research Contribution: Uncertainty Quantification & Selective Prediction
 
-**Author / Track Lead:** Fernando Garcia Medina\
+**Research Area:** Post-Hoc Uncertainty Estimation, Error Correlation & Rejection Control\
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University\
 **Lab:** IMPACT Lab (Prof. Hassan Rivaz, Omid Nejati Manzari)\
-**Development Branch:** `feature/fernando-uncertainty`
+**Development Branch:** `feature/uncertainty-rejection`\
+**Lead Contributor:** Fernando Garcia Medina
 
 ---
 
 ## 1. Research Scope & Contributions
 
-This subproject implements Fernando's core scientific contribution for ELEC 6661, structured around three levels:
+This module implements the core scientific contribution for uncertainty-guided segmentation and rejection control, structured around three levels:
 
 1. **Level 0: Scientific Research & Evaluation (Mandatory ELEC 6661 Scope)**
    - Post-hoc uncertainty quantification using MedCLIPSeg's Monte Carlo Value attention.
@@ -30,10 +31,10 @@ This subproject implements Fernando's core scientific contribution for ELEC 6661
 ## 2. Directory Structure
 
 ```text
-fernando/
-├── README.md                          # Subproject overview and reproduction guide
+uncertainty_rejection/
+├── README.md                          # Contribution overview and reproduction guide
 │
-├── src/                               # Fernando's core uncertainty package
+├── src/                               # Core uncertainty quantification package
 │   └── uncertainty/
 │       ├── __init__.py                # Exported API
 │       ├── raw_entropy.py             # Binary entropy computation & .npy / PNG persistence
@@ -56,10 +57,10 @@ fernando/
 ├── notebooks/                         # Interactive analysis
 │   └── evaluate.ipynb                 # Interactive evaluation notebook
 │
-├── scripts/                           # Fernando's execution scripts
+├── scripts/                           # Execution scripts
 │   ├── run_aggregation.sh            # Stage 02 execution runner
 │   ├── run_selective_prediction.sh   # Stage 03 execution runner
-│   └── run_tests.sh                  # Automated subproject test suite
+│   └── run_tests.sh                  # Automated test suite runner
 │
 └── tests/                             # Automated test suite
     ├── test_imports.py                # Package import validation
@@ -72,11 +73,11 @@ fernando/
 ## 3. Implementation Attribution
 
 - **Shared Baseline:** Builds upon the frozen MedCLIPSeg baseline located in `shared/medclipseg/`.
-- **Modifications Authored by Fernando:**
+- **Contribution Scope:**
   - Raw `float32` `.npy` array persistence added to the inference loop (`shared/medclipseg/test.py`).
-  - The entire `fernando/src/uncertainty/` package.
+  - The entire `uncertainty_rejection/src/uncertainty/` package.
   - All experimental runners (`run_aggregation.py`, `run_selective_prediction.py`).
-  - All test suites in `fernando/tests/`.
+  - All test suites in `uncertainty_rejection/tests/`.
 
 ---
 
@@ -85,12 +86,12 @@ fernando/
 From the repository root:
 
 ```bash
-# 1. Run Fernando's automated test suite
-bash fernando/scripts/run_tests.sh
+# 1. Run automated test suite
+bash uncertainty_rejection/scripts/run_tests.sh
 
 # 2. Run Stage 02 aggregation and error correlation analysis
-bash fernando/scripts/run_aggregation.sh BUSI 666
+bash uncertainty_rejection/scripts/run_aggregation.sh BUSI 666
 
 # 3. Run Stage 03 selective prediction and control comparisons
-bash fernando/scripts/run_selective_prediction.sh BUSI 666 U_fg
+bash uncertainty_rejection/scripts/run_selective_prediction.sh BUSI 666 U_fg
 ```

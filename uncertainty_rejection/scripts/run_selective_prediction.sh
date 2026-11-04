@@ -6,6 +6,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 DATASET="${1:-BUSI}"
 SEED="${2:-666}"
+FEATURE="${3:-U_fg}"
 
 PYTHON_EXEC="python3"
 if [ -f "$REPO_ROOT/.venv/bin/python" ]; then
@@ -15,7 +16,8 @@ fi
 export MPLCONFIGDIR="${MPLCONFIGDIR:-/tmp/matplotlib_cache}"
 mkdir -p "$MPLCONFIGDIR"
 
-PYTHONPATH="$REPO_ROOT/fernando/src:$REPO_ROOT/shared:$REPO_ROOT" $PYTHON_EXEC \
-    "$REPO_ROOT/fernando/research/aggregation/run_aggregation.py" \
+PYTHONPATH="$REPO_ROOT/uncertainty_rejection/src:$REPO_ROOT/shared:$REPO_ROOT" $PYTHON_EXEC \
+    "$REPO_ROOT/uncertainty_rejection/research/selective_prediction/run_selective_prediction.py" \
     --dataset "$DATASET" \
-    --seed "$SEED"
+    --seed "$SEED" \
+    --feature "$FEATURE"
