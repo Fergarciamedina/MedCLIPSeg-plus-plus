@@ -7,11 +7,11 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 DATASET="${1:-BUSI}"
 SEED="${2:-666}"
-CONFIG_FILE="${3:-$REPO_ROOT/configs/${DATASET}.yaml}"
+CONFIG_FILE="${3:-$REPO_ROOT/shared/configs/${DATASET}.yaml}"
 
 # Set default data paths relative to canonical project root if not already defined
 export MEDCLIPSEG_DATA="${MEDCLIPSEG_DATA:-$REPO_ROOT/../data/raw}"
@@ -20,7 +20,7 @@ export MPLCONFIGDIR="${MPLCONFIGDIR:-/tmp/matplotlib_cache}"
 mkdir -p "$MPLCONFIGDIR"
 
 echo "=========================================================="
-echo "  MedCLIPSeg Inference Execution"
+echo "  MedCLIPSeg Inference Execution (Shared Baseline)"
 echo "  Dataset:       $DATASET"
 echo "  Seed:          $SEED"
 echo "  Config:        $CONFIG_FILE"
@@ -39,7 +39,7 @@ if [ -f "$REPO_ROOT/.venv/bin/python" ]; then
 fi
 
 # Run inference
-PYTHONPATH="$REPO_ROOT/src:$REPO_ROOT" $PYTHON_EXEC "$REPO_ROOT/src/medclipseg/test.py" \
+PYTHONPATH="$REPO_ROOT/shared:$REPO_ROOT" $PYTHON_EXEC "$REPO_ROOT/shared/medclipseg/test.py" \
     --config-file "$CONFIG_FILE" \
     --output-dir "$MEDCLIPSEG_OUTPUT" \
     --source_dataset "$DATASET" \
