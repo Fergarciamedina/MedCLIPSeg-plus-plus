@@ -1,3 +1,4 @@
+# Private and local data
 data/
 papers/
 latex/*.pdf
@@ -7,22 +8,39 @@ latex/*.out
 latex/*.bbl
 latex/*.blg
 latex/*.toc
+
+# Checkpoints and weights
 *.pth
 *.pt
 *.ckpt
+checkpoints/
+
+# Binary data and arrays
+*.npy
+*.npz
+*.bin
+*.h5
+*.parquet
+
+# Output artifacts
 seg_results/
 trained_models/
 unc_results/
-__pycache__/
-.DS_Store
+outputs_medclipseg/
+
+# Virtual environments & IDEs
 .venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
 .idea/
 .vscode/
+.ipynb_checkpoints/
+.cache/
+.env
+
+# Temporary and archives
 *.zip
 *.tar.gz
 node_modules/
-.ipynb_checkpoints/
-.env
-.cache/
-checkpoints/
-src/BUSI/

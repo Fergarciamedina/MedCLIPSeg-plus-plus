@@ -1,1 +1,0 @@
-This is where the .venv will be created after the student reviews the structure. Command: python3 -m venv .venv
