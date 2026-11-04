@@ -3,8 +3,7 @@
 **Research Area:** Linguistic Sensitivity, Clinical Phrasing & Prompt Perturbations\
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University\
 **Lab:** IMPACT Lab (Prof. Hassan Rivaz, Omid Nejati Manzari)\
-**Development Branch:** `feature/prompt-robustness`\
-**Lead Contributor:** Ehsan
+**Development Branch:** `feature/prompt-robustness`
 
 ---
 

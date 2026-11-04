@@ -3,8 +3,7 @@
 **Research Area:** Post-Hoc Uncertainty Estimation, Error Correlation & Rejection Control\
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University\
 **Lab:** IMPACT Lab (Prof. Hassan Rivaz, Omid Nejati Manzari)\
-**Development Branch:** `feature/uncertainty-rejection`\
-**Lead Contributor:** Fernando Garcia Medina
+**Development Branch:** `feature/uncertainty-rejection`
 
 ---
 

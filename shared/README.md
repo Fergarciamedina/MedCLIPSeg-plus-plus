@@ -48,8 +48,8 @@ shared/
 
 ---
 
-## 4. Attribution of Shared Modifications
+## 4. Shared Baseline Enhancements
 
-While `shared/medclipseg/` serves as the common baseline, specific architectural enhancements were contributed by team members:
-- **Raw Uncertainty Persistence:** The modification to `shared/medclipseg/test.py` that serializes uncompressed `float32` `.npy` predictive entropy arrays strictly before per-image min-max normalization was designed and implemented by **Fernando** to support the Level 0 uncertainty rejection research.
-- **Environment Resolution:** Support for dynamic `${MEDCLIPSEG_DATA}` environment variable resolution and MPS device fallback was implemented by **Fernando**.
+While `shared/medclipseg/` serves as the common baseline, specific architectural enhancements were integrated into the core engine:
+- **Raw Uncertainty Persistence:** The modification to `shared/medclipseg/test.py` serializes uncompressed `float32` `.npy` predictive entropy arrays strictly before per-image min-max normalization, supporting Level 0 uncertainty rejection research.
+- **Environment Resolution:** Support for dynamic `${MEDCLIPSEG_DATA}` environment variable resolution and MPS device fallback is integrated into the shared inference runner.
