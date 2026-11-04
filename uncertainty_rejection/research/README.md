@@ -23,20 +23,20 @@ This track investigates post-hoc failure detection and selective prediction for 
 
 To maintain strict scientific rigor and software maintainability, the following non-negotiable architectural rules apply:
 
-```
-[ mac/src/ | colab/src/ ]   <-- Shared Core Inference Engine (test.py)
+```text
+[ shared/medclipseg/ ]       <-- Shared Core Inference Engine (test.py)
           │
           ▼
  [ Level 0: Research ]      <-- Mandatory Scientific Deliverable (ELEC 6661)
           │ (Aggregators, Calibrated Tau, Raw Uncertainty Arrays)
-   ┌──────┴──────────────┐
-   ▼                     ▼
+    ┌──────┴──────────────┐
+    ▼                     ▼
 [ Level 1: UI ]      [ Level 2: Search ]  <-- Strictly Optional Extensions
 ```
 
 1. **Zero Code Duplication:**
    - Neither Level 1 nor Level 2 implements independent copies of the MedCLIPSeg neural network, inference loops, or metric calculators.
-   - All experimental execution relies on the unified platform backends in [`repo/mac/`](../mac/) (Apple Silicon MPS) and [`repo/colab/`](../colab/) (NVIDIA CUDA).
+   - All experimental execution relies on the unified platform backend in `shared/medclipseg/` (supporting Apple Silicon MPS and NVIDIA CUDA).
 2. **Strict Independence of Level 0:**
    - Level 0 is completely self-contained. Progress on the course deliverable must **never** be delayed or blocked by work on Level 1 or Level 2.
 3. **Calibrated Thresholds as Boundary:**

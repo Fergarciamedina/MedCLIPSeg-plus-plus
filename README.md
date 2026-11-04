@@ -8,15 +8,15 @@
 
 ---
 
-## 1. Project Overview & Team Structure
+## 1. Project Overview & Research Architecture
 
 This project extends the MedCLIPSeg baseline into two independent, complementary research workstreams within the IMPACT Lab framework (**BASELINE + ONE CHANGE + FAIR EVALUATION**).
 
-The repository is organized strictly by **research owner**:
+The repository is organized strictly by **research contribution**:
 
 ```text
 MedCLIPSeg-plus-plus/
-├── fernando/                          # Fernando's Research Subproject (Uncertainty & Selective Prediction)
+├── uncertainty_rejection/             # Uncertainty Quantification & Selective Prediction
 │   ├── src/uncertainty/               # Uncertainty extraction, aggregation & rejection library
 │   ├── research/                      # Level 0 experiments (Stages 01-04)
 │   ├── systems/                       # Level 1 (Priority UI) & Level 2 (Similarity Search)
@@ -24,7 +24,7 @@ MedCLIPSeg-plus-plus/
 │   ├── scripts/                       # Stage 02/03 runner scripts & test runner
 │   └── tests/                         # Automated unit & integration tests
 │
-├── ehsan/                             # Ehsan's Research Subproject (Prompt Robustness)
+├── prompt_robustness/                 # Text-Prompt Robustness & Perturbation Analysis
 │   └── research/                      # Text-prompt perturbation & sensitivity experiments
 │
 ├── shared/                            # Minimal Shared Baseline & Infrastructure
@@ -45,13 +45,13 @@ MedCLIPSeg-plus-plus/
 
 ---
 
-## 2. Team Workstreams Summary
+## 2. Research Contributions & Team Credits
 
-| Subproject | Research Owner | Contribution / Scope | Dedicated Branch | Subproject Guide |
-| :--- | :--- | :--- | :--- | :--- |
-| **`fernando/`** | Fernando Garcia Medina | **Uncertainty-Based Selective Prediction**: Raw pixel-level entropy extraction, 5 aggregation metrics, validation threshold calibration, risk-coverage curves, control benchmarks, and domain shift evaluation. | `feature/fernando-uncertainty` | [`fernando/README.md`](fernando/README.md) |
-| **`ehsan/`** | Ehsan | **Text-Prompt Robustness**: Prompt perturbation analysis, linguistic sensitivity, and cross-center phrasing evaluation. | `feature/ehsan-prompt-robustness` | [`ehsan/README.md`](ehsan/README.md) |
-| **`shared/`** | Team Shared | **Common Baseline**: MedCLIPSeg neural network, datasets, consolidated configs, and common execution scripts. | Coordinated via PR | [`shared/README.md`](shared/README.md) |
+| Research Contribution | Module Path | Focus & Scope | Dedicated Branch | Module Guide | Contributor |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Uncertainty-Based Selective Prediction** | `uncertainty_rejection/` | Raw pixel-level entropy extraction, 5 aggregation metrics, validation threshold calibration, risk-coverage curves, control benchmarks, and domain shift evaluation. | `feature/uncertainty-rejection` | [`uncertainty_rejection/README.md`](uncertainty_rejection/README.md) | Fernando Garcia Medina |
+| **Text-Prompt Robustness** | `prompt_robustness/` | Prompt perturbation analysis, linguistic sensitivity, and cross-center phrasing evaluation. | `feature/prompt-robustness` | [`prompt_robustness/README.md`](prompt_robustness/README.md) | Ehsan |
+| **Common Baseline** | `shared/` | MedCLIPSeg neural network, datasets, consolidated configs, and common execution scripts. | Coordinated via PR | [`shared/README.md`](shared/README.md) | Team Shared |
 
 ---
 
@@ -60,15 +60,15 @@ MedCLIPSeg-plus-plus/
 To maintain clean separation between research tracks:
 
 ```text
-  feature/fernando-uncertainty  ───────────────────────────────┐
+  feature/uncertainty-rejection  ──────────────────────────────┐
                                                                 ▼
-                                      PR + Review ───►  main (integrated)
+                                       PR + Review ───►  main (integrated)
                                                                 ▲
-  feature/ehsan-prompt-robustness ─────────────────────────────┘
+  feature/prompt-robustness      ──────────────────────────────┘
 ```
 
-1. **`feature/fernando-uncertainty`**: All commits regarding uncertainty quantification, selective prediction, aggregation metrics, and optional systems.
-2. **`feature/ehsan-prompt-robustness`**: All commits regarding text-prompt design, linguistic perturbations, and prompt sensitivity evaluations.
+1. **`feature/uncertainty-rejection`**: All commits regarding uncertainty quantification, selective prediction, aggregation metrics, and optional systems.
+2. **`feature/prompt-robustness`**: All commits regarding text-prompt design, linguistic perturbations, and prompt sensitivity evaluations.
 3. **`main`**: Production branch containing reviewed, integrated code. Direct pushes to `main` are restricted to integrated releases.
 4. **Shared Core Governance**: Any change to `shared/medclipseg/`, `shared/configs/`, or `shared/scripts/` requires mutual coordination and review.
 
@@ -77,7 +77,7 @@ To maintain clean separation between research tracks:
 ## 4. Attribution of Baseline Enhancements
 
 Although `shared/medclipseg/` serves as the common baseline, specific enhancements were authored by team members:
-- **Fernando** implemented the raw `float32` `.npy` uncertainty extraction in `shared/medclipseg/test.py` (saving uncompressed entropy arrays prior to visualization normalization), dynamic `${MEDCLIPSEG_DATA}` resolution, and Apple Silicon MPS device support.
+- **Fernando Garcia Medina** implemented the raw `float32` `.npy` uncertainty extraction in `shared/medclipseg/test.py` (saving uncompressed entropy arrays prior to visualization normalization), dynamic `${MEDCLIPSEG_DATA}` resolution, and Apple Silicon MPS device support.
 
 ---
 
@@ -90,19 +90,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Run Fernando's Test Suite & Experiments
+### Run Tests & Experiments
 ```bash
 # 1. Run all tests
-bash fernando/scripts/run_tests.sh
+bash uncertainty_rejection/scripts/run_tests.sh
 
 # 2. Run baseline inference (shared engine)
 bash shared/scripts/run_inference.sh BUSI 666
 
 # 3. Run Stage 02 uncertainty aggregation & correlation analysis
-bash fernando/scripts/run_aggregation.sh BUSI 666
+bash uncertainty_rejection/scripts/run_aggregation.sh BUSI 666
 
 # 4. Run Stage 03 selective prediction & control comparison
-bash fernando/scripts/run_selective_prediction.sh BUSI 666 U_fg
+bash uncertainty_rejection/scripts/run_selective_prediction.sh BUSI 666 U_fg
 ```
 
 ---

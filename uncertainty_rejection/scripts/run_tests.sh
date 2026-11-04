@@ -12,11 +12,11 @@ fi
 export MPLCONFIGDIR="${MPLCONFIGDIR:-/tmp/matplotlib_cache}"
 mkdir -p "$MPLCONFIGDIR"
 
-echo "Running Fernando's test suite..."
-PYTHONPATH="$REPO_ROOT/fernando/src:$REPO_ROOT/shared:$REPO_ROOT" $PYTHON_EXEC -c "
-import fernando.tests.test_imports as t1
-import fernando.tests.test_uncertainty as t2
-import fernando.tests.test_config_loading as t3
+echo "Running uncertainty & selective rejection test suite..."
+PYTHONPATH="$REPO_ROOT/uncertainty_rejection/src:$REPO_ROOT/shared:$REPO_ROOT" $PYTHON_EXEC -c "
+import uncertainty_rejection.tests.test_imports as t1
+import uncertainty_rejection.tests.test_uncertainty as t2
+import uncertainty_rejection.tests.test_config_loading as t3
 
 t1.test_import_medclipseg()
 t1.test_import_uncertainty()
