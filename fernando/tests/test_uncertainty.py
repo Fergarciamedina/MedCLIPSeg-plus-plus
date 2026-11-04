@@ -1,11 +1,17 @@
 """Unit tests for uncertainty quantification logic."""
 
+import os
+import sys
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.join(REPO_ROOT, "fernando", "src"))
+
 import numpy as np
 import pandas as pd
-from src.uncertainty.raw_entropy import compute_pixel_entropy
-from src.uncertainty.aggregation import compute_uncertainty_features
-from src.uncertainty.metrics import compute_spearman_correlations, compute_failure_auroc
-from src.uncertainty.selective_prediction import (
+from uncertainty.raw_entropy import compute_pixel_entropy
+from uncertainty.aggregation import compute_uncertainty_features
+from uncertainty.metrics import compute_spearman_correlations, compute_failure_auroc
+from uncertainty.selective_prediction import (
     calibrate_rejection_threshold,
     apply_selective_rejection,
     compute_risk_coverage_curve,

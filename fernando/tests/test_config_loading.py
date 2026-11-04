@@ -6,7 +6,7 @@ import yaml
 
 
 def test_yaml_syntax():
-    config_dir = os.path.join(os.path.dirname(__file__), "..", "configs")
+    config_dir = os.path.join(os.path.dirname(__file__), "..", "..", "shared", "configs")
     yaml_files = glob.glob(os.path.join(config_dir, "*.yaml"))
     assert len(yaml_files) > 0, "No yaml configs found in configs/"
 

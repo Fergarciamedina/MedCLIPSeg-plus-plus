@@ -10,12 +10,14 @@ import argparse
 import pandas as pd
 import numpy as np
 
-# Add repo root to path
+# Add paths for fernando modules and shared repo
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 sys.path.insert(0, REPO_ROOT)
+sys.path.insert(0, os.path.join(REPO_ROOT, "fernando", "src"))
+sys.path.insert(0, os.path.join(REPO_ROOT, "shared"))
 
-from src.uncertainty.aggregation import extract_image_features
-from src.uncertainty.selective_prediction import (
+from uncertainty.aggregation import extract_image_features
+from uncertainty.selective_prediction import (
     calibrate_rejection_threshold,
     apply_selective_rejection,
     compute_risk_coverage_curve,

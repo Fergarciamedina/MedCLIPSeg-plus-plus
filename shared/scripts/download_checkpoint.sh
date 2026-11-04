@@ -6,7 +6,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 DATASET="${1:-BUSI}"
 SEED="${2:-666}"
@@ -21,7 +21,7 @@ fi
 
 echo "Downloading checkpoint for $DATASET (seed $SEED, $PERCENTAGE%)..."
 
-cd "$REPO_ROOT/src/medclipseg"
+cd "$REPO_ROOT/shared/medclipseg"
 $PYTHON_EXEC utils/download_ckpt.py --dataset "$DATASET" --data_percentage "$PERCENTAGE" --seed "$SEED"
 
 # Relocate from temporary local folder to canonical MEDCLIPSEG_OUTPUT

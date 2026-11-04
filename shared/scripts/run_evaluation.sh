@@ -6,11 +6,11 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 DATASET="${1:-BUSI}"
 SEED="${2:-666}"
-CONFIG_FILE="${3:-$REPO_ROOT/configs/${DATASET}.yaml}"
+CONFIG_FILE="${3:-$REPO_ROOT/shared/configs/${DATASET}.yaml}"
 
 export MEDCLIPSEG_DATA="${MEDCLIPSEG_DATA:-$REPO_ROOT/../data/raw}"
 export MEDCLIPSEG_OUTPUT="${MEDCLIPSEG_OUTPUT:-$REPO_ROOT/../data/outputs}"
@@ -22,7 +22,7 @@ fi
 
 echo "Running ground-truth evaluation for $DATASET..."
 
-cd "$REPO_ROOT/src/medclipseg"
+cd "$REPO_ROOT/shared/medclipseg"
 $PYTHON_EXEC utils/eval.py \
     --config-file "$CONFIG_FILE" \
     --output-dir "$MEDCLIPSEG_OUTPUT" \

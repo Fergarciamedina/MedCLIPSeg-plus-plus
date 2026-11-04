@@ -1,42 +1,66 @@
 # System Architecture & Technical Specifications
 
 **Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University\
-**Project:** MedCLIPSeg++ Uncertainty-Based Selective Prediction Under Domain Shift
+**Project:** MedCLIPSeg++ Multi-Track Research
 
 ---
 
-## 1. Multi-Track & Multi-Level System Architecture
+## 1. Team Ownership & Workstream Architecture
 
-The repository enforces strict separation between foundational scientific research (Level 0) and optional conceptual systems (Levels 1 and 2), with parallel support for prompt perturbation research:
+The repository is organized primarily by **research owner** rather than technical layers, providing complete independence for each researcher while anchoring both in a minimal shared baseline:
 
 ```mermaid
 graph TD
-    classDef core fill:#2b5c8f,stroke:#1a365d,color:#ffffff,stroke-width:2px;
-    classDef track fill:#4a5568,stroke:#2d3748,color:#ffffff,stroke-width:1.5px;
+    classDef shared fill:#2c7a7b,stroke:#234e52,color:#ffffff,stroke-width:2px;
+    classDef fernando fill:#2b5c8f,stroke:#1a365d,color:#ffffff,stroke-width:2px;
+    classDef ehsan fill:#4a5568,stroke:#2d3748,color:#ffffff,stroke-width:1.5px;
     classDef opt fill:#718096,stroke:#4a5568,color:#ffffff,stroke-dasharray: 5 5;
-    classDef run fill:#2c7a7b,stroke:#234e52,color:#ffffff,stroke-width:1.5px;
 
-    CoreLib["Shared Core Libraries<br>(src/medclipseg/ & src/uncertainty/)"]:::run
+    SharedBaseline["shared/medclipseg/<br>(Frozen Foundation & Adapters)"]:::shared
 
-    subgraph Tracks ["Research Tracks"]
-        TrackPR["Prompt Robustness Track<br>(research/prompt_robustness/)"]:::track
-        TrackUR["Level 0: Uncertainty Rejection Research<br>(research/uncertainty_rejection/)"]:::core
+    subgraph FernandoSubproject ["Fernando's Subproject (fernando/)"]
+        F_Uncertainty["fernando/src/uncertainty/<br>(Entropy, Aggregation, Selective Rejection)"]:::fernando
+        F_Research["fernando/research/<br>(Level 0: Experiments 01-04)"]:::fernando
+        F_Sys1["fernando/systems/priority_ui/<br>(Level 1: Triage Dashboard)"]:::opt
+        F_Sys2["fernando/systems/similarity_search/<br>(Level 2: IVF Block Pruning)"]:::opt
     end
 
-    subgraph ClinicalSystems ["Application Systems"]
-        SysL1["Level 1: Priority UI Dashboard<br>(systems/priority_ui/)"]:::opt
-        SysL2["Level 2: Similarity Retrieval Engine<br>(systems/similarity_search/)"]:::opt
+    subgraph EhsanSubproject ["Ehsan's Subproject (ehsan/)"]
+        E_Research["ehsan/research/<br>(Prompt Robustness & Perturbations)"]:::ehsan
     end
 
-    CoreLib --> TrackPR
-    CoreLib --> TrackUR
-    TrackUR -->|"Calibrated Tau & Summary Metrics"| SysL1
-    TrackUR -->|"Shared CLIP Feature Embeddings"| SysL2
+    SharedBaseline --> F_Uncertainty
+    SharedBaseline --> E_Research
+    F_Uncertainty --> F_Research
+    F_Research -->|"Calibrated Tau"| F_Sys1
+    SharedBaseline -->|"CLIP Embeddings"| F_Sys2
 ```
 
 ---
 
-## 2. Level 0: Scientific Research Pipeline
+## 2. Development & Branching Workflow
+
+```mermaid
+gitGraph
+   commit id: "baseline"
+   branch feature/fernando-uncertainty
+   checkout feature/fernando-uncertainty
+   commit id: "raw-npy-save"
+   commit id: "aggregation-metrics"
+   commit id: "selective-prediction"
+   checkout main
+   branch feature/ehsan-prompt-robustness
+   checkout feature/ehsan-prompt-robustness
+   commit id: "prompt-scenarios"
+   commit id: "perturbation-eval"
+   checkout main
+   merge feature/fernando-uncertainty id: "pr-fernando-merge"
+   merge feature/ehsan-prompt-robustness id: "pr-ehsan-merge"
+```
+
+---
+
+## 3. Level 0: Fernando's Scientific Research Pipeline
 
 Level 0 is the mandatory core deliverable of the project. It calibrates selective prediction on In-Distribution validation data and tests its robustness under domain shift without model retraining.
 
@@ -54,18 +78,18 @@ flowchart TD
     end
 
     subgraph Stage01 ["Stage 01: Raw Entropy Extraction"]
-        Infer["Frozen UniMedCLIP Inference<br>(src/medclipseg/test.py)"]:::proc
-        SaveRaw["Save Raw float32 .npy<br>(src/uncertainty/raw_entropy.py)"]:::proc
+        Infer["Frozen UniMedCLIP Inference<br>(shared/medclipseg/test.py)"]:::proc
+        SaveRaw["Save Raw float32 .npy<br>(fernando/src/uncertainty/raw_entropy.py)"]:::proc
     end
 
     subgraph Stage02 ["Stage 02: Aggregation & Correlation"]
-        Agg["Compute Summary Metrics<br>(src/uncertainty/aggregation.py)"]:::proc
-        Metrics["Spearman rho & AUROC<br>(run_aggregation.py)"]:::proc
+        Agg["Compute Summary Metrics<br>(fernando/src/uncertainty/aggregation.py)"]:::proc
+        Metrics["Spearman rho & AUROC<br>(fernando/research/aggregation/)"]:::proc
     end
 
     subgraph Stage03 ["Stage 03: Selective Prediction"]
         Calib["Calibrate Fixed Tau_c on Val<br>(calibrate_rejection_threshold)"]:::dec
-        RiskCov["Risk-Coverage Curves & AURC<br>(run_selective_prediction.py)"]:::proc
+        RiskCov["Risk-Coverage Curves & AURC<br>(fernando/research/selective_prediction/)"]:::proc
         Controls["Evaluate Controls<br>(Random, Naive Confidence, Oracle)"]:::proc
     end
 
@@ -92,7 +116,7 @@ flowchart TD
 
 ---
 
-## 3. Level 1: Operational Triage & Priority Flow
+## 4. Level 1: Operational Triage & Priority Flow (Fernando)
 
 Level 1 specifies an interactive triage dashboard for new unannotated ultrasound acquisitions where ground truth is not available.
 
@@ -100,8 +124,8 @@ Level 1 specifies an interactive triage dashboard for new unannotated ultrasound
 sequenceDiagram
     autonumber
     actor Clinician as Sonographer / Specialist
-    participant UI as Priority Triage Dashboard
-    participant Backend as Shared Inference Runner
+    participant UI as Priority Triage Dashboard (fernando/systems/priority_ui/)
+    participant Backend as Shared Inference Runner (shared/medclipseg/)
     participant Filter as Validation Calibrated Rejection Rule
 
     Clinician->>UI: Upload N Unlabeled Ultrasound Images + Text Prompt
@@ -119,7 +143,7 @@ sequenceDiagram
 
 ---
 
-## 4. Level 2: Similarity Search & Predicate Pruning
+## 5. Level 2: Similarity Search & Predicate Pruning (Fernando)
 
 Level 2 decouples vector indexing from online querying, utilizing precomputed block metadata summaries to prune non-matching IVF posting lists during vector distance computation.
 
@@ -146,7 +170,7 @@ flowchart TD
     classDef proc fill:#2b5c8f,stroke:#1a365d,color:#ffffff;
     classDef out fill:#2c7a7b,stroke:#234e52,color:#ffffff;
 
-    Q["Query Image + Prompt + Metadata Predicate<br>(e.g., Pathology = Malignant)"]:::query --> QEnc["Compute Query Vector &<br>Level 0 Uncertainty Score"]:::proc
+    Q["Query Image + Prompt + Metadata Predicate<br>(e.g., Pathology = Malignant)"]:::query --> QEnc["Compute Query Vector &<br>Uncertainty Score"]:::proc
     QEnc --> IVFProbe["Select Top-N Nearest IVF Centroids"]:::proc
     IVFProbe --> ListTraverse["Traverse Posting Lists"]:::proc
 

@@ -12,12 +12,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Add repo root to path
+# Add paths for fernando modules and shared repo
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 sys.path.insert(0, REPO_ROOT)
+sys.path.insert(0, os.path.join(REPO_ROOT, "fernando", "src"))
+sys.path.insert(0, os.path.join(REPO_ROOT, "shared"))
 
-from src.uncertainty.aggregation import extract_image_features
-from src.uncertainty.metrics import compute_spearman_correlations, compute_failure_auroc
+from uncertainty.aggregation import extract_image_features
+from uncertainty.metrics import compute_spearman_correlations, compute_failure_auroc
 
 
 def get_args():
