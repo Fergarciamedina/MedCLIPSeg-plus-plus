@@ -8,6 +8,15 @@ latex/*.out
 latex/*.bbl
 latex/*.blg
 latex/*.toc
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 
 # Checkpoints and weights
 *.pth
