@@ -2,8 +2,8 @@
 
 A lightweight, modular, model-agnostic Python toolkit for evaluating uncertainty-based selective prediction in medical image segmentation under domain shift.
 
-This toolkit accompanies the research project:
-**"Uncertainty-Based Selective Prediction for Text-Guided Medical Image Segmentation Under Domain Shift"** (ELEC 6661, Concordia University).
+This toolkit accompanies the research platform:
+**[MedCLIPSeg++: Reliability-Aware Segmentation and Case Retrieval](https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus)**. Detailed scientific specifications and multi-center validation protocols are provided in [docs/architecture/SELECTIVE_SEGMENTATION_ARCHITECTURE.md](../docs/architecture/SELECTIVE_SEGMENTATION_ARCHITECTURE.md).
 
 ---
 
@@ -147,9 +147,8 @@ If you use this toolkit in your research, please cite:
 
 ```bibtex
 @article{garciamedina2026selective,
-  title={Uncertainty-Based Selective Prediction for Text-Guided Medical Image Segmentation Under Domain Shift},
+  title={Uncertainty-Guided Selective Segmentation and Case Retrieval for Medical Vision-Language Models Under Domain Shift},
   author={Garcia-Medina, Fernando},
-  journal={ELEC 6661 Technical Report, Concordia University},
   year={2026}
 }
 ```

@@ -1,6 +1,6 @@
 # Scientific Evidence and Claims: Falsifiable Hypotheses, Literature Attribution, Quantitative Comparisons, and Inference Limits
 
-**ELEC 6661 | Scientific evidence registry | Version 2.0 | 2026-11-07 | Coverage: Steps 1–11C**  
+**MedCLIPSeg++ | Scientific Evidence Registry | Version 2.0 | Coverage: Multi-Center Benchmark**  
 **Read with:** [Theory and Metrics](THEORY_AND_METRICS.md) · [Experimental Protocol](EXPERIMENTAL_PROTOCOL.md) · [Research Decisions and Limitations](RESEARCH_DECISIONS_AND_LIMITATIONS.md).
 
 > **Purpose.** This is an audit trail from **scientific question → plausible mechanism → falsifiable hypothesis → mathematical estimator → implementation → observed result → counterexample → justified claim → unresolved limitation**. A reference supports a published concept, **not** the project's own numerical result. Project outcomes below are based on completed execution and reconciliation reports; the raw case CSVs and source checkout were not provided for independent re-execution in the document-authoring environment. No artificial “independent replication” claim is made.

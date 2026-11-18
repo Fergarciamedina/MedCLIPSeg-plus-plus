@@ -1,0 +1,3 @@
+-r ../../uncertainty_aware_retrieval/requirements.txt
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0

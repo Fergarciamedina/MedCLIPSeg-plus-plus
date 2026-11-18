@@ -1,6 +1,6 @@
 # Theory and Metrics: Mathematical Foundations for Uncertainty-Based Selective Segmentation
 
-**Project:** ELEC 6661 — Uncertainty-Based Selective Prediction for Text-Guided Medical Image Segmentation Under Domain Shift  
+**Project:** MedCLIPSeg++ — Uncertainty-Guided Selective Segmentation Under Domain Shift  
 **Document version:** 2.0 — 2026-11-07 (consolidated through Steps 1–11C)  
 **Scope:** Frozen MedCLIPSeg, binary breast-ultrasound lesion segmentation, uncertainty aggregation, selective risk, validation/test/OOD evaluation.  
 **Companion documents:** [Experimental Protocol](EXPERIMENTAL_PROTOCOL.md) · [Scientific Evidence and Claims](SCIENTIFIC_EVIDENCE_AND_CLAIMS.md) · [Research Decisions and Limitations](RESEARCH_DECISIONS_AND_LIMITATIONS.md).

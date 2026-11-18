@@ -1,6 +1,6 @@
 # Research Decisions and Limitations: Cumulative Scientific Rationale and Experimental Audit Trail
 
-**ELEC 6661 — Medical Image Analysis**  
+**MedCLIPSeg++ Research Methodology & Boundaries**  
 **Study:** Uncertainty-Based Selective Prediction for Text-Guided Medical Image Segmentation Under Domain Shift (frozen MedCLIPSeg)  
 **Version:** 2.0, 2026-11-07 · **Status:** Historical Decisions D-001–D-134 preserved in English; new consolidation Decisions D-135–D-156 through Step 11C.  
 **Companion documents:** [Theory and Metrics](THEORY_AND_METRICS.md) · [Experimental Protocol](EXPERIMENTAL_PROTOCOL.md) · [Scientific Evidence and Claims](SCIENTIFIC_EVIDENCE_AND_CLAIMS.md).

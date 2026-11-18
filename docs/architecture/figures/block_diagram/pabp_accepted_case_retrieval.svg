@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1020" viewBox="0 0 1920 1020" role="img" aria-labelledby="title desc">
+  <title id="title">Predicate-Aware Block Pruning for Accepted-Case Retrieval</title>
+  <desc id="desc">An accepted ultrasound query embedding enters FAISS-IVF. In the selected inverted lists, blocks with accepted-case metadata are scanned, a block with only review-required cases is skipped, eligible case identifiers are checked, embedding distances are computed and Top-K accepted similar cases are returned. The underlying historical vector index provides embeddings, IDs and frozen selective-decision metadata.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,4.5 L0,9 Z" fill="#31445d"/></marker>
+    <marker id="blueArrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,4.5 L0,9 Z" fill="#2563eb"/></marker>
+    <marker id="greenArrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,4.5 L0,9 Z" fill="#218358"/></marker>
+    <style>
+      text{font-family:Inter,Arial,Helvetica,sans-serif;fill:#192940}
+      .title{font-size:42px;font-weight:800;letter-spacing:-.8px}
+      .subtitle{font-size:20px;fill:#607089}
+      .heading{font-size:25px;font-weight:800}
+      .body{font-size:20px}
+      .small{font-size:17px;fill:#50647b}
+      .tiny{font-size:15px;fill:#50647b}
+      .step{font-size:14px;font-weight:800;letter-spacing:1.5px;fill:#617793}
+      .good{fill:#21794f}
+      .bad{fill:#ba3b46}
+      .line{fill:none;stroke:#31445d;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+      .lineblue{fill:none;stroke:#2563eb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#blueArrow)}
+      .linegreen{fill:none;stroke:#218358;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#greenArrow)}
+      .box{fill:#fff;stroke:#cdd9e8;stroke-width:2.3}
+      .card{fill:#fff;stroke-width:3}
+    </style>
+  </defs>
+
+  <rect width="1920" height="1020" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1920" height="12" fill="#263d69"/>
+  <text class="title" x="58" y="72">Predicate-Aware Block Pruning</text>
+  <text class="subtitle" x="59" y="109">Accepted-case similarity retrieval  ·  FAISS-IVF  ·  Metadata eligibility summaries</text>
+  <line x1="58" y1="134" x2="1862" y2="134" stroke="#d5e0ec" stroke-width="2"/>
+
+  <text class="step" x="58" y="176">01  QUERY</text>
+  <text class="step" x="359" y="176">02  COARSE VECTOR SEARCH</text>
+  <text class="step" x="687" y="176">03  BLOCK-SUMMARY ELIGIBILITY CHECK</text>
+  <text class="step" x="1160" y="176">04  CANDIDATE EVALUATION</text>
+
+  <!-- Query input -->
+  <rect class="box" x="52" y="308" width="268" height="224" rx="24" stroke="#8eadd4"/>
+  <rect x="75" y="330" width="90" height="58" rx="10" fill="#e4efff" stroke="#558ac8" stroke-width="2"/>
+  <path d="M88 374 L102 357 L113 364 L130 341 L151 366" fill="none" stroke="#3570b8" stroke-width="3"/>
+  <text class="heading" x="188" y="369" font-style="italic">q</text>
+  <text class="heading" x="76" y="429">Query embedding</text>
+  <text class="small" x="76" y="458">Ultrasound image vector</text>
+  <rect x="76" y="477" width="214" height="38" rx="17" fill="#e3f7eb" stroke="#69b68c" stroke-width="1.6"/>
+  <circle cx="94" cy="496" r="10" fill="#2c9b69"/><path d="M89 496 l4 4 l7 -9" fill="none" stroke="white" stroke-width="2.5"/>
+  <text x="111" y="502" font-size="17" font-weight="700" fill="#21794f">Query: Accepted</text>
+
+  <!-- FAISS selector -->
+  <rect class="box" x="366" y="308" width="260" height="224" rx="24" stroke="#a2a3d9"/>
+  <text class="heading" x="396" y="354">FAISS-IVF</text>
+  <text class="body" x="396" y="385">Select nearest</text>
+  <text class="body" x="396" y="411">inverted lists</text>
+  <rect x="395" y="436" width="34" height="48" rx="5" fill="#88b6e7"/>
+  <rect x="438" y="436" width="34" height="48" rx="5" fill="#88b6e7"/>
+  <rect x="481" y="436" width="34" height="48" rx="5" fill="#e4e9f3"/>
+  <rect x="524" y="436" width="34" height="48" rx="5" fill="#e4e9f3"/>
+  <text class="tiny" x="396" y="510">nprobe controls list selection</text>
+  <path class="line" d="M320 421 H366"/>
+
+  <!-- One selected IVF list, split into blocks -->
+  <rect x="645" y="198" width="482" height="734" rx="26" fill="#eaf1ff" stroke="#a5bff1" stroke-width="2" stroke-dasharray="8 8"/>
+  <path class="lineblue" d="M626 421 H657 V290 H688"/>
+  <path class="lineblue" d="M657 421 V528 H688"/>
+  <path class="lineblue" d="M657 528 V762 H688"/>
+  <text x="680" y="228" class="small" font-weight="700">Illustrative blocks within selected IVF lists</text>
+
+  <!-- Block A -->
+  <rect class="card" x="690" y="244" width="418" height="205" rx="23" fill="#f0fdf4" stroke="#63aa78"/>
+  <text class="heading" x="714" y="284">Block A</text>
+  <circle cx="765" cy="332" r="23" fill="#2eac72"/><text x="765" y="340" font-size="23" font-weight="800" fill="white" text-anchor="middle">A</text>
+  <circle cx="837" cy="332" r="23" fill="#e8b3ba"/><text x="837" y="340" font-size="23" font-weight="800" fill="#812e38" text-anchor="middle">R</text>
+  <circle cx="909" cy="332" r="23" fill="#2eac72"/><text x="909" y="340" font-size="23" font-weight="800" fill="white" text-anchor="middle">A</text>
+  <text class="small" x="953" y="327">Metadata</text><text class="small" x="953" y="350">per case</text>
+  <rect x="713" y="372" width="366" height="54" rx="13" fill="#dcf8e5" stroke="#70bd8d" stroke-width="1.6"/>
+  <text x="728" y="406" font-size="21" font-weight="800" fill="#20774e">✓  Contains Accepted → SCAN</text>
+
+  <!-- Block B -->
+  <rect class="card" x="690" y="480" width="418" height="205" rx="23" fill="#fff6f6" stroke="#e58d94"/>
+  <text class="heading" x="714" y="520">Block B</text>
+  <circle cx="765" cy="567" r="23" fill="#e8b3ba"/><text x="765" y="575" font-size="23" font-weight="800" fill="#812e38" text-anchor="middle">R</text>
+  <circle cx="837" cy="567" r="23" fill="#e8b3ba"/><text x="837" y="575" font-size="23" font-weight="800" fill="#812e38" text-anchor="middle">R</text>
+  <circle cx="909" cy="567" r="23" fill="#e8b3ba"/><text x="909" y="575" font-size="23" font-weight="800" fill="#812e38" text-anchor="middle">R</text>
+  <text class="small" x="953" y="562">Metadata</text><text class="small" x="953" y="585">per case</text>
+  <rect x="713" y="608" width="366" height="54" rx="13" fill="#ffe8e9" stroke="#e7a0a6" stroke-width="1.6"/>
+  <text x="728" y="643" font-size="20" font-weight="800" fill="#b93e4b">✕  No Accepted cases → SKIP</text>
+
+  <!-- Block C -->
+  <rect class="card" x="690" y="716" width="418" height="205" rx="23" fill="#f0fdf4" stroke="#63aa78"/>
+  <text class="heading" x="714" y="756">Block C</text>
+  <circle cx="765" cy="803" r="23" fill="#e8b3ba"/><text x="765" y="811" font-size="23" font-weight="800" fill="#812e38" text-anchor="middle">R</text>
+  <circle cx="837" cy="803" r="23" fill="#2eac72"/><text x="837" y="811" font-size="23" font-weight="800" fill="white" text-anchor="middle">A</text>
+  <circle cx="909" cy="803" r="23" fill="#e8b3ba"/><text x="909" y="811" font-size="23" font-weight="800" fill="#812e38" text-anchor="middle">R</text>
+  <text class="small" x="953" y="799">Metadata</text><text class="small" x="953" y="821">per case</text>
+  <rect x="713" y="844" width="366" height="54" rx="13" fill="#dcf8e5" stroke="#70bd8d" stroke-width="1.6"/>
+  <text x="728" y="878" font-size="21" font-weight="800" fill="#20774e">✓  Contains Accepted → SCAN</text>
+
+  <!-- Candidate evaluation and ranking -->
+  <rect class="box" x="1222" y="359" width="244" height="178" rx="22" stroke="#82b994"/>
+  <text x="1246" y="402" class="heading">Check case IDs</text>
+  <text x="1246" y="439" class="body">Keep only</text>
+  <text x="1246" y="468" class="body" font-weight="700" fill="#21794f">status = Accepted</text>
+  <text x="1246" y="503" class="tiny">within scanned blocks</text>
+  <rect class="box" x="1498" y="359" width="183" height="178" rx="22" stroke="#7d9ed8"/>
+  <text x="1522" y="399" class="heading">Compute</text>
+  <text x="1522" y="429" class="heading">embedding</text>
+  <text x="1522" y="459" class="heading">distances</text>
+  <text x="1522" y="504" class="tiny">only eligible IDs</text>
+  <rect x="1707" y="359" width="196" height="178" rx="22" fill="#e7f6ee" stroke="#4eab78" stroke-width="3"/>
+  <text x="1732" y="402" class="heading" fill="#21794f">Top-K</text>
+  <text x="1732" y="437" class="heading" fill="#21794f">similar cases</text>
+  <text x="1732" y="472" class="body">Accepted only</text>
+  <text x="1732" y="506" class="tiny">by vector proximity</text>
+  <path class="line" d="M1466 449 H1498"/>
+  <path class="linegreen" d="M1681 449 H1707"/>
+
+  <!-- Read-only arrows from surviving blocks -->
+  <path class="linegreen" d="M1108 345 H1166 V405 H1222"/>
+  <path class="linegreen" d="M1108 820 H1380 V537"/>
+  <path d="M1108 580 H1152" fill="none" stroke="#ca4e5a" stroke-width="3" stroke-dasharray="6 6"/>
+  <rect x="1153" y="557" width="198" height="40" rx="18" fill="#ffe8e9" stroke="#e5a0a6"/>
+  <text x="1174" y="584" font-size="18" font-weight="800" fill="#b93e4b">Skip whole block</text>
+
+  <!-- Vector database metadata -->
+  <rect class="box" x="52" y="652" width="574" height="225" rx="23" stroke="#b0a6dc"/>
+  <ellipse cx="106" cy="703" rx="29" ry="11" fill="#ded9fb" stroke="#7369b9" stroke-width="2.5"/>
+  <path d="M77 703 V753 C77 767 135 767 135 753 V703" fill="#edeafd" stroke="#7369b9" stroke-width="2.5"/>
+  <ellipse cx="106" cy="729" rx="29" ry="11" fill="none" stroke="#7369b9" stroke-width="2"/>
+  <text class="heading" x="154" y="706">Historical vector index</text>
+  <text class="body" x="83" y="794">Embeddings  +  case IDs  +  decision metadata</text>
+  <rect x="83" y="818" width="509" height="39" rx="12" fill="#f0edfc"/>
+  <text x="100" y="843" font-size="17" fill="#524f91">Block summary = whether any case is Accepted</text>
+  <path class="lineblue" d="M489 652 V532"/>
+
+  <!-- q needed by distance scorer; long but separate path below the blocks -->
+  <path class="lineblue" d="M626 503 H635 V947 H1588 V537"/>
+  <rect x="1245" y="922" width="290" height="36" rx="16" fill="#eaf1ff" stroke="#b5c9f1"/>
+  <text x="1270" y="947" font-size="17" font-weight="700" fill="#2563eb">Query vector q for distances</text>
+
+  <!-- Legend and scientifically cautious note -->
+  <circle cx="72" cy="971" r="12" fill="#2eac72"/>
+  <text x="91" y="978" class="small">A = Accepted by uncertainty policy</text>
+  <circle cx="453" cy="971" r="12" fill="#e8b3ba"/>
+  <text x="472" y="978" class="small">R = Review Required</text>
+  <text x="890" y="978" font-size="17" fill="#53667d">Illustrative block contents; actual pruning depends on the indexed case distribution.</text>
+</svg>

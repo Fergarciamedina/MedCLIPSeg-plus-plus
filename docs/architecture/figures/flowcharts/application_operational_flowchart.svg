@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1250" width="1100" height="1250" style="background:#ffffff; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="headerGradS2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <filter id="shadowS2" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1.5" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrS2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#334155"/>
+    </marker>
+    <marker id="arrGreenS2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrRedS2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <!-- Title Banner -->
+  <rect x="30" y="15" width="1040" height="60" rx="8" fill="url(#headerGradS2)"/>
+  <text x="50" y="42" fill="#ffffff" font-size="18" font-weight="bold">Figure S2: Integrated Application Operational Flowchart</text>
+  <text x="50" y="62" fill="#cbd5e1" font-size="12">Standard Flowchart Specification of Runtime Execution, Decision Branching, and Terminal Outcomes</text>
+
+  <!-- Node 1: Start (Oval / Terminator) -->
+  <g transform="translate(550, 115)" filter="url(#shadowS2)">
+    <rect x="-160" y="-22" width="320" height="44" rx="22" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+    <text x="0" y="5" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">Start: Radiologist Enters Scan &amp; Instruction</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <line x1="550" y1="137" x2="550" y2="165" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+
+  <!-- Node 2: Input (Parallelogram) -->
+  <g transform="translate(550, 195)" filter="url(#shadowS2)">
+    <polygon points="-190,-25 170,-25 190,25 -170,25" fill="#f8fafc" stroke="#64748b" stroke-width="1.8"/>
+    <text x="0" y="-4" fill="#0f172a" font-size="11" font-weight="bold" text-anchor="middle">Input: Ultrasound Image X_v, Clinical Instruction X_t,</text>
+    <text x="0" y="14" fill="#334155" font-size="11" text-anchor="middle">Retrieval Top-K Parameter, Operating Threshold Mode</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <line x1="550" y1="220" x2="550" y2="255" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+
+  <!-- Node 3: Decision 1 - Input Validation (Diamond) -->
+  <g transform="translate(550, 305)" filter="url(#shadowS2)">
+    <polygon points="0,-45 140,0 0,45 -140,0" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
+    <text x="0" y="-12" fill="#78350f" font-size="11" font-weight="bold" text-anchor="middle">Input Validation Check</text>
+    <text x="0" y="4" fill="#92400e" font-size="10" text-anchor="middle">Valid Image Format &amp; Text?</text>
+    <text x="0" y="18" fill="#b45309" font-size="9" text-anchor="middle">(Non-empty, dimensions finite)</text>
+  </g>
+
+  <!-- Branch D1 No -> Error 1 -->
+  <line x1="690" y1="305" x2="840" y2="305" stroke="#dc2626" stroke-width="2" marker-end="url(#arrRedS2)"/>
+  <text x="735" y="295" fill="#dc2626" font-size="10" font-weight="bold">No: Malformed</text>
+  
+  <!-- Terminal: Error 1 -->
+  <g transform="translate(940, 305)" filter="url(#shadowS2)">
+    <rect x="-90" y="-22" width="180" height="44" rx="22" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="0" y="-2" fill="#991b1b" font-size="10" font-weight="bold" text-anchor="middle">Display Input Error</text>
+    <text x="0" y="14" fill="#b91c1c" font-size="9" text-anchor="middle">Halt Execution</text>
+  </g>
+
+  <!-- Branch D1 Yes -> Process Intent -->
+  <line x1="550" y1="350" x2="550" y2="385" stroke="#16a34a" stroke-width="2" marker-end="url(#arrGreenS2)"/>
+  <text x="560" y="370" fill="#16a34a" font-size="10" font-weight="bold">Yes</text>
+
+  <!-- Node 4: Process - Parse Intent -->
+  <g transform="translate(550, 415)" filter="url(#shadowS2)">
+    <rect x="-160" y="-22" width="320" height="44" rx="4" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="0" y="-3" fill="#0f172a" font-size="11" font-weight="bold" text-anchor="middle">Parse Clinical Intent via Rule Matcher</text>
+    <text x="0" y="14" fill="#475569" font-size="10" text-anchor="middle">Extract Top-K &amp; Mode: [SEGMENT_ONLY | RETRIEVE_SIMILAR]</text>
+  </g>
+
+  <!-- Arrow 4 -> 5 -->
+  <line x1="550" y1="437" x2="550" y2="470" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+
+  <!-- Node 5: Decision 2 - Precomputed Outputs Available? (Diamond) -->
+  <g transform="translate(550, 520)" filter="url(#shadowS2)">
+    <polygon points="0,-45 145,0 0,45 -145,0" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.8"/>
+    <text x="0" y="-12" fill="#0369a1" font-size="11" font-weight="bold" text-anchor="middle">Precomputed Cache Check</text>
+    <text x="0" y="4" fill="#0284c7" font-size="10" text-anchor="middle">Are Canonical Outputs on Disk?</text>
+    <text x="0" y="18" fill="#075985" font-size="9" text-anchor="middle">(Demo / Benchmark Cohorts)</text>
+  </g>
+
+  <!-- Branch D2 Yes -> Load Cache -->
+  <line x1="405" y1="520" x2="270" y2="520" stroke="#16a34a" stroke-width="2" marker-end="url(#arrGreenS2)"/>
+  <text x="345" y="510" fill="#16a34a" font-size="10" font-weight="bold">Yes: Found</text>
+
+  <g transform="translate(170, 520)" filter="url(#shadowS2)">
+    <rect x="-90" y="-25" width="180" height="50" rx="4" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="0" y="-6" fill="#065f46" font-size="10" font-weight="bold" text-anchor="middle">Load Precomputed Maps</text>
+    <text x="0" y="10" fill="#047857" font-size="9" text-anchor="middle">Load Mask Ŷ &amp; Entropy ℋ</text>
+    <text x="0" y="22" fill="#059669" font-size="8" text-anchor="middle">(Bypasses Live Backbone)</text>
+  </g>
+
+  <!-- Branch D2 No -> Check Live Inference -->
+  <line x1="695" y1="520" x2="810" y2="520" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+  <text x="735" y="510" fill="#475569" font-size="10" font-weight="bold">No: Local Upload</text>
+
+  <!-- Node 6: Decision 3 - Hardware/Model Support (Diamond) -->
+  <g transform="translate(930, 520)" filter="url(#shadowS2)">
+    <polygon points="0,-40 100,0 0,40 -100,0" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+    <text x="0" y="-10" fill="#1e293b" font-size="10" font-weight="bold" text-anchor="middle">Live Device Check</text>
+    <text x="0" y="4" fill="#475569" font-size="9" text-anchor="middle">PyTorch/MPS Ready?</text>
+    <text x="0" y="16" fill="#64748b" font-size="8" text-anchor="middle">Weights loaded?</text>
+  </g>
+
+  <!-- Branch D3 No -> Hardware Error -->
+  <line x1="930" y1="560" x2="930" y2="600" stroke="#dc2626" stroke-width="2" marker-end="url(#arrRedS2)"/>
+  <text x="940" y="585" fill="#dc2626" font-size="10" font-weight="bold">No</text>
+  <g transform="translate(930, 625)" filter="url(#shadowS2)">
+    <rect x="-85" y="-20" width="170" height="40" rx="20" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="0" y="-2" fill="#991b1b" font-size="10" font-weight="bold" text-anchor="middle">Device Unsupported</text>
+    <text x="0" y="12" fill="#b91c1c" font-size="8" text-anchor="middle">Halt / Prompt Checkpoint</text>
+  </g>
+
+  <!-- Branch D3 Yes -> Execute Live Backbone -->
+  <line x1="930" y1="480" x2="930" y2="445" stroke="#16a34a" stroke-width="2"/>
+  <line x1="930" y1="445" x2="810" y2="445" stroke="#16a34a" stroke-width="2" marker-end="url(#arrGreenS2)"/>
+  <text x="900" y="460" fill="#16a34a" font-size="10" font-weight="bold">Yes</text>
+  <g transform="translate(710, 445)" filter="url(#shadowS2)">
+    <rect x="-90" y="-24" width="180" height="48" rx="4" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="0" y="-5" fill="#0369a1" font-size="10" font-weight="bold" text-anchor="middle">Live MedCLIPSeg Passes</text>
+    <text x="0" y="9" fill="#0284c7" font-size="9" text-anchor="middle">T=30 MC stochastic passes</text>
+    <text x="0" y="21" fill="#0284c7" font-size="8" text-anchor="middle">Compute Ŷ and ℋ</text>
+  </g>
+
+  <!-- Re-converge to Predefined Subprocess: Selective Decision -->
+  <line x1="170" y1="545" x2="170" y2="615" stroke="#334155" stroke-width="2"/>
+  <line x1="170" y1="615" x2="360" y2="615" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+  <line x1="710" y1="469" x2="710" y2="615" stroke="#334155" stroke-width="2"/>
+  <line x1="710" y1="615" x2="550" y2="615" stroke="#334155" stroke-width="2"/>
+
+  <!-- Predefined Subprocess: Selective Decision Flowchart (Figure R2) -->
+  <g transform="translate(550, 650)" filter="url(#shadowS2)">
+    <rect x="-190" y="-25" width="380" height="50" rx="4" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+    <line x1="-175" y1="-25" x2="-175" y2="25" stroke="#ca8a04" stroke-width="1.5"/>
+    <line x1="175" y1="-25" x2="175" y2="25" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="0" y="-6" fill="#854d0e" font-size="11" font-weight="bold" text-anchor="middle">SUBPROCESS: Execute Selective Decision Engine</text>
+    <text x="0" y="10" fill="#a16207" font-size="10" text-anchor="middle">Apply Spatial Stencil Ω_fg → Evaluate U_fg ≤ τ* (0.064058) or U_mean ≤ 1e-4</text>
+    <text x="0" y="22" fill="#ca8a04" font-size="9" text-anchor="middle">[Detailed in Figure R2]</text>
+  </g>
+
+  <!-- Arrow from Subprocess -> Decision 4 -->
+  <line x1="550" y1="675" x2="550" y2="715" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+
+  <!-- Node 7: Decision 4 - Selective Triage Result (Diamond) -->
+  <g transform="translate(550, 765)" filter="url(#shadowS2)">
+    <polygon points="0,-45 150,0 0,45 -150,0" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="0" y="-12" fill="#78350f" font-size="11" font-weight="bold" text-anchor="middle">Selective Triage Gate</text>
+    <text x="0" y="4" fill="#92400e" font-size="10" text-anchor="middle">Is Decision == ACCEPTED?</text>
+    <text x="0" y="18" fill="#b45309" font-size="9" text-anchor="middle">(Confirmed Low Uncertainty)</text>
+  </g>
+
+  <!-- Branch D4 No: REVIEW_REQUIRED -->
+  <line x1="700" y1="765" x2="840" y2="765" stroke="#dc2626" stroke-width="2.2" marker-end="url(#arrRedS2)"/>
+  <text x="735" y="755" fill="#dc2626" font-size="10" font-weight="bold">No: REVIEW_REQUIRED</text>
+
+  <!-- Action: Route to Human Review Queue -->
+  <g transform="translate(940, 765)" filter="url(#shadowS2)">
+    <rect x="-95" y="-30" width="190" height="60" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1.8"/>
+    <text x="0" y="-12" fill="#991b1b" font-size="10" font-weight="bold" text-anchor="middle">Route to Human Review</text>
+    <text x="0" y="3" fill="#b91c1c" font-size="9" text-anchor="middle">• Render Overlay + Dissonance</text>
+    <text x="0" y="17" fill="#b91c1c" font-size="9" text-anchor="middle">• PRUNE from Auto-Retrieval</text>
+  </g>
+
+  <!-- Terminal: Review Queue -->
+  <line x1="940" y1="795" x2="940" y2="835" stroke="#dc2626" stroke-width="2" marker-end="url(#arrRedS2)"/>
+  <g transform="translate(940, 860)" filter="url(#shadowS2)">
+    <rect x="-95" y="-22" width="190" height="44" rx="22" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+    <text x="0" y="-2" fill="#7f1d1d" font-size="10" font-weight="bold" text-anchor="middle">Terminal Outcome B:</text>
+    <text x="0" y="12" fill="#991b1b" font-size="9" text-anchor="middle">Expert Radiologist Triage Queue</text>
+  </g>
+
+  <!-- Branch D4 Yes: ACCEPTED -->
+  <line x1="550" y1="810" x2="550" y2="850" stroke="#16a34a" stroke-width="2.2" marker-end="url(#arrGreenS2)"/>
+  <text x="560" y="830" fill="#16a34a" font-size="10" font-weight="bold">Yes: ACCEPTED</text>
+
+  <!-- Node 8: Decision 5 - Intent Check: Is Retrieval Requested? -->
+  <g transform="translate(550, 895)" filter="url(#shadowS2)">
+    <polygon points="0,-40 140,0 0,40 -140,0" fill="#f8fafc" stroke="#64748b" stroke-width="1.8"/>
+    <text x="0" y="-10" fill="#0f172a" font-size="11" font-weight="bold" text-anchor="middle">Intent Requirement Check</text>
+    <text x="0" y="6" fill="#334155" font-size="10" text-anchor="middle">Is Similarity Retrieval Desired?</text>
+    <text x="0" y="18" fill="#64748b" font-size="9" text-anchor="middle">(Mode == RETRIEVE_SIMILAR)</text>
+  </g>
+
+  <!-- Branch D5 No: Segment Only -->
+  <line x1="410" y1="895" x2="270" y2="895" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+  <text x="315" y="885" fill="#334155" font-size="10" font-weight="bold">No: Seg Only</text>
+
+  <!-- Terminal: Segment Only -->
+  <g transform="translate(160, 895)" filter="url(#shadowS2)">
+    <rect x="-95" y="-25" width="190" height="50" rx="25" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <text x="0" y="-6" fill="#065f46" font-size="10" font-weight="bold" text-anchor="middle">Terminal Outcome C:</text>
+    <text x="0" y="9" fill="#047857" font-size="9" text-anchor="middle">Display Segmentation Overlay</text>
+    <text x="0" y="21" fill="#059669" font-size="8" text-anchor="middle">(Autonomous Reporting Permitted)</text>
+  </g>
+
+  <!-- Branch D5 Yes: Proceed to PABP Retrieval -->
+  <line x1="550" y1="935" x2="550" y2="970" stroke="#16a34a" stroke-width="2" marker-end="url(#arrGreenS2)"/>
+  <text x="560" y="955" fill="#16a34a" font-size="10" font-weight="bold">Yes</text>
+
+  <!-- Node 9: Process - Extract Embedding & Probe Centroids -->
+  <g transform="translate(550, 1000)" filter="url(#shadowS2)">
+    <rect x="-180" y="-24" width="360" height="48" rx="4" fill="#faf5ff" stroke="#c084fc" stroke-width="1.5"/>
+    <text x="0" y="-5" fill="#581c87" font-size="11" font-weight="bold" text-anchor="middle">Extract UniMedCLIP Embedding &amp; Probe Centroids</text>
+    <text x="0" y="11" fill="#6b21a8" font-size="10" text-anchor="middle">L2-normalize v_q (512-d) → Probe nprobe IVF Centroids</text>
+  </g>
+
+  <!-- Arrow 9 -> 10 -->
+  <line x1="550" y1="1024" x2="550" y2="1055" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+
+  <!-- Node 10: Process - PABP Block Evaluation -->
+  <g transform="translate(550, 1085)" filter="url(#shadowS2)">
+    <rect x="-190" y="-25" width="380" height="50" rx="4" fill="#f5f3ff" stroke="#9333ea" stroke-width="1.8"/>
+    <text x="0" y="-6" fill="#4c1d95" font-size="11" font-weight="bold" text-anchor="middle">Evaluate Predicate-Aware Block Pruning (PABP)</text>
+    <text x="0" y="10" fill="#6b21a8" font-size="10" text-anchor="middle">Check Block Predicates: Skip Ineligible Lists (no ACCEPTED cases)</text>
+    <text x="0" y="22" fill="#7e22ce" font-size="8" text-anchor="middle">Computes Inner Product ⟨v_q, v_i⟩ ONLY on Eligible Candidates</text>
+  </g>
+
+  <!-- Arrow 10 -> 11 -->
+  <line x1="550" y1="1110" x2="550" y2="1140" stroke="#334155" stroke-width="2" marker-end="url(#arrS2)"/>
+
+  <!-- Node 11: Final Output (Parallelogram) -->
+  <g transform="translate(550, 1170)" filter="url(#shadowS2)">
+    <polygon points="-210,-24 190,-24 210,24 -190,24" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.8"/>
+    <text x="0" y="-5" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">Deliver Tri-Modal Overlay &amp; Top-K Similar Case Gallery</text>
+    <text x="0" y="11" fill="#166534" font-size="10" text-anchor="middle">Present Query Overlay, Histological Diagnoses, and High-Confidence Matches</text>
+  </g>
+
+  <!-- Arrow 11 -> End -->
+  <line x1="550" y1="1194" x2="550" y2="1215" stroke="#16a34a" stroke-width="2" marker-end="url(#arrGreenS2)"/>
+
+  <!-- Node 12: Terminal Outcome A (Oval / Terminator) -->
+  <g transform="translate(550, 1230)" filter="url(#shadowS2)">
+    <rect x="-140" y="-18" width="280" height="36" rx="18" fill="#15803d" stroke="#166534" stroke-width="2"/>
+    <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">End: Successful Clinical Review Delivery</text>
+  </g>
+</svg>

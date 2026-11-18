@@ -1,29 +1,20 @@
-# Research Contribution: Uncertainty Quantification & Selective Prediction
+# Uncertainty-Guided Selective Segmentation
 
-**Research Area:** Post-Hoc Uncertainty Estimation, Error Correlation & Rejection Control\
-**Course:** ELEC 6661 — Medical Image Processing (Fall 2026), Concordia University\
-**Lab:** IMPACT Lab (Prof. Hassan Rivaz, Omid Nejati Manzari)\
-**Development Branch:** `feature/uncertainty-rejection`
+A self-contained scientific research module for post-hoc predictive uncertainty quantification, error correlation analysis, and validation-calibrated selective prediction in breast ultrasound image segmentation.
+
+Part of the **[MedCLIPSeg++](https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus)** research platform. For the complete scientific block diagrams (Figures R1, R2, R3), mathematical formulations, and cross-domain empirical results, see [docs/architecture/SELECTIVE_SEGMENTATION_ARCHITECTURE.md](../docs/architecture/SELECTIVE_SEGMENTATION_ARCHITECTURE.md).
 
 ---
 
-## 1. Research Scope & Contributions
+## 1. Methodology Overview
 
-This module implements the core scientific contribution for uncertainty-guided segmentation and rejection control, structured around three levels:
+This module provides the complete scientific implementation for:
 
-1. **Level 0: Scientific Research & Evaluation (Mandatory ELEC 6661 Scope)**
-   - Post-hoc uncertainty quantification using MedCLIPSeg's Monte Carlo Value attention.
-   - Persistence of uncompressed, raw `float32` pixel-level entropy arrays (`.npy`) prior to visualization normalization.
-   - Extraction of 5 image-level aggregation features: $U_{\text{fg}}$ (foreground mean), $U_{\text{std\_fg}}$ (foreground std dev), $U_{\text{boundary}}$ (morphological boundary band), $U_{\text{mean}}$ (global mean), and $U_{\text{ratio}}$.
-   - Statistical validation: Spearman rank correlation ($\rho$) against DSC and NSD, and failure discrimination AUROC ($\text{DSC} < 0.5$).
-   - Selective prediction: calibrating rejection threshold $\tau_c$ on the BUSI validation set, evaluating Risk-Coverage curves and Area Under Risk-Coverage (AURC), and benchmarking against Random, Naive Confidence, and Oracle controls.
-   - Out-of-distribution (OOD) evaluation across unseen breast ultrasound targets (`BUSBRA`, `BUSUC`, `BUID`, `UDIAT`).
-
-2. **Level 1: Priority UI Dashboard (Optional PLUS A — Architectural Specification)**
-   - Triage system for unannotated clinical cases, ranking images by uncertainty score ($U$) to prioritize difficult segmentations for human sonographer review.
-
-3. **Level 2: Multimodal Similarity Search (Optional PLUS B — Architectural Specification)**
-   - Retrieval engine combining frozen CLIP visual embeddings with within-list block-summary predicate pruning in FAISS IVF.
+1. **Pixel-Level Entropy Extraction:** Extracts raw `float32` pixel-wise Shannon entropy arrays from MedCLIPSeg's Monte Carlo variational attention prior to visualization colormapping.
+2. **Mask-Conditioned Aggregation:** Computes 5 image-level uncertainty metrics: $U_{\text{fg}}$ (foreground mean), $U_{\text{std\_fg}}$ (foreground standard deviation), $U_{\text{boundary}}$ (morphological boundary band), $U_{\text{mean}}$ (global background grid), and $U_{\text{ratio}}$.
+3. **Statistical Validation:** Evaluates Spearman rank correlation ($\rho$) against Dice Similarity Coefficient (DSC) and Normalized Surface Distance (NSD), and failure discrimination AUROC ($\text{DSC} < 0.5$).
+4. **Selective Prediction:** Calibrates a deployable rejection threshold $\tau^*$ exclusively on in-distribution validation data, generates Risk-Coverage curves and Area Under Risk-Coverage (AURC), and benchmarks against Random, Naive Confidence, and Oracle controls.
+5. **Domain Shift Evaluation:** Evaluates the frozen model and frozen threshold across 4 external out-of-distribution (OOD) cohorts: `BUSBRA`, `BUSUC`, `BUID`, and `UDIAT` ($N=464$ external scans).
 
 ---
 
@@ -31,66 +22,51 @@ This module implements the core scientific contribution for uncertainty-guided s
 
 ```text
 uncertainty_rejection/
-├── README.md                          # Contribution overview and reproduction guide
+├── README.md                          # Module overview and reproduction guide
 │
-├── src/                               # Core uncertainty quantification package
+├── src/                               # Core Python package
 │   └── uncertainty/
 │       ├── __init__.py                # Exported API
-│       ├── raw_entropy.py             # Binary entropy computation & .npy / PNG persistence
-│       ├── aggregation.py             # Feature computation (U_mean, U_fg, U_std_fg, U_ratio, U_boundary)
-│       ├── metrics.py                 # Spearman rho & failure AUROC
+│       ├── raw_entropy.py             # Binary Shannon entropy calculation & persistence
+│       ├── aggregation.py             # Spatial feature aggregation (U_fg, U_mean, etc.)
+│       ├── metrics.py                 # Spearman rho & failure AUROC computation
 │       └── selective_prediction.py    # Tau calibration, risk-coverage curves & controls
 │
-├── research/                          # Level 0 scientific experiments
-│   ├── README.md                      # Experimental pipeline overview
-│   ├── raw_entropy/                   # Stage 01: Raw entropy specifications
-│   ├── aggregation/                   # Stage 02: run_aggregation.py (correlation & AUROC)
-│   ├── selective_prediction/          # Stage 03: run_selective_prediction.py (selective prediction)
-│   ├── ood_evaluation/                # Stage 04: OOD domain shift protocol
-│   └── future_work.md                 # Untested hypotheses and future research directions
+├── research/                          # Canonical scientific records & experiment scripts
+│   ├── EXPERIMENTAL_PROTOCOL.md       # Formal experimental design & evaluation protocol
+│   ├── THEORY_AND_METRICS.md          # Mathematical formulas, metrics & conventions
+│   ├── SCIENTIFIC_EVIDENCE_AND_CLAIMS.md # Empirical claims ledger with full data tables
+│   ├── RESEARCH_DECISIONS_AND_LIMITATIONS.md # Methodological decisions & known boundary conditions
+│   ├── PUBLISHED_BASELINE_COMPARISON.md  # Detailed comparison with Koleilat et al. baseline
+│   ├── aggregation/                   # Aggregation feature computation scripts
+│   ├── inference/                     # Validation inference scripts
+│   ├── selective_prediction/          # Selective prediction & locked test evaluation scripts
+│   └── statistical_analysis/          # Validation statistics & bootstrap CI runners
 │
-├── systems/                           # Clinical application systems (Scaffolding)
-│   ├── priority_ui/                   # Level 1 triage specifications
-│   └── similarity_search/             # Level 2 similarity search specifications
-│
-├── notebooks/                         # Interactive analysis
-│   └── evaluate.ipynb                 # Interactive evaluation notebook
-│
-├── scripts/                           # Execution scripts
-│   ├── run_aggregation.sh            # Stage 02 execution runner
-│   ├── run_selective_prediction.sh   # Stage 03 execution runner
-│   └── run_tests.sh                  # Automated test suite runner
+├── scripts/                           # Reproduction shell runners
+│   ├── run_aggregation.sh            # Aggregation & correlation runner
+│   ├── run_selective_prediction.sh   # Selective prediction runner
+│   └── run_tests.sh                  # Regression test runner (31 tests)
 │
 └── tests/                             # Automated test suite
-    ├── test_imports.py                # Package import validation
-    ├── test_uncertainty.py            # Mathematical bounds and selective logic tests
-    └── test_config_loading.py         # Configuration file validation
+    ├── test_imports.py                # Package imports validation
+    ├── test_uncertainty.py            # Mathematical bounds, aggregation & selective logic
+    └── test_config_loading.py         # Config files & frozen parameter loading
 ```
 
 ---
 
-## 3. Implementation Attribution
+## 3. Reproduction & Execution
 
-- **Shared Baseline:** Builds upon the frozen MedCLIPSeg baseline located in `shared/medclipseg/`.
-- **Contribution Scope:**
-  - Raw `float32` `.npy` array persistence added to the inference loop (`shared/medclipseg/test.py`).
-  - The entire `uncertainty_rejection/src/uncertainty/` package.
-  - All experimental runners (`run_aggregation.py`, `run_selective_prediction.py`).
-  - All test suites in `uncertainty_rejection/tests/`.
-
----
-
-## 4. Execution & Reproduction
-
-From the repository root:
+From `MedCLIPSeg-plus-plus/`:
 
 ```bash
-# 1. Run automated test suite
+# 1. Run full 31-test regression suite
 bash uncertainty_rejection/scripts/run_tests.sh
 
-# 2. Run Stage 02 aggregation and error correlation analysis
+# 2. Run aggregation and correlation analysis on BUSI
 bash uncertainty_rejection/scripts/run_aggregation.sh BUSI 666
 
-# 3. Run Stage 03 selective prediction and control comparisons
+# 3. Run selective prediction evaluation
 bash uncertainty_rejection/scripts/run_selective_prediction.sh BUSI 666 U_fg
 ```

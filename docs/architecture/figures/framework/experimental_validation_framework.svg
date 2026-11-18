@@ -1,0 +1,317 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 920" width="1440" height="920" style="background:#ffffff; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="headerGradR3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <filter id="shadowR3" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrR3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <marker id="arrIndigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4f46e5"/>
+    </marker>
+  </defs>
+
+  <!-- Title Banner -->
+  <rect x="20" y="15" width="1400" height="65" rx="8" fill="url(#headerGradR3)"/>
+  <text x="45" y="45" fill="#ffffff" font-size="20" font-weight="bold">Figure R3: Experimental Research and Validation Architecture (Component A)</text>
+  <text x="45" y="66" fill="#e0e7ff" font-size="13">Multi-Center Cohort Provenance, Seven Uncertainty Operators, Locked In-Distribution Testing, and Cross-Domain Evaluation</text>
+
+  <!-- Column 1: Multi-Center Cohorts (N=542) -->
+  <g transform="translate(20, 95)" filter="url(#shadowR3)">
+    <rect x="0" y="0" width="310" height="740" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="0" y="0" width="310" height="38" rx="10" fill="#334155"/>
+    <rect x="0" y="25" width="310" height="13" fill="#334155"/>
+    <text x="155" y="24" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">CLINICAL COHORT PROVENANCE</text>
+
+    <rect x="15" y="48" width="280" height="30" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+    <text x="155" y="67" fill="#1e293b" font-size="11" font-weight="bold" text-anchor="middle">5 International Cohorts (Audited N=542)</text>
+
+    <!-- In-Domain BUSI -->
+    <rect x="15" y="90" width="280" height="180" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+    <rect x="15" y="90" width="280" height="26" rx="6" fill="#dbeafe"/>
+    <text x="25" y="108" fill="#1e40af" font-size="11" font-weight="bold">In-Domain: BUSI Benchmark (Cairo, Egypt)</text>
+    <text x="25" y="130" fill="#334155" font-size="10">• Scanner: LOGIQ E9 Ultrasound</text>
+    <text x="25" y="146" fill="#334155" font-size="10">• Total Dataset: N=780 scans (Seed 666)</text>
+    
+    <rect x="25" y="156" width="260" height="42" rx="4" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="35" y="172" fill="#1e40af" font-size="10" font-weight="bold">Validation Split (N=78: 65 lesion, 13 normal)</text>
+    <text x="35" y="188" fill="#3b82f6" font-size="9">Used EXCLUSIVELY for Phase 1 Threshold Calibration</text>
+
+    <rect x="25" y="206" width="260" height="52" rx="4" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="35" y="222" fill="#1e40af" font-size="10" font-weight="bold">Locked Test Split (N=65 lesion cases)</text>
+    <text x="35" y="238" fill="#3b82f6" font-size="9">Unseen holdout split for Phase 2 Evaluation</text>
+    <text x="35" y="250" fill="#1d4ed8" font-size="8">Baseline DSC: 0.8286 | Random AURC: 0.1687</text>
+
+    <!-- Out-of-Distribution Cohorts -->
+    <rect x="15" y="282" width="280" height="290" rx="6" fill="#ffffff" stroke="#fdba74"/>
+    <rect x="15" y="282" width="280" height="26" rx="6" fill="#ffedd5"/>
+    <text x="25" y="300" fill="#9a3412" font-size="11" font-weight="bold">External OOD Target Cohorts (N=464)</text>
+
+    <rect x="25" y="318" width="260" height="52" rx="4" fill="#fff7ed" stroke="#fed7aa"/>
+    <text x="35" y="334" fill="#c2410c" font-size="10" font-weight="bold">1. UDIAT Benchmark (Spain, N=25)</text>
+    <text x="35" y="349" fill="#7c2d12" font-size="9">Siemens Elegra scanner | Dense lesion contours</text>
+    <text x="35" y="362" fill="#9a3412" font-size="8">Baseline DSC: 0.7467 → Accepted DSC: 0.8747</text>
+
+    <rect x="25" y="378" width="260" height="52" rx="4" fill="#fff7ed" stroke="#fed7aa"/>
+    <text x="35" y="394" fill="#c2410c" font-size="10" font-weight="bold">2. BUID Clinical Registry (N=35)</text>
+    <text x="35" y="409" fill="#7c2d12" font-size="9">Multi-system clinical database | Variable gain</text>
+    <text x="35" y="422" fill="#9a3412" font-size="8">Baseline DSC: 0.7900 → Accepted DSC: 0.8818</text>
+
+    <rect x="25" y="438" width="260" height="52" rx="4" fill="#fff7ed" stroke="#fed7aa"/>
+    <text x="35" y="454" fill="#c2410c" font-size="10" font-weight="bold">3. BUSUC Multi-Center Cohort (N=122)</text>
+    <text x="35" y="469" fill="#7c2d12" font-size="9">Institutional registry | Standardized protocol</text>
+    <text x="35" y="482" fill="#9a3412" font-size="8">Baseline DSC: 0.8430 → Accepted DSC: 0.8982</text>
+
+    <rect x="25" y="498" width="260" height="62" rx="4" fill="#fff7ed" stroke="#fed7aa"/>
+    <text x="35" y="514" fill="#c2410c" font-size="10" font-weight="bold">4. BUSBRA Multi-Scanner (Brazil, N=282)</text>
+    <text x="35" y="529" fill="#7c2d12" font-size="9">Multi-transducer Brazilian cohort | High diversity</text>
+    <text x="35" y="542" fill="#9a3412" font-size="8">Baseline DSC: 0.7511 → Accepted DSC: 0.8536</text>
+    <text x="35" y="554" fill="#b45309" font-size="8">Coverage drops to 44.7% (Safe Rejection)</text>
+
+    <!-- Excluded Regimes Box -->
+    <rect x="15" y="585" width="280" height="140" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="4 4"/>
+    <text x="25" y="605" fill="#475569" font-size="10" font-weight="bold">Excluded / Non-Evaluated Regimes</text>
+    <text x="25" y="623" fill="#64748b" font-size="9">• Non-breast ultrasound (Thyroid, Cardiac)</text>
+    <text x="25" y="639" fill="#64748b" font-size="9">• Real-time video sweeps / freehand sweeps</text>
+    <text x="25" y="655" fill="#64748b" font-size="9">• Online continuous domain adaptation</text>
+    <text x="25" y="671" fill="#64748b" font-size="9">• Supervised retraining of MedCLIPSeg</text>
+    <rect x="25" y="685" width="260" height="30" rx="3" fill="#fee2e2" stroke="#fca5a5"/>
+    <text x="155" y="704" fill="#991b1b" font-size="8" font-weight="bold" text-anchor="middle">Preserves rigorous research claim boundaries</text>
+  </g>
+
+  <!-- Column 2: Seven Uncertainty Aggregation Operators -->
+  <g transform="translate(350, 95)" filter="url(#shadowR3)">
+    <rect x="0" y="0" width="370" height="740" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="0" y="0" width="370" height="38" rx="10" fill="#334155"/>
+    <rect x="0" y="25" width="370" height="13" fill="#334155"/>
+    <text x="185" y="24" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">SEVEN UNCERTAINTY OPERATORS</text>
+
+    <rect x="15" y="48" width="340" height="30" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+    <text x="185" y="67" fill="#1e293b" font-size="11" font-weight="bold" text-anchor="middle">Systematic Evaluation of Aggregation Formulas</text>
+
+    <!-- Method 1: U_mean -->
+    <rect x="15" y="88" width="340" height="75" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="25" y="105" fill="#b91c1c" font-size="10" font-weight="bold">1. Global Spatial Mean (U_mean) [DISQUALIFIED]</text>
+    <text x="25" y="120" fill="#475569" font-size="9">U_mean = (1/|Ω|) ∑_{i∈Ω} ℋ(i)  (over all 256² pixels)</text>
+    <text x="25" y="134" fill="#991b1b" font-size="8" font-weight="bold">Confounding: ρ = +0.9148 with lesion area</text>
+    <text x="25" y="148" fill="#64748b" font-size="8">Falsely penalizes large benign masses; dilutes tiny carcinomas</text>
+
+    <!-- Method 2: U_positive -->
+    <rect x="15" y="170" width="340" height="68" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="25" y="187" fill="#0f172a" font-size="10" font-weight="bold">2. Positive-Entropy Mean (U_positive)</text>
+    <text x="25" y="202" fill="#475569" font-size="9">U_positive = (1/|Ω_pos|) ∑_{i∈Ω_pos} ℋ(i), Ω_pos = {i | ℋ(i) &gt; 0}</text>
+    <text x="25" y="217" fill="#64748b" font-size="8">Excludes zero background, but still affected by speckle haze</text>
+
+    <!-- Method 3: U_fg (PRIMARY) -->
+    <rect x="15" y="245" width="340" height="98" rx="5" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+    <text x="25" y="263" fill="#15803d" font-size="11" font-weight="bold">3. Foreground Mean Predictive Entropy (U_fg) [PRIMARY]</text>
+    <text x="25" y="280" fill="#166534" font-size="10" font-weight="bold">U_fg = (1/|Ω_fg|) ∑_{i∈Ω_fg} ℋ(i),  Ω_fg = {i | Ŷ(i) &gt; 0}</text>
+    <text x="25" y="297" fill="#15803d" font-size="9" font-weight="bold">• Minimal Validation AURC = 0.0839 (vs Random 0.1687)</text>
+    <text x="25" y="311" fill="#166534" font-size="9" font-weight="bold">• Area-Robust: ρ = -0.085 with area (Decoupled from tumor size)</text>
+    <text x="25" y="325" fill="#047857" font-size="8">Selected as primary triage policy metric</text>
+
+    <!-- Method 4: U_boundary -->
+    <rect x="15" y="350" width="340" height="75" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="25" y="367" fill="#0f172a" font-size="10" font-weight="bold">4. Morphological Boundary Band (U_boundary)</text>
+    <text x="25" y="382" fill="#475569" font-size="9">U_boundary = (1/|Ω_b|) ∑_{i∈Ω_b} ℋ(i), Ω_b = (Ŷ ⊕ K_w) \ (Ŷ ⊖ K_w)</text>
+    <text x="25" y="396" fill="#64748b" font-size="8">Band half-width w=2px; isolates contour transition zone</text>
+    <text x="25" y="410" fill="#64748b" font-size="8">Strong boundary focus, but sensitive to pixel discretization</text>
+
+    <!-- Method 5: U_threshold -->
+    <rect x="15" y="432" width="340" height="68" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="25" y="449" fill="#0f172a" font-size="10" font-weight="bold">5. High-Entropy Tail (U_threshold)</text>
+    <text x="25" y="464" fill="#475569" font-size="9">U_threshold = (1/|Ω_t|) ∑_{i∈Ω_t} ℋ(i), Ω_t = {i | ℋ(i) &gt; 0.10 nats}</text>
+    <text x="25" y="478" fill="#64748b" font-size="8">Averages only pixels with severe model disagreement</text>
+
+    <!-- Method 6: U_std_fg (COMPARATOR) -->
+    <rect x="15" y="507" width="340" height="98" rx="5" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.8"/>
+    <text x="25" y="525" fill="#1e40af" font-size="11" font-weight="bold">6. Foreground Entropy Std Dev (U_std_fg) [COMPARATOR]</text>
+    <text x="25" y="542" fill="#1d4ed8" font-size="10" font-weight="bold">U_std_fg = √[ (1/|Ω_fg|) ∑_{i∈Ω_fg} (ℋ(i) - U_fg)² ]</text>
+    <text x="25" y="559" fill="#2563eb" font-size="9">• Measures contour dissonance and texture heterogeneity</text>
+    <text x="25" y="573" fill="#1e40af" font-size="9">• Validation AURC = 0.0850 (Statistical Tie with U_fg)</text>
+    <text x="25" y="587" fill="#1e3a8a" font-size="8">Locked prespecified comparator (ΔAURC = -0.0011, p=0.884)</text>
+
+    <!-- Method 7: U_ratio -->
+    <rect x="15" y="612" width="340" height="68" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="25" y="629" fill="#0f172a" font-size="10" font-weight="bold">7. Foreground-to-Global Ratio (U_ratio)</text>
+    <text x="25" y="644" fill="#475569" font-size="9">U_ratio = U_fg / (U_mean + 10⁻⁶)</text>
+    <text x="25" y="658" fill="#64748b" font-size="8">Evaluates signal-to-background contrast ratio</text>
+
+    <!-- Summary Banner -->
+    <rect x="15" y="688" width="340" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="185" y="705" fill="#0f172a" font-size="9" font-weight="bold" text-anchor="middle">Operator Selection Verdict: U_fg Primary, U_std_fg Comparator</text>
+    <text x="185" y="718" fill="#64748b" font-size="8" text-anchor="middle">First-order moment preferred by Occam's razor given p=0.884</text>
+  </g>
+
+  <!-- Column 3: Three-Phase Validation Pipeline & Results -->
+  <g transform="translate(740, 95)" filter="url(#shadowR3)">
+    <rect x="0" y="0" width="680" height="740" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="0" y="0" width="680" height="38" rx="10" fill="#312e81"/>
+    <rect x="0" y="25" width="680" height="13" fill="#312e81"/>
+    <text x="340" y="24" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">THREE-PHASE VALIDATION PIPELINE &amp; AUDITED NUMERICAL RESULTS</text>
+
+    <rect x="15" y="48" width="650" height="30" rx="4" fill="#e0e7ff" stroke="#a5b4fc"/>
+    <text x="340" y="67" fill="#3730a3" font-size="11" font-weight="bold" text-anchor="middle">Protocol Governance: Phase 1 Calibration → Phase 2 Locked Testing → Phase 3 OOD Transfer</text>
+
+    <!-- Phase 1: In-Distribution Calibration -->
+    <rect x="15" y="88" width="650" height="160" rx="6" fill="#ffffff" stroke="#fde047" stroke-width="1.8"/>
+    <rect x="15" y="88" width="650" height="26" rx="6" fill="#fef9c3"/>
+    <text x="25" y="106" fill="#854d0e" font-size="11" font-weight="bold">Phase 1: In-Distribution Threshold Calibration (BUSI Validation Split, N=78)</text>
+
+    <text x="25" y="130" fill="#334155" font-size="10">• Systematic search across coverage targets: 70%, 75%, 80%, 85%, 90%, 95%</text>
+    <text x="25" y="146" fill="#334155" font-size="10">• Prespecified primary operating point: <tspan font-weight="bold" fill="#854d0e">coverage_80 (Target 80% coverage on lesion cases)</tspan></text>
+    
+    <rect x="25" y="156" width="310" height="75" rx="4" fill="#fefce8" stroke="#fde047"/>
+    <text x="35" y="172" fill="#854d0e" font-size="10" font-weight="bold">Calibrated Operating Parameters:</text>
+    <text x="35" y="188" fill="#a16207" font-size="9">• Lesion Threshold: <tspan font-weight="bold">τ* = 0.064058324</tspan></text>
+    <text x="35" y="202" fill="#a16207" font-size="9">• Negative Threshold: <tspan font-weight="bold">τ_neg = 0.0001 (10⁻⁴)</tspan></text>
+    <text x="35" y="216" fill="#ca8a04" font-size="8">Realized Val Coverage: 80.0% (52/65 accepted)</text>
+
+    <rect x="345" y="156" width="310" height="75" rx="4" fill="#fefce8" stroke="#fde047"/>
+    <text x="355" y="172" fill="#854d0e" font-size="10" font-weight="bold">Validation Statistical Verification:</text>
+    <text x="355" y="188" fill="#a16207" font-size="9">• Baseline Val DSC: 0.8520 → Accepted DSC: 0.8910</text>
+    <text x="355" y="202" fill="#a16207" font-size="9">• Selective Gain: <tspan font-weight="bold">+0.0390 DSC improvement</tspan></text>
+    <text x="355" y="216" fill="#a16207" font-size="9">• Negative Normal Cases (N=13): 100% Accepted (DSC=1.0)</text>
+
+    <!-- Phase 2: Locked In-Distribution Testing -->
+    <rect x="15" y="258" width="650" height="150" rx="6" fill="#ffffff" stroke="#86efac" stroke-width="1.8"/>
+    <rect x="15" y="258" width="650" height="26" rx="6" fill="#dcfce7"/>
+    <text x="25" y="276" fill="#15803d" font-size="11" font-weight="bold">Phase 2: Locked In-Distribution Testing (BUSI Test Split, N=65 Lesion Cases)</text>
+
+    <text x="25" y="300" fill="#334155" font-size="10">• Evaluated with frozen parameters locked from Phase 1 (No recalibration permitted)</text>
+
+    <!-- Table: Phase 2 Metrics -->
+    <rect x="25" y="310" width="630" height="85" rx="4" fill="#f0fdf4" stroke="#bbf7d0"/>
+    <text x="35" y="328" fill="#166534" font-size="10" font-weight="bold">Metric</text>
+    <text x="140" y="328" fill="#166534" font-size="10" font-weight="bold">Baseline</text>
+    <text x="240" y="328" fill="#166534" font-size="10" font-weight="bold">Accepted (τ*)</text>
+    <text x="370" y="328" fill="#166534" font-size="10" font-weight="bold">Selective Gain</text>
+    <text x="490" y="328" fill="#166534" font-size="10" font-weight="bold">Rejected</text>
+    <text x="570" y="328" fill="#166534" font-size="10" font-weight="bold">U_fg AURC</text>
+
+    <line x1="35" y1="335" x2="645" y2="335" stroke="#86efac" stroke-width="1"/>
+    <text x="35" y="352" fill="#0f172a" font-size="10">Mean DSC</text>
+    <text x="140" y="352" fill="#475569" font-size="10">0.8286</text>
+    <text x="240" y="352" fill="#15803d" font-size="10" font-weight="bold">0.9031 (72.3% Cov)</text>
+    <text x="370" y="352" fill="#15803d" font-size="10" font-weight="bold">+0.0745 [0.035, 0.124]</text>
+    <text x="490" y="352" fill="#b91c1c" font-size="10">0.6341</text>
+    <text x="570" y="352" fill="#1e40af" font-size="10" font-weight="bold">0.0790</text>
+
+    <text x="35" y="372" fill="#0f172a" font-size="10">Mean NSD</text>
+    <text x="140" y="372" fill="#475569" font-size="10">0.8712</text>
+    <text x="240" y="372" fill="#15803d" font-size="10" font-weight="bold">0.9328</text>
+    <text x="370" y="372" fill="#15803d" font-size="10" font-weight="bold">+0.0616</text>
+    <text x="490" y="372" fill="#b91c1c" font-size="10">0.7105</text>
+    <text x="570" y="372" fill="#64748b" font-size="9">(Random: 0.1687)</text>
+
+    <text x="35" y="390" fill="#166534" font-size="9">• Monotonic Risk Curve: Risk (1-DSC) strictly falls as coverage decreases (AUROC = 0.884)</text>
+
+    <!-- Phase 3: External Multi-Center Domain Shift Evaluation -->
+    <rect x="15" y="418" width="650" height="305" rx="6" fill="#ffffff" stroke="#c084fc" stroke-width="1.8"/>
+    <rect x="15" y="418" width="650" height="26" rx="6" fill="#f3e8ff"/>
+    <text x="25" y="436" fill="#6b21a8" font-size="11" font-weight="bold">Phase 3: Cross-Domain OOD Domain Shift Evaluation (4 External Cohorts, N=464)</text>
+
+    <text x="25" y="458" fill="#334155" font-size="10">• Zero-Shot Transfer: Frozen τ* = 0.064058 applied directly across all external centers</text>
+    <text x="25" y="472" fill="#334155" font-size="10">• 100% Non-Empty Integrity: Zero empty masks produced across all 464 scans (U_fg fully defined)</text>
+
+    <!-- Master OOD Table -->
+    <rect x="25" y="482" width="630" height="155" rx="4" fill="#faf5ff" stroke="#e9d5ff"/>
+    <text x="35" y="500" fill="#581c87" font-size="9" font-weight="bold">Dataset</text>
+    <text x="130" y="500" fill="#581c87" font-size="9" font-weight="bold">N</text>
+    <text x="160" y="500" fill="#581c87" font-size="9" font-weight="bold">Baseline</text>
+    <text x="235" y="500" fill="#581c87" font-size="9" font-weight="bold">Coverage</text>
+    <text x="310" y="500" fill="#581c87" font-size="9" font-weight="bold">Accepted</text>
+    <text x="390" y="500" fill="#581c87" font-size="9" font-weight="bold">Gain [95% CI]</text>
+    <text x="510" y="500" fill="#581c87" font-size="9" font-weight="bold">Rejected</text>
+    <text x="580" y="500" fill="#581c87" font-size="9" font-weight="bold">U_fg AURC</text>
+
+    <line x1="35" y1="506" x2="645" y2="506" stroke="#d8b4fe" stroke-width="1"/>
+    
+    <text x="35" y="522" fill="#0f172a" font-size="9">UDIAT (Spain)</text>
+    <text x="130" y="522" fill="#475569" font-size="9">25</text>
+    <text x="160" y="522" fill="#475569" font-size="9">0.7467</text>
+    <text x="235" y="522" fill="#475569" font-size="9">56.0% (14/25)</text>
+    <text x="310" y="522" fill="#15803d" font-size="9" font-weight="bold">0.8747</text>
+    <text x="390" y="522" fill="#15803d" font-size="9" font-weight="bold">+0.1281 [0.03, 0.26]</text>
+    <text x="510" y="522" fill="#b91c1c" font-size="9">0.5837</text>
+    <text x="580" y="522" fill="#1e40af" font-size="9">0.1133</text>
+
+    <text x="35" y="540" fill="#0f172a" font-size="9">BUID (Registry)</text>
+    <text x="130" y="540" fill="#475569" font-size="9">35</text>
+    <text x="160" y="540" fill="#475569" font-size="9">0.7900</text>
+    <text x="235" y="540" fill="#475569" font-size="9">57.1% (20/35)</text>
+    <text x="310" y="540" fill="#15803d" font-size="9" font-weight="bold">0.8818</text>
+    <text x="390" y="540" fill="#15803d" font-size="9" font-weight="bold">+0.0919 [0.03, 0.16]</text>
+    <text x="510" y="540" fill="#b91c1c" font-size="9">0.6675</text>
+    <text x="580" y="540" fill="#1e40af" font-size="9">0.1094</text>
+
+    <text x="35" y="558" fill="#0f172a" font-size="9">BUSUC (Registry)</text>
+    <text x="130" y="558" fill="#475569" font-size="9">122</text>
+    <text x="160" y="558" fill="#475569" font-size="9">0.8430</text>
+    <text x="235" y="558" fill="#475569" font-size="9">63.9% (78/122)</text>
+    <text x="310" y="558" fill="#15803d" font-size="9" font-weight="bold">0.8982</text>
+    <text x="390" y="558" fill="#15803d" font-size="9" font-weight="bold">+0.0551 [0.04, 0.08]</text>
+    <text x="510" y="558" fill="#b91c1c" font-size="9">0.7453</text>
+    <text x="580" y="558" fill="#1e40af" font-size="9">0.0916</text>
+
+    <text x="35" y="576" fill="#0f172a" font-size="9">BUSBRA (Brazil)</text>
+    <text x="130" y="576" fill="#475569" font-size="9">282</text>
+    <text x="160" y="576" fill="#475569" font-size="9">0.7511</text>
+    <text x="235" y="576" fill="#475569" font-size="9">44.7% (126/282)</text>
+    <text x="310" y="576" fill="#15803d" font-size="9" font-weight="bold">0.8536</text>
+    <text x="390" y="576" fill="#15803d" font-size="9" font-weight="bold">+0.1025 [0.08, 0.13]</text>
+    <text x="510" y="576" fill="#b91c1c" font-size="9">0.6683</text>
+    <text x="580" y="576" fill="#1e40af" font-size="9">0.1529</text>
+
+    <line x1="35" y1="585" x2="645" y2="585" stroke="#a855f7" stroke-width="1.2"/>
+    
+    <text x="35" y="602" fill="#581c87" font-size="10" font-weight="bold">POOLED OOD (Micro)</text>
+    <text x="130" y="602" fill="#581c87" font-size="10" font-weight="bold">464</text>
+    <text x="160" y="602" fill="#581c87" font-size="10" font-weight="bold">0.7780</text>
+    <text x="235" y="602" fill="#581c87" font-size="10" font-weight="bold">51.3% (238/464)</text>
+    <text x="310" y="602" fill="#15803d" font-size="10" font-weight="bold">0.8718</text>
+    <text x="390" y="602" fill="#15803d" font-size="10" font-weight="bold">+0.0939 [0.08, 0.11]</text>
+    <text x="510" y="602" fill="#b91c1c" font-size="10" font-weight="bold">0.6791</text>
+    <text x="580" y="602" fill="#1e40af" font-size="10" font-weight="bold">0.1267</text>
+
+    <text x="35" y="622" fill="#6b21a8" font-size="9">Macro Unweighted Mean</text>
+    <text x="130" y="622" fill="#6b21a8" font-size="9">4 sets</text>
+    <text x="160" y="622" fill="#6b21a8" font-size="9">0.7827</text>
+    <text x="235" y="622" fill="#6b21a8" font-size="9">55.4%</text>
+    <text x="310" y="622" fill="#15803d" font-size="9" font-weight="bold">0.8771</text>
+    <text x="390" y="622" fill="#15803d" font-size="9" font-weight="bold">+0.0944</text>
+    <text x="510" y="622" fill="#b91c1c" font-size="9">0.6662</text>
+    <text x="580" y="622" fill="#1e40af" font-size="9">0.1168</text>
+
+    <!-- Key Synthesis Findings -->
+    <rect x="25" y="645" width="630" height="68" rx="4" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="35" y="662" fill="#1e40af" font-size="10" font-weight="bold">Audited Scientific Conclusions:</text>
+    <text x="35" y="677" fill="#1e3a8a" font-size="9">1. Safety Fail-Safe: Realized coverage drops gracefully from 72.3% (ID) to 51.3% (OOD) under scanner shift.</text>
+    <text x="35" y="691" fill="#1e3a8a" font-size="9">2. Robust Quality Retention: Retained DSC remains 0.8718 across unseen foreign ultrasound machines.</text>
+    <text x="35" y="705" fill="#1e3a8a" font-size="9">3. Risk Minimization: U_fg AURC (0.1267) vastly outperforms Random (0.2216) and U_mean (0.1864).</text>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 330 220 L 350 220" fill="none" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arrIndigo)"/>
+  <path d="M 720 300 L 740 300" fill="none" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#arrIndigo)"/>
+
+  <!-- Footer Legend -->
+  <rect x="20" y="850" width="1400" height="55" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="35" y="872" fill="#0f172a" font-size="11" font-weight="bold">Experimental Methodology Legend &amp; Cohort Conventions:</text>
+  
+  <rect x="35" y="880" width="14" height="14" rx="2" fill="#3b82f6"/>
+  <text x="55" y="892" fill="#334155" font-size="10">In-Domain BUSI Cohort (Phase 1 Calibration &amp; Phase 2 Testing)</text>
+
+  <rect x="425" y="880" width="14" height="14" rx="2" fill="#f97316"/>
+  <text x="445" y="892" fill="#334155" font-size="10">Out-of-Distribution Cohorts (Phase 3 Zero-Shot Generalization)</text>
+
+  <rect x="805" y="880" width="14" height="14" rx="2" fill="#16a34a"/>
+  <text x="825" y="892" fill="#334155" font-size="10">Accepted Quality Gain (Statistically Significant p &lt; 0.001)</text>
+
+  <rect x="1145" y="880" width="14" height="14" rx="2" fill="#94a3b8" stroke="#64748b" stroke-dasharray="3 3"/>
+  <text x="1165" y="892" fill="#334155" font-size="10">Excluded Experimental Regimes</text>
+</svg>

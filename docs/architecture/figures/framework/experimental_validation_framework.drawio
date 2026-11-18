@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-11-17T00:00:00.000Z" agent="Antigravity Architecture Generator" version="21.0.0" type="device">
+  <diagram id="diag_Figure_R3_Experimental_Validation_Framework" name="Figure_R3_Experimental_Validation_Framework">
+    <mxGraphModel dx="1440" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="920" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title_r3" value="&lt;b&gt;Figure R3: Experimental Research and Validation Architecture (Component A)&lt;/b&gt;&lt;br&gt;Multi-Center Provenance, Seven Uncertainty Operators, and Locked Statistical Evaluation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#312e81;fontColor=#ffffff;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1360" height="50" as="geometry" />
+        </mxCell>
+        <!-- Col 1 -->
+        <mxCell id="col1_r3" value="&lt;b&gt;CLINICAL COHORT PROVENANCE&lt;/b&gt;&lt;hr&gt;• In-Domain BUSI (Egypt, N=780)&lt;br&gt;  - Val Split (N=78) for Calibration&lt;br&gt;  - Test Split (N=65) Locked&lt;br&gt;• External OOD Cohorts (N=464):&lt;br&gt;  - UDIAT (Spain, N=25)&lt;br&gt;  - BUID (Registry, N=35)&lt;br&gt;  - BUSUC (Registry, N=122)&lt;br&gt;  - BUSBRA (Brazil, N=282)&lt;br&gt;• Excluded: Non-breast, video" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="20" y="90" width="290" height="700" as="geometry" />
+        </mxCell>
+        <!-- Col 2 -->
+        <mxCell id="col2_r3" value="&lt;b&gt;SEVEN UNCERTAINTY OPERATORS&lt;/b&gt;&lt;hr&gt;1. U_mean: Disqualified (ρ=+0.9148 area)&lt;br&gt;2. U_positive: Excludes zero pixels&lt;br&gt;3. &lt;b&gt;U_fg [PRIMARY]&lt;/b&gt;: Val AURC=0.0839, Area-robust (ρ=-0.085)&lt;br&gt;4. U_boundary: Morphological band&lt;br&gt;5. U_threshold: High-entropy tail (t=0.1)&lt;br&gt;6. &lt;b&gt;U_std_fg [COMPARATOR]&lt;/b&gt;: Dissonance, tied (ΔAURC=-0.0011, p=0.884)&lt;br&gt;7. U_ratio: Foreground/Global" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="90" width="350" height="700" as="geometry" />
+        </mxCell>
+        <!-- Col 3 -->
+        <mxCell id="col3_r3" value="&lt;b&gt;THREE-PHASE VALIDATION PIPELINE&lt;/b&gt;&lt;hr&gt;&lt;b&gt;Phase 1: In-Domain Calibration (Val N=78)&lt;/b&gt;&lt;br&gt;• Lock τ* = 0.064058, τ_neg = 1e-4&lt;br&gt;• Coverage 80% (Gain +0.0390 DSC)&lt;br&gt;&lt;br&gt;&lt;b&gt;Phase 2: Locked Testing (Test N=65)&lt;/b&gt;&lt;br&gt;• Baseline 0.8286 → Accepted 0.9031&lt;br&gt;• Gain +0.0745, AURC 0.0790 vs 0.1687&lt;br&gt;&lt;br&gt;&lt;b&gt;Phase 3: OOD Transfer (Pooled N=464)&lt;/b&gt;&lt;br&gt;• Baseline 0.7780 → Accepted 0.8718&lt;br&gt;• Gain +0.0939, Coverage 51.3% (Safe drop)&lt;br&gt;• Zero empty masks across all 464 scans" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="90" width="680" height="700" as="geometry" />
+        </mxCell>
+        <!-- Edges -->
+        <mxCell id="er3_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f46e5;strokeWidth=2;endArrow=classic;" edge="1" parent="1" source="col1_r3" target="col2_r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="er3_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f46e5;strokeWidth=2;endArrow=classic;" edge="1" parent="1" source="col2_r3" target="col3_r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+    
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

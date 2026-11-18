@@ -1,13 +1,10 @@
 # Private and local data
 data/
 papers/
-latex/*.pdf
-latex/*.aux
-latex/*.log
-latex/*.out
-latex/*.bbl
-latex/*.blg
-latex/*.toc
+paper/
+latex/
+*.tex
+*.bib
 *.aux
 *.log
 *.out
@@ -53,3 +50,5 @@ __pycache__/
 *.zip
 *.tar.gz
 node_modules/
+.DS_Store
+*.bkp

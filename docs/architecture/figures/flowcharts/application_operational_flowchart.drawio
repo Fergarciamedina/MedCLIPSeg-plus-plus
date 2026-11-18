@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-11-17T00:00:00.000Z" agent="Antigravity Architecture Generator" version="21.0.0" type="device">
+  <diagram id="diag_Figure_S2_Application_Operational_Flowchart" name="Figure_S2_Application_Operational_Flowchart">
+    <mxGraphModel dx="1100" dy="1250" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1250" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="start" value="Start: Radiologist Enters Scan &amp; Instruction" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1e293b;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="in1" value="Input: Image X_v, Text X_t, Top-K" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#f8fafc;strokeColor=#64748b;" vertex="1" parent="1">
+          <mxGeometry x="420" y="120" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="Is Input Valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="200" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="err1" value="Display Input Error" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;fontColor=#991b1b;" vertex="1" parent="1">
+          <mxGeometry x="720" y="215" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Parse Intent via Rule Matcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1f5f9;strokeColor=#94a3b8;" vertex="1" parent="1">
+          <mxGeometry x="440" y="310" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="Precomputed Cache Available?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0284c7;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="390" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sub1" value="[[ Execute Selective Decision Engine ]]&lt;br&gt;Evaluate U_fg ≤ τ* or U_mean ≤ τ_neg" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#ca8a04;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="500" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" value="Is Decision ACCEPTED?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="590" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rev" value="Route to Human Review Queue&lt;br&gt;(Prune from similarity search)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#b91c1c;fontColor=#7f1d1d;" vertex="1" parent="1">
+          <mxGeometry x="720" y="605" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" value="Is Retrieval Desired?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="700" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pabp" value="Evaluate PABP &amp; Rank Top-K Verified Cases" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeColor=#9333ea;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="810" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="out1" value="Deliver Overlay &amp; Similar Case Gallery" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#f0fdf4;strokeColor=#22c55e;" vertex="1" parent="1">
+          <mxGeometry x="420" y="900" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="end" value="End: Delivery Complete" style="ellipse;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=#166534;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="980" width="180" height="45" as="geometry" />
+        </mxCell>
+        <!-- Edges -->
+        <mxCell id="es1" edge="1" parent="1" source="start" target="in1" style="strokeColor=#334155;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es2" edge="1" parent="1" source="in1" target="d1" style="strokeColor=#334155;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es3" value="No" edge="1" parent="1" source="d1" target="err1" style="strokeColor=#dc2626;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es4" value="Yes" edge="1" parent="1" source="d1" target="p1" style="strokeColor=#16a34a;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es5" edge="1" parent="1" source="p1" target="d2" style="strokeColor=#334155;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es6" edge="1" parent="1" source="d2" target="sub1" style="strokeColor=#334155;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es7" edge="1" parent="1" source="sub1" target="d3" style="strokeColor=#334155;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es8" value="No" edge="1" parent="1" source="d3" target="rev" style="strokeColor=#dc2626;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es9" value="Yes" edge="1" parent="1" source="d3" target="d4" style="strokeColor=#16a34a;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es10" value="Yes" edge="1" parent="1" source="d4" target="pabp" style="strokeColor=#16a34a;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es11" edge="1" parent="1" source="pabp" target="out1" style="strokeColor=#334155;strokeWidth=2;endArrow=classic;" />
+        <mxCell id="es12" edge="1" parent="1" source="out1" target="end" style="strokeColor=#16a34a;strokeWidth=2;endArrow=classic;" />
+    
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

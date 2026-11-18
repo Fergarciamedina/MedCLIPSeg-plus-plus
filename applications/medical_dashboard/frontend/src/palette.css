@@ -1,0 +1,83 @@
+:root {
+  --palette-background: #f9fafb;
+  --palette-primary: #1d4ed8;
+  --palette-primary-soft: #dbeafe;
+  --palette-accent: #f97316;
+  --palette-text: #111827;
+}
+
+body {
+  background: var(--palette-background);
+  color: var(--palette-text);
+}
+
+.sidebar,
+.topbar,
+.panel,
+.summary-card,
+.image-workspace,
+.image-panel {
+  background-color: #fff;
+}
+
+.brand-icon,
+.case-icon,
+.workspace-mark,
+.summary-icon.blue,
+.summary-icon.violet {
+  background: var(--palette-primary-soft);
+  color: var(--palette-primary);
+}
+
+.brand strong span,
+.nav-item.nav-active,
+.eyebrow-mark,
+.subtle-link,
+.toolbar-tab.active,
+.text-button,
+.track-marker,
+.heading-symbol {
+  color: var(--palette-primary);
+}
+
+.nav-item.nav-active {
+  background: var(--palette-primary-soft);
+}
+
+.page-heading h1,
+.summary-copy strong,
+.panel-title,
+.case-title-line h2 {
+  color: var(--palette-text);
+}
+
+.button-primary {
+  border-color: var(--palette-accent);
+  background: var(--palette-accent);
+  color: #fff;
+  box-shadow: 0 2px 4px #f9731626;
+}
+
+.button-primary:hover {
+  border-color: #ea580c;
+  background: #ea580c;
+}
+
+.toolbar-tab.active:after {
+  background: var(--palette-primary);
+}
+
+.similarity-track i,
+.track-fill {
+  background: var(--palette-primary);
+}
+
+.retrieval-count {
+  color: var(--palette-primary);
+  background: var(--palette-primary-soft);
+}
+
+.button-outline:hover {
+  border-color: var(--palette-primary);
+  color: var(--palette-primary);
+}

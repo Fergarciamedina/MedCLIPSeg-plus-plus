@@ -31,8 +31,7 @@ uncertainty_selective_evaluation/
 ├── requirements.txt                  # Minimal dependencies (numpy, scipy, pandas, matplotlib)
 ├── README.md                         # Detailed documentation and API reference
 ├── COLLABORATOR_INTEGRATION_GUIDE.md # This integration document
-└── notebooks/
-    └── uncertainty_selective_evaluation.ipynb # Beginner-friendly Google Colab notebook
+└── notebooks/ -> ../notebooks/medclipseg_plus_plus_demonstration.ipynb # Interactive demonstration notebook
 ```
 
 ---
