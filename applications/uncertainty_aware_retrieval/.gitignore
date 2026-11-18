@@ -1,0 +1,12 @@
+# Runtime data caches
+runtime/
+*.npy
+*.npz
+*.faiss
+*.index
+*.cache
+.cache/
+__pycache__/
+*.py[cod]
+.DS_Store
+
