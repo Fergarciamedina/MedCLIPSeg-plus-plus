@@ -2,7 +2,9 @@
 
 An additive React + TypeScript dashboard and FastAPI API for reviewing the repository's precomputed benchmark cases. The existing Streamlit application remains available and unchanged.
 
-Phase 1 supports case selection, original/mask/uncertainty image display, the existing selective triage policy and threshold values, and accepted-case PABP retrieval. Uploaded images are labeled **Not Evaluated**; live MedCLIPSeg inference is not connected in this phase. This is a research prototype, not a diagnostic product.
+The dashboard accepts a clinical prompt plus one to twenty images per request through a single **Send** action. It routes the prompt through the existing deterministic `IntentRouter`; for an uploaded scan that exactly matches a canonical benchmark image by decoded pixels, it returns the stored segmentation, frozen uncertainty decision, and any prompt-authorized PABP matches. In **Current request**, the clinician selects one submitted image at a time and sees its original image, segmentation overlay, policy status, and requested similar cases. The uncertainty map is not displayed in this view. A genuinely new image remains **Not Evaluated** because live MedCLIPSeg inference is not connected. Results are request-scoped and not persisted. This is a research prototype, not a diagnostic product.
+
+Benchmark metadata is sourced from the cohort aggregation CSVs and cached in `applications/uncertainty_aware_retrieval/runtime/gallery_manifest.json`; embeddings are cached in `applications/uncertainty_aware_retrieval/runtime/gallery_embeddings.npy`. Original scans, masks, uncertainty maps and source metric CSVs remain in the configured `data/raw/` and `data/outputs/` tree. There is no SQL database in this application. The API builds the PABP index in memory at startup.
 
 ## Requirements
 
@@ -13,6 +15,19 @@ Phase 1 supports case selection, original/mask/uncertainty image display, the ex
 - A cached `gallery_embeddings.npy` avoids recomputing embeddings; absent that cache, the configured checkpoint is needed to compute them
 
 ## Launch on Mac
+
+The simplest local launch is one command from the repository root:
+
+```bash
+bash applications/medical_dashboard/run_local.sh
+```
+
+It checks the local dependencies, starts both services on `127.0.0.1`, opens
+`http://127.0.0.1:5173`, and stops both services when you press `Ctrl+C`. It
+does not upload data, install packages, or make the dashboard reachable from
+another device.
+
+### Manual launch
 
 From the repository root, create and activate an environment if you do not already have one:
 
@@ -61,9 +76,9 @@ streamlit run applications/uncertainty_aware_retrieval/app.py
 - `GET /api/health` — process health
 - `GET /api/summary` — benchmark totals and frozen policy thresholds
 - `GET /api/cases` — filterable precomputed manifest
-- `GET /api/cases/{dataset}/{image_id}/analyze` — triage and gated retrieval for one manifest case
 - `GET /api/image?dataset=...&image_id=...&kind=original|mask|uncertainty` — manifest-checked image response
-- `POST /api/uploads/evaluate` — returns HTTP 501 with **Not Evaluated** until live inference is integrated
+- `GET /api/cases/{dataset}/{image_id}/analyze?prompt=...` — parse the request through the existing intent router and run the requested supported actions over precomputed case outputs
+- `POST /api/uploads/evaluate` — multipart `files` (1–20) + prompt. Exact canonical matches return their precomputed segmentation, triage, and prompt-authorized retrieval results; new scans return an explicit **Not Evaluated** state until live inference exists.
 
 ## Verification
 
@@ -79,4 +94,4 @@ python -m unittest discover -s tests -v
 
 ## Phase 2: live inference integration
 
-The repository currently lacks an inference service that matches the apparent `MedCLIPSegAdapter` interface: the existing application `SegmentationService` does precomputed lookups and has no compatible `predict` method. Phase 2 should first identify the authoritative model loader, checkpoint, prompt format, preprocessing and MC sampling implementation. Then implement an adapter that returns the existing mask and dense entropy-map outputs, call it from an explicit asynchronous analysis job, persist temporary results safely, and pass its outputs through the unchanged selective-prediction service. The API should keep live uploads **Not Evaluated** until both outputs exist. No model, algorithm, metric, threshold, or research protocol changes are needed for the UI/API integration itself.
+The repository currently lacks an inference service that matches the apparent `MedCLIPSegAdapter` interface: the existing application `SegmentationService` does precomputed lookups and has no compatible `predict` method. Phase 2 should first identify the authoritative model loader, checkpoint, prompt format, preprocessing and MC sampling implementation. Then implement an adapter that returns the existing mask and dense entropy-map outputs, call it from an explicit asynchronous analysis job, handle temporary results safely, and pass its outputs through the unchanged selective-prediction service. The API should keep live uploads **Not Evaluated** until both outputs exist. No model, algorithm, metric, threshold, or research protocol changes are needed for the UI/API integration itself.

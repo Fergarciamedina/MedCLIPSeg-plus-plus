@@ -71,10 +71,24 @@ class DashboardApiTests(unittest.TestCase):
         self.assertTrue(response.headers["content-type"].startswith("image/"))
         self.assertEqual(self.client.get("/api/image?dataset=BUSI&image_id=41_normal.png&kind=weights").status_code, 422)
 
-    def test_new_image_upload_is_explicitly_not_evaluated(self):
-        response = self.client.post("/api/uploads/evaluate")
-        self.assertEqual(response.status_code, 501)
-        self.assertIn("Not Evaluated", response.json()["detail"])
+    def test_batch_upload_matches_canonical_pixels_and_evaluates_each_match(self):
+        image_path = Path(self.record["image_path"])
+        with image_path.open("rb") as image_file:
+            payload = image_file.read()
+        response = self.client.post(
+            "/api/uploads/evaluate",
+            data={"prompt": "Segment and find 2 similar cases"},
+            files=[
+                ("files", ("renamed-a.png", payload, "image/png")),
+                ("files", ("renamed-b.png", payload, "image/png")),
+            ],
+        )
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["evaluated_count"], 2)
+        self.assertEqual(body["not_evaluated_count"], 0)
+        self.assertTrue(all(item["matched"] for item in body["items"]))
+        self.assertTrue(all(item["analysis"]["case"]["status"] == "Accepted" for item in body["items"]))
 
 
 if __name__ == "__main__":

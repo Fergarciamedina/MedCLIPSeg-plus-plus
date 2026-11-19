@@ -25,6 +25,7 @@ The platform is structured into three self-contained modules, each with dedicate
 | :--- | :--- | :--- | :--- |
 | **Component A: Scientific Research** | [`uncertainty_rejection/`](uncertainty_rejection/) | [Module README](uncertainty_rejection/README.md) • [Scientific Architecture](docs/architecture/SELECTIVE_SEGMENTATION_ARCHITECTURE.md) | Pixel-level Shannon entropy extraction, mask-conditioned foreground aggregation ($U_{\mathrm{fg}}$), frozen threshold calibration ($\tau^* = 0.064058324$), and multi-center out-of-distribution evaluation ($N=542$). |
 | **Component B: Clinical Application** | [`applications/uncertainty_aware_retrieval/`](applications/uncertainty_aware_retrieval/) | [Application README](applications/uncertainty_aware_retrieval/README.md) • [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) | Interactive Streamlit clinical interface with 3-step workflow, FAISS-IVF indexing with Predicate-Aware Block Pruning (PABP), dynamic contour overlays, and triage telemetry. |
+| **Medical Dashboard** | [`applications/medical_dashboard/`](applications/medical_dashboard/) | [Dashboard README](applications/medical_dashboard/README.md) | Local React + FastAPI dashboard. Send a prompt with up to 20 images, inspect matched benchmark segmentation and top-K similar cases, and browse the benchmark gallery. |
 | **Evaluation Toolkit** | [`uncertainty_selective_evaluation/`](uncertainty_selective_evaluation/) | [Toolkit README](uncertainty_selective_evaluation/README.md) • [Integration Guide](uncertainty_selective_evaluation/COLLABORATOR_INTEGRATION_GUIDE.md) | Model-agnostic Python package and Google Colab notebook for benchmarking arbitrary segmentation models against our 7 uncertainty operators and frozen decision policies. |
 
 ---
@@ -121,6 +122,9 @@ MedCLIPSeg-plus-plus/
 │   └── stage6_system_output/          # [⑥] Adaptive multi-panel clinical output
 │
 ├── applications/                      # Engineering Applications
+│   ├── medical_dashboard/              # Local React + FastAPI case review dashboard
+│   │   ├── README.md                   # Dashboard setup, local launcher, and API
+│   │   └── run_local.sh                # Starts local services on 127.0.0.1
 │   └── uncertainty_aware_retrieval/   # Clinical Ultrasound Retrieval & PABP Engine
 │       ├── README.md                  # Application guide & clinical workflow documentation
 │       ├── app.py                     # Interactive 3-step Streamlit clinical UI
@@ -182,6 +186,13 @@ python3 uncertainty_selective_evaluation/test_reproducibility.py
 ```bash
 streamlit run applications/uncertainty_aware_retrieval/app.py
 ```
+
+### Launch the Medical Dashboard (macOS)
+From the repository root, run:
+```bash
+bash applications/medical_dashboard/run_local.sh
+```
+The script starts the API and web interface on `127.0.0.1`, opens <http://127.0.0.1:5173>, and stops both services with `Ctrl+C`. Local dependencies must already be installed. Uploaded images remain request-scoped; exact benchmark matches display their stored segmentation and prompt-requested similar cases. New images remain unevaluated until live inference is connected. See the [dashboard README](applications/medical_dashboard/README.md) for requirements and setup.
 
 ### Evaluate Custom Predictions via CLI
 ```bash

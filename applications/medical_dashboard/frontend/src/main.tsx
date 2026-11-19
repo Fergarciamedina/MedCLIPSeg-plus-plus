@@ -11,7 +11,9 @@ import './palette.css'
 
 type CaseItem = { image_id: string; dataset: string; status: string; u_fg: number | null; u_mean: number | null; count_fg: number; dsc: number | null; nsd: number | null }
 type Summary = { case_count: number; datasets: string[]; accepted_count: number; review_count: number; threshold: number; empty_mask_threshold: number }
-type Result = { case: CaseItem & { score: number | null; threshold: number; margin: number | null; reason: string; clinical_note: string; source: string }; images: Record<string, string>; neighbors: { image_id: string; dataset: string; similarity: number; u_fg: number | null; dsc: number | null }[]; retrieval_metrics: Record<string, number> | null }
+type Result = { case: CaseItem & { score: number | null; threshold: number; margin: number | null; reason: string; clinical_note: string; source: string }; parsed_prompt: { intent: string; top_k: number; explanation: string; is_ambiguous: boolean }; images: Record<string, string>; neighbors: { image_id: string; dataset: string; similarity: number; u_fg: number | null; dsc: number | null }[]; retrieval_metrics: Record<string, number> | null }
+type UploadItem = { upload_name: string; matched: boolean; preview_data_url: string; status: string; message: string; analysis: Result | null }
+type UploadBatch = { prompt: Result['parsed_prompt']; items: UploadItem[]; evaluated_count: number; not_evaluated_count: number }
 
 const api = async <T,>(path: string): Promise<T> => {
   const response = await fetch(path)
@@ -37,6 +39,13 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [promptDraft, setPromptDraft] = useState('Segment lesions and retrieve similar historical cases')
+  const [uploadFiles, setUploadFiles] = useState<File[]>([])
+  const [uploadResult, setUploadResult] = useState<UploadBatch | null>(null)
+  const [uploadBusy, setUploadBusy] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [activeUploadIndex, setActiveUploadIndex] = useState(0)
+  const [dashboardView, setDashboardView] = useState<'request' | 'gallery'>('request')
 
   useEffect(() => {
     Promise.all([api<Summary>('/api/summary'), api<{ items: CaseItem[] }>('/api/cases')])
@@ -49,11 +58,29 @@ function App() {
     if (!selected) return
     let cancelled = false
     setResult(null)
-    api<Result>(`/api/cases/${encodeURIComponent(selected.dataset)}/${encodeURIComponent(selected.image_id)}/analyze`)
+    api<Result>(`/api/cases/${encodeURIComponent(selected.dataset)}/${encodeURIComponent(selected.image_id)}/analyze?prompt=${encodeURIComponent(promptDraft)}`)
       .then(r => { if (!cancelled) setResult(r) })
       .catch(e => { if (!cancelled) setError(e.message) })
     return () => { cancelled = true }
   }, [selected])
+
+  const analyzeUpload = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!uploadFiles.length) return
+    setUploadBusy(true); setUploadError(''); setUploadResult(null)
+    try {
+      const data = new FormData()
+      uploadFiles.forEach(file => data.append('files', file))
+      data.append('prompt', promptDraft)
+      const response = await fetch('/api/uploads/evaluate', { method: 'POST', body: data })
+      const body = await response.json()
+      if (!response.ok) throw new Error(body.detail || `Request failed (${response.status})`)
+      setUploadResult(body as UploadBatch)
+      setActiveUploadIndex(0)
+      setDashboardView('request')
+    } catch (e) { setUploadError(e instanceof Error ? e.message : 'Upload could not be processed.') }
+    finally { setUploadBusy(false) }
+  }
 
   const visibleCases = useMemo(() => cases.filter(c =>
     (dataset === 'All cohorts' || c.dataset === dataset) &&
@@ -85,11 +112,22 @@ function App() {
     <main className="main-area">
       <header className="topbar"><div className="topbar-left"><button className="icon-button menu-toggle" onClick={() => setMenuOpen(true)} aria-label="Open case list"><Menu size={19}/></button><span className="crumb-muted">MedCLIPSeg++</span><ChevronRight size={14}/><span>Case review</span></div><div className="topbar-right"><div className={`api-status ${apiReady ? '' : 'api-offline'}`}><i/> {apiReady ? 'Benchmark service ready' : loading ? 'Connecting' : 'Service unavailable'}</div></div></header>
       <div className="page-content">
-        <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-mark"><Microscope size={13}/></span> PRECOMPUTED STUDY CASES</div><h1>Case review</h1><p className="heading-sub">Review the scan, segmentation overlay, predictive uncertainty, policy result, and PABP references.</p></div><div className="heading-actions"><span className="not-evaluated-chip"><i/> New scans: Not Evaluated</span></div></div>
+        <div className="page-heading"><div><div className="eyebrow"><span className="eyebrow-mark"><Microscope size={13}/></span> CLINICAL REVIEW WORKSPACE</div><h1>Case review</h1><p className="heading-sub">Submit scans, review their request results, then browse the complete precomputed study gallery separately.</p></div><div className="heading-actions"><div className="workspace-tabs"><button className={dashboardView === 'request' ? 'active' : ''} onClick={() => setDashboardView('request')}>Current request</button><button className={dashboardView === 'gallery' ? 'active' : ''} onClick={() => setDashboardView('gallery')}>Database gallery</button></div></div></div>
+
+        <section className="panel request-panel">
+          <div className="request-intro"><div className="panel-title">Clinical request</div><p>Enter the instruction that should route the existing MedCLIPSeg++ workflow. The deterministic project intent router recognizes segmentation and similar-case retrieval requests.</p></div>
+          <label className="prompt-label" htmlFor="clinical-prompt">Prompt</label>
+          <textarea id="clinical-prompt" value={promptDraft} onChange={e => setPromptDraft(e.target.value)} placeholder="For example: Segment this lesion and find the 5 most similar historical cases" rows={2}/>
+          <form className="upload-row" onSubmit={analyzeUpload}><label className="upload-drop"><ImagePlus size={18}/><span><b>{uploadFiles.length ? `${uploadFiles.length} image${uploadFiles.length === 1 ? '' : 's'} selected` : 'Choose one or more ultrasound images'}</b><small>PNG or JPEG · up to 20 MB each · batch limit: 20</small></span><input type="file" multiple accept="image/png,image/jpeg,.jpg,.jpeg" onChange={e => {setUploadFiles(Array.from(e.target.files ?? [])); setUploadResult(null)}}/></label><button className="button button-primary" disabled={!uploadFiles.length || uploadBusy || !promptDraft.trim()}>{uploadBusy ? 'Analyzing…' : 'Send'}</button></form>
+          {uploadError && <div className="upload-error"><AlertCircle size={15}/>{uploadError}</div>}
+          {uploadResult && <div className="upload-summary"><b>Request analyzed: {uploadResult.prompt.intent}</b><span>{uploadResult.prompt.explanation}</span><span>{uploadResult.evaluated_count} found in the database · {uploadResult.not_evaluated_count} require live inference</span></div>}
+        </section>
 
         {error && <div className="error-banner"><AlertCircle size={18}/><div><b>Dashboard could not load its benchmark services</b><p>{error}</p><small>Install the application requirements and check that MEDCLIPSEG_DATA points to the repository's data directory.</small></div></div>}
 
-        <div className="content-grid">
+        {dashboardView === 'request' && <section className="panel request-results"><div className="panel-heading"><div><div className="panel-title">Analysis results</div><div className="panel-sub">Select an uploaded image to review its segmentation and similar cases.</div></div></div>{uploadResult ? <><div className="request-image-tabs">{uploadResult.items.map((item, index) => <button key={`${item.upload_name}-${index}`} className={activeUploadIndex === index ? 'active' : ''} onClick={() => setActiveUploadIndex(index)}>{item.upload_name}<StatusPill status={item.status}/></button>)}</div>{(() => { const item = uploadResult.items[activeUploadIndex]; return item && <article className="request-case-result"><div className="request-image-pair"><div><b>Uploaded image</b><img src={item.preview_data_url} alt={`Uploaded ultrasound ${item.upload_name}`}/></div><div><b>Segmentation</b>{item.analysis ? <div className="request-segmentation"><img src={imageUrl(item.analysis.case.dataset, item.analysis.case.image_id, 'original')} alt="Original ultrasound"/><img src={imageUrl(item.analysis.case.dataset, item.analysis.case.image_id, 'mask')} alt="Segmented lesion mask"/></div> : <div className="request-segmentation-unavailable">Not available until live inference</div>}</div></div><div className="request-result-details"><div className="upload-result-heading"><b>{item.upload_name}</b><StatusPill status={item.status}/></div><p>{item.message}</p>{item.analysis && <p><b>{item.analysis.case.status === 'Accepted' ? 'Accepted by policy' : 'Needs review'}</b> · score {fmt(item.analysis.case.score, 5)}</p>}{!item.matched && <p className="upload-pending">Waiting for live model inference</p>}<div className="request-neighbors"><h3>Similar cases <span>{item.analysis?.neighbors.length ?? 0}</span></h3>{item.analysis?.neighbors.length ? item.analysis.neighbors.map((neighbor, rank) => <div className="request-neighbor" key={`${neighbor.dataset}:${neighbor.image_id}`}><img src={imageUrl(neighbor.dataset, neighbor.image_id, 'original')} alt={`Similar case ${neighbor.image_id}`}/><span><b>{neighbor.image_id}</b><small>{neighbor.dataset} · Rank {rank + 1}</small></span><strong>{fmt(neighbor.similarity * 100, 1)}%</strong></div>) : <p className="request-no-neighbors">{item.analysis ? 'No similar cases were returned for this image.' : 'Similar cases are unavailable until the image can be evaluated.'}</p>}</div></div></article> })()}</> : <div className="request-empty"><ImagePlus size={22}/><b>Upload one or more images to begin</b><span>Enter your instruction and click Send to analyze the images.</span></div>}</section>}
+
+        {dashboardView === 'gallery' && <div className="content-grid">
           <section className="panel case-panel">
             <div className="panel-heading"><div><div className="panel-title">Study cases</div><div className="panel-sub">Select an evaluated ultrasound</div></div><span className="count-pill">{visibleCases.length}</span></div>
             <div className="case-controls"><label className="search-box"><Search size={15}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search case ID"/></label><label className="select-wrap"><Filter size={14}/><select value={dataset} onChange={e => setDataset(e.target.value)}><option>All cohorts</option>{summary?.datasets.map(d => <option key={d}>{d}</option>)}</select><ChevronDown size={13}/></label><label className="select-wrap status-select"><SlidersHorizontal size={14}/><select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}><option>All cases</option><option>Accepted</option><option>Needs review</option></select><ChevronDown size={13}/></label></div>
@@ -99,7 +137,7 @@ function App() {
           </section>
 
           <section className="review-column">
-            <div className="panel case-header-panel"><div className="case-title-block"><div className="case-icon"><FileImage size={18}/></div><div><div className="case-title-line"><h2>{selected?.image_id ?? (loading ? 'Loading case…' : 'No case selected')}</h2>{result && <StatusPill status={result.case.status}/>}</div><p>{selected?.dataset ?? 'Benchmark cohort'} <span className="bullet">·</span> Precomputed benchmark result</p></div></div><button className="button button-outline" onClick={() => stepCase(1)} disabled={!visibleCases.length}>Next case <ChevronRight size={15}/></button></div>
+            <div className="panel case-header-panel"><div className="case-title-block"><div className="case-icon"><FileImage size={18}/></div><div><div className="case-title-line"><h2>{selected?.image_id ?? (loading ? 'Loading case…' : 'No case selected')}</h2>{result && <StatusPill status={result.case.status}/>}</div><p>{selected?.dataset ?? 'Benchmark cohort'} <span className="bullet">·</span> Precomputed result <span className="bullet">·</span> Prompt route: {result?.parsed_prompt?.intent ?? '—'}</p></div></div><button className="button button-outline" onClick={() => stepCase(1)} disabled={!visibleCases.length}>Next case <ChevronRight size={15}/></button></div>
 
             <div className="image-workspace">
               <div className="image-toolbar"><div className="toolbar-tabs"><button className={activeView === 'overlay' ? 'toolbar-tab active' : 'toolbar-tab'} onClick={() => setActiveView('overlay')}><Layers2 size={15}/> Mask overlay</button><button className={activeView === 'uncertainty' ? 'toolbar-tab active' : 'toolbar-tab'} onClick={() => setActiveView('uncertainty')}><Sparkles size={15}/> Uncertainty</button></div><div className="image-tools"><span className="image-dimension">PRECOMPUTED</span></div></div>
@@ -127,7 +165,7 @@ function App() {
             </div>
             <div className="research-note"><ShieldCheck size={15}/><span><b>Research review only.</b> These are precomputed benchmark outputs. Uncertainty and policy status do not guarantee segmentation accuracy.</span></div>
           </section>
-        </div>
+        </div>}
         <footer className="page-footer"><span>MedCLIPSeg++ <b>·</b> Reliability-aware segmentation research</span><span>Local research environment <i/></span></footer>
       </div>
     </main>
@@ -139,7 +177,8 @@ function NavButton({ icon, label, active, count, onClick }: { icon: React.ReactN
 }
 function StatusPill({ status }: { status: string }) {
   const review = status === 'Rejected'
-  return <span className={`status-pill ${review ? 'status-review' : 'status-accepted'}`}><i/>{review ? 'Review' : 'Within policy'}</span>
+  const pending = status === 'Not Evaluated'
+  return <span className={`status-pill ${pending ? 'status-pending' : review ? 'status-review' : 'status-accepted'}`}><i/>{pending ? 'Awaiting inference' : review ? 'Review' : 'Within policy'}</span>
 }
 function Metric({ label, value, note }: { label: string; value: string; note: string }) {
   return <div className="metric-cell"><span>{label}</span><b>{value}</b><small>{note}</small></div>
