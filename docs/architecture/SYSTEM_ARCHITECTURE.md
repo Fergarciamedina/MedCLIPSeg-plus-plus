@@ -11,108 +11,13 @@
 
 ## 1. System Overview & Executive Summary
 
-**MedCLIPSeg++** is an open-source clinical research platform that unifies zero-shot medical vision-language segmentation, post-hoc predictive uncertainty quantification, safety-calibrated selective triage, and fast multimodal case retrieval.
-
-The system addresses a critical clinical failure mode in automated radiology: standard deep learning segmentation models produce deterministic binary contours without confidence boundaries, silently outputting plausible-looking false positives on ambiguous acoustic shadows or failing silently under scanner distribution shift.
-
-MedCLIPSeg++ introduces a **hierarchical modular architecture** that connects our scientific research contribution (**Uncertainty-Guided Selective Segmentation**) with an interactive clinical decision-support engine (**Uncertainty-Aware Medical Image Retrieval**). By employing predictive uncertainty as an automated safety guardrail, the system permits similarity retrieval exclusively for high-confidence segmentations while routing ambiguous cases to an expert radiologist queue. Similarity search is accelerated using **Predicate-Aware Block Pruning (PABP)** atop a FAISS-IVF vector index, pruning entire index inverted lists whose candidates fail clinical eligibility criteria.
-
----
+MedCLIPSeg++ connects text-guided image segmentation, a selective prediction policy, and eligibility-filtered case retrieval. Stage 4 is the [experimentally evaluated contribution](../../research/stage_4/README.md). The [runnable dashboard](../../application/README.md) uses masks and entropy from a configured precomputed collection. The design below also describes live inference and other interfaces that can be integrated through the same system stages.
 
 ## 2. Complete System Architecture (Figure S1)
 
-Figure S1 depicts the five sequential operational stages of MedCLIPSeg++, mapping user interaction, frozen neural inference, selective triage gating, vector retrieval, and clinical presentation:
+The [editable architecture source](figures/block_diagram/complete_system_architecture.drawio) shows inputs, intent routing, frozen MedCLIPSeg, selective prediction, similarity retrieval, and system output in order. Stage 4 assigns an acceptance status from the predicted mask and entropy. Stage 5 runs when both the requested intent and acceptance permit retrieval.
 
 ![Figure S1: Complete MedCLIPSeg++ System Architecture](figures/block_diagram/complete_system_architecture.svg)
-
-```mermaid
-flowchart LR
-    %% STAGE 1: CLINICAL INTERACTION
-    subgraph STAGE_1 ["Stage 1: Clinical Interaction"]
-        direction TB
-        S1_INPUTS["Clinical Inputs:<br/>• Scan X_v (256x256)<br/>• Instruction X_t<br/>• Top-K Parameter (1-10)<br/>• Threshold Mode"]
-        S1_PARSER["Rule-Based Intent Parser<br/>(MOD-INTENT-INTERPRET)<br/>Mode: RETRIEVE_SIMILAR"]
-        S1_INPUTS --> S1_PARSER
-    end
-
-    %% STAGE 2: SEGMENTATION & UNCERTAINTY BACKBONE
-    subgraph STAGE_2 ["Stage 2: Segmentation Backbone (Frozen)"]
-        direction TB
-        S2_DISPATCH{"Execution Dispatcher:<br/>Disk Cache or Live?"}
-        S2_CACHE["A. Precomputed Cache<br/>(Demo / Benchmark Scans)"]
-        S2_LIVE["B. Live MedCLIPSeg Backbone<br/>(ViT-B/16 + PVL Adapters)<br/>T=30 MC Stochastic Passes"]
-        S2_OUTPUTS["Simultaneous Dual Outputs:<br/>• Predicted Mask Y_hat (0.5 threshold)<br/>• Predictive Entropy Map H in [0, ln 2]"]
-        
-        S2_DISPATCH -->|"Cached Scan"| S2_CACHE
-        S2_DISPATCH -->|"Uploaded Scan"| S2_LIVE
-        S2_CACHE --> S2_OUTPUTS
-        S2_LIVE --> S2_OUTPUTS
-    end
-
-    %% STAGE 3: SELECTIVE DECISION ENGINE
-    subgraph STAGE_3 ["Stage 3: Selective Decision Engine (Core Contribution)"]
-        direction TB
-        S3_STENCIL["Spatial Stencil Operator:<br/>Omega_fg = {(x,y) | Y_hat(x,y) == 1}<br/>(Mask dictates WHERE to measure)"]
-        S3_BRANCH{"Foreground Check:<br/>|Omega_fg| > 0 ?"}
-        S3_UFG["Branch A: U_fg Evaluation<br/>U_fg = (1/|Omega_fg|) * sum(H)<br/>Is U_fg <= tau* (0.064058) ?"]
-        S3_UMEAN["Branch B: Empty Fallback<br/>U_mean = (1/|Omega|) * sum(H)<br/>Is U_mean <= tau_neg (1e-4) ?"]
-        S3_ROUTER{"Triage Classification"}
-        
-        S3_STENCIL --> S3_BRANCH
-        S3_BRANCH -->|"Yes: Lesion Present"| S3_UFG
-        S3_BRANCH -->|"No: Zero Denom"| S3_UMEAN
-        S3_UFG --> S3_ROUTER
-        S3_UMEAN --> S3_ROUTER
-    end
-
-    %% STAGE 4: SIMILARITY RETRIEVAL & PABP
-    subgraph STAGE_4 ["Stage 4: Similarity Retrieval & PABP"]
-        direction TB
-        S4_GUARD{"Safety Interlock:<br/>Is Status ACCEPTED?"}
-        S4_EMBED["Extract 512-d Embedding v_q<br/>(UniMedCLIP Vision Encoder)<br/>L2 Normalization ||v_q||_2 = 1"]
-        S4_IVF["FAISS-IVF Index Quantizer:<br/>Probe nprobe Voronoi Centroids"]
-        S4_PABP["Predicate-Aware Block Pruning:<br/>Eligible(B) = OR_{j in B} Accepted(j)<br/>Skip Ineligible Lists (No distance calc)"]
-        S4_RANK["Inner Product Scorer & Heap:<br/>Rank Top-K Historical Matches"]
-
-        S4_GUARD -->|"Yes: Permitted"| S4_EMBED
-        S4_EMBED --> S4_IVF
-        S4_IVF --> S4_PABP
-        S4_PABP --> S4_RANK
-    end
-
-    %% STAGE 5: CLINICAL PRESENTATION
-    subgraph STAGE_5 ["Stage 5: Clinical Presentation"]
-        direction TB
-        S5_OVERLAY["Clinical Tri-Modal Overlay:<br/>Blend(X_v, Y_hat contour, H heatmap)"]
-        S5_GALLERY["Top-K Similar Case Gallery:<br/>Historical Scans + Diagnoses + Overlays"]
-        S5_REVIEW["Dedicated Human Review Queue:<br/>Flagged Ambiguous Scans Diverted"]
-        S5_DISCLAIMER["Research Prototype Notice:<br/>Not for Unsupervised Diagnosis"]
-    end
-
-    %% Stage Connections
-    STAGE_1 --> STAGE_2
-    STAGE_2 --> STAGE_3
-    S3_ROUTER -->|"ACCEPTED"| S4_GUARD
-    S3_ROUTER -->|"REVIEW REQUIRED"| S5_REVIEW
-    S4_RANK --> S5_GALLERY
-    STAGE_2 -.-> S5_OVERLAY
-
-    %% Styling
-    classDef stageBox fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px;
-    classDef s1Style fill:#f8fafc,stroke:#64748b,stroke-width:1.5px;
-    classDef s2Style fill:#f0f9ff,stroke:#0284c7,stroke-width:1.5px;
-    classDef s3Style fill:#fefce8,stroke:#ca8a04,stroke-width:1.8px;
-    classDef s4Style fill:#faf5ff,stroke:#9333ea,stroke-width:1.5px;
-    classDef s5Style fill:#f0fdf4,stroke:#16a34a,stroke-width:1.5px;
-
-    class S1_INPUTS,S1_PARSER s1Style;
-    class S2_DISPATCH,S2_CACHE,S2_LIVE,S2_OUTPUTS s2Style;
-    class S3_STENCIL,S3_BRANCH,S3_UFG,S3_UMEAN,S3_ROUTER s3Style;
-    class S4_GUARD,S4_EMBED,S4_IVF,S4_PABP,S4_RANK s4Style;
-    class S5_OVERLAY,S5_GALLERY,S5_REVIEW,S5_DISCLAIMER s5Style;
-```
-
----
 
 ## 3. Hierarchical Modular Architecture (L0–L3 Breakdown)
 

@@ -1,0 +1,5 @@
+Policy,Evaluated_Samples,Accepted_Count,Rejected_Count,Realized_Coverage,Accepted_Mean_DSC,Baseline_DSC,Absolute_DSC_Gain,Accepted_Mean_NSD,Actions_Summary
+two_stage,78,60,18,0.7692307692307693,0.9241266666666667,0.8571923076923076,0.06693435897435907,0.949005,"{'primary_lesion_score': 65, 'two_stage_accept_negative': 13}"
+drop_empty,65,47,18,0.7230769230769231,0.9031404255319148,0.8286307692307692,0.07450965630114559,0.9349000000000001,{'primary_lesion_score': 65}
+global_fallback,78,60,18,0.7692307692307693,0.9241266666666667,0.8571923076923076,0.06693435897435907,0.949005,"{'primary_lesion_score': 65, 'fallback_global_uncertainty': 13}"
+conservative_abstention,78,47,31,0.6025641025641025,0.9031404255319148,0.8571923076923076,0.04594811783960717,0.9349000000000001,"{'primary_lesion_score': 65, 'conservative_abstain_empty': 13}"

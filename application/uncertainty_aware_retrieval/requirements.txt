@@ -1,0 +1,16 @@
+# MedCLIPSeg++ Uncertainty-Aware Medical Image Retrieval Requirements
+faiss-cpu>=1.9.0
+streamlit>=1.40.0
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+pillow>=10.0.0
+matplotlib>=3.7.0
+open_clip_torch>=2.20.0
+transformers>=4.30.0,<5
+timm>=0.9.2
+ftfy>=6.1.1
+pyyaml>=6.0
+

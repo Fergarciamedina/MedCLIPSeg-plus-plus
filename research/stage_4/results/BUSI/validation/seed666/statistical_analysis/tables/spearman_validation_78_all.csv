@@ -1,0 +1,8 @@
+Metric,Display,Valid_N,NaN_Count,Status,DSC_rho,DSC_pval,DSC_ci_lower,DSC_ci_upper,NSD_rho,NSD_pval,NSD_ci_lower,NSD_ci_upper
+U_mean,$U_{\mathrm{mean}}$,78,0,Complete Coverage,-0.4448792139386301,4.486864153059232e-05,-0.643181561254663,-0.19206438696054123,-0.5680401959092932,5.82289339820389e-08,-0.7283494323961682,-0.35408040461914553
+U_positive,$U_{\mathrm{positive}}$,78,0,Complete Coverage,-0.43068850967312533,8.283062813850253e-05,-0.6317547244988709,-0.17775618759240328,-0.5558696301301886,1.2700694346434883e-07,-0.7217520754310285,-0.34152125312439924
+U_fg,$U_{\mathrm{fg}}$,65,13,Undefined for 13 normal scans (|Omega_fg|=0),,,,,,,,
+U_boundary,$U_{\mathrm{boundary}}$,65,13,Undefined for 13 normal scans (|Omega_fg|=0),,,,,,,,
+U_threshold,$U_{\mathrm{threshold}}$,65,13,Undefined for 13 normal scans (|Omega_fg|=0),,,,,,,,
+U_std_fg,$U_{\mathrm{std\_fg}}$,65,13,Undefined for 13 normal scans (|Omega_fg|=0),,,,,,,,
+U_ratio,$U_{\mathrm{ratio}}$,65,13,Undefined for 13 normal scans (|Omega_fg|=0),,,,,,,,

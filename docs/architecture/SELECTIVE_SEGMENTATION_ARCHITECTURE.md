@@ -184,7 +184,7 @@ Our selective prediction layer acts as a post-hoc safety supervisor:
 
 ## 3. Selective Decision Operational Flowchart (Figure R2)
 
-Figure R2 details the programmatic decision flow executed during inference by [`uncertainty_rejection/src/uncertainty/selective_prediction.py`](../../uncertainty_rejection/src/uncertainty/selective_prediction.py), using standard flowchart symbols:
+Figure R2 details the programmatic decision flow executed during inference by [`research/stage_4/src/uncertainty/selective_prediction.py`](../../research/stage_4/src/uncertainty/selective_prediction.py), using standard flowchart symbols:
 
 ![Figure R2: Selective Decision Flowchart](figures/flowcharts/selective_decision_flowchart.svg)
 

@@ -1,0 +1,8 @@
+Comparison,Description,Delta_AURC_DSC,DSC_95CI,p_value_DSC,Significant_DSC,Delta_AURC_NSD,NSD_95CI,p_value_NSD,Significant_NSD
+U_fg vs U_std_fg,Primary vs Prespecified Comparator,0.00028385324289800784,"[-0.0005, +0.0010]",0.44,False,0.00012799848930012542,"[-0.0004, +0.0007]",0.618,False
+U_fg vs U_mean,Primary vs Global Full-Image Entropy,-0.044844813518609083,"[-0.0566, -0.0322]",0.0,True,-0.0289685896116762,"[-0.0390, -0.0192]",0.0,True
+U_fg vs U_boundary,Primary vs Morphological Boundary Band,-0.022008188897246997,"[-0.0297, -0.0140]",0.0,True,-0.012229333671703604,"[-0.0177, -0.0073]",0.0,True
+U_fg vs U_threshold,Primary vs High-Uncertainty Fraction,-0.05132748518010258,"[-0.0674, -0.0333]",0.0,True,-0.04025976096819196,"[-0.0550, -0.0256]",0.0,True
+U_fg vs U_positive,Primary vs Positive-Entropy Filter,-0.049248159749433834,"[-0.0629, -0.0347]",0.0,True,-0.032551440776097354,"[-0.0443, -0.0214]",0.0,True
+U_fg vs U_ratio,Primary vs Uncertainty Ratio,-0.027980401825205614,"[-0.0430, -0.0134]",0.0,True,-0.031164244213079173,"[-0.0459, -0.0170]",0.0,True
+U_std_fg vs U_mean,Comparator vs Global Full-Image Entropy,-0.04512866676150709,"[-0.0569, -0.0325]",0.0,True,-0.029096588100976324,"[-0.0393, -0.0193]",0.0,True

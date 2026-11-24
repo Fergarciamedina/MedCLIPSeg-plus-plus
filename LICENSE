@@ -1,1 +1,5 @@
-TODO: placeholder note, no license text
+The MedCLIPSeg-derived components in shared/ are distributed under the upstream
+Apache License 2.0 reproduced in shared/LICENSE-MedCLIPSeg. Third-party notices
+in the source continue to apply. See ATTRIBUTION.md for provenance.
+
+A repository-wide license for the original MedCLIPSeg++ material is unspecified.
