@@ -2,25 +2,19 @@
 
 **Uncertainty-guided review for breast ultrasound segmentation, with retrieval of similar reference cases.**
 
-[Interactive walkthrough](docs/learning/LEARNING_GUIDE.md) · [Research](research/RESEARCH_GUIDE.md) · [Results](research/stage_4_selective_prediction/experiments/RESULTS_GUIDE.md) · [Notebooks](research/RESEARCH_GUIDE.md#notebooks) · [Run the dashboard](application/APPLICATION_GUIDE.md) · [Sources and scientific basis](ATTRIBUTION.md)
+[Interactive walkthrough](docs/learning/LEARNING_GUIDE.md) · [Research and evidence](research/RESEARCH_GUIDE.md) · [Notebooks](#notebooks) · [Run the dashboard](#run-the-complete-system) · [Sources](ATTRIBUTION.md)
+
+## System architecture
+
+![Six-stage MedCLIPSeg++ system architecture showing inputs, intent routing, MedCLIPSeg, selective prediction, similarity retrieval and system output](docs/architecture/figures/block_diagram/complete_system_architecture.png)
+
+[Vector diagram](docs/architecture/figures/block_diagram/complete_system_architecture.svg) · [Editable diagram](docs/architecture/figures/block_diagram/complete_system_architecture.drawio) · [Architecture guide](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Application stages](application/stages/APPLICATION_STAGES.md) · [Study stages](research/RESEARCH_GUIDE.md#explore-the-six-stages)
 
 ## Overview
 
 A segmentation model can produce a plausible outline even when the prediction is poor. MedCLIPSeg++ studies whether a frozen MedCLIPSeg model's pixelwise uncertainty map can help decide which breast ultrasound segmentations to retain and which to flag for review. It compares seven ways of reducing the map to one score per scan, selects a rule on BUSI validation, and tests the same rule on a separate BUSI split and four external cohorts.
 
 The system also includes a local dashboard that shows precomputed segmentations and retrieves similar cases. **Stage 4, the uncertainty-based review decision, is the experimentally evaluated contribution.** The wider application shows how that decision can sit between segmentation and retrieval.
-
-## See the dashboard
-
-[![MedCLIPSeg++ dashboard showing a synthetic ultrasound, mask overlay, review decision and similar reference cases](docs/learning/dashboard_preview.png)](application/medical_dashboard/DASHBOARD_GUIDE.md)
-
-The screenshot shows the mask overlay, the review decision and similar cases in the running dashboard with synthetic images, masks and embeddings. [Run the dashboard](application/APPLICATION_GUIDE.md) · [Follow the interactive walkthrough](docs/learning/LEARNING_GUIDE.md).
-
-## System architecture
-
-![Six-stage MedCLIPSeg++ system architecture showing inputs, intent routing, MedCLIPSeg, selective prediction, similarity retrieval and system output](docs/architecture/figures/block_diagram/complete_system_architecture.png)
-
-[Editable diagram](docs/architecture/figures/block_diagram/complete_system_architecture.drawio) · [Architecture guide](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Application stages](application/stages/APPLICATION_STAGES.md) · [Study stages](research/RESEARCH_GUIDE.md#explore-the-six-stages)
 
 ## Method
 
@@ -46,14 +40,44 @@ On BUSI validation, foreground mean entropy had the lowest area under the risk�
 
 Dice measures overlap with the reference annotation. These gains describe the retained subset. The rule leaves each predicted mask as produced by the backbone. The external results also show the cost of using a fixed threshold, with roughly half of cases sent to review. One poor BUSI segmentation passed the rule. The experiments used the upstream prompt workflow, whose available descriptions include diagnostic terms. [Full results and limitations](research/stage_4_selective_prediction/experiments/RESULTS_GUIDE.md) · [Cross-domain data](research/stage_4_selective_prediction/experiments/external_test/results/cross_domain_summary.csv).
 
-## Run or reproduce
+## Get the project
 
-| I want to… | Start here |
-| --- | --- |
-| Inspect the experiment without datasets or model weights | Open the [result tables](research/stage_4_selective_prediction/experiments/RESULTS_GUIDE.md) or run the [benchmarking notebook](research/notebooks/02_scientific_benchmarking.ipynb) using the bundled aggregate results. |
-| Understand the complete pipeline | Follow [From Ultrasound to Mask Review](docs/learning/LEARNING_GUIDE.md), read the [six-stage research guide](research/RESEARCH_GUIDE.md) or run the [software walkthrough](research/notebooks/01_complete_system_pipeline.ipynb) with the synthetic segmentation adapter. |
-| Run the dashboard with my own cases | Follow the [application setup](application/APPLICATION_GUIDE.md) to supply a CSV catalog, images, masks, uncertainty artifacts and either precomputed or locally generated embeddings. Uploads without matching stored outputs are marked **Not Evaluated**. |
-| Regenerate the study from prepared data and weights | Follow the [Stage 4 reproduction commands](research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md#reproduction) and [model configuration guide](shared/configs/DATASET_CONFIGURATIONS.md). |
+Clone the repository once for the study scripts, notebooks and dashboard.
+
+```bash
+git clone https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus.git
+cd MedCLIPSeg-plus-plus
+```
+
+## Reproduce the research
+
+**Inspect the published results.** The benchmarking notebook reads bundled aggregate tables and redraws the comparisons. It needs Python, Jupyter and scientific plotting packages. The included results can be inspected without acquiring data or model weights. [Notebook requirements](research/notebooks/NOTEBOOK_GUIDE.md#scientific-benchmarking-notebook).
+
+**Rerun validation and testing from saved scores.** Supply the six per-image score tables from the prepared splits. The study launcher recalculates the validation selection, held-out BUSI results and cross-cohort results. [Expected files and commands](research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md#reproduction).
+
+**Regenerate the predictions as well.** Use Python and Bash, install [the research requirements](requirements.txt), and obtain the prepared BUSI, UDIAT, BUID, BUSUC and BUSBRA images, reference masks and prompt workbooks. Use the released BUSI MedCLIPSeg checkpoint for seed 666 and select CPU, Apple MPS or CUDA as available. The original inference used Apple Silicon. [Data and checkpoint setup](research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md#reproduction) · [Cohort checks](research/stage_1_study_inputs/STUDY_INPUTS.md).
+
+## Run the complete system
+
+**Requirements.** Use Python 3.9 or newer, Bash, Node.js 20 or newer with npm for the initial build, and a browser. Supply a catalog CSV, PNG or JPEG images, binary PNG masks, and either aligned NumPy entropy arrays or their foreground and whole-image scores. Supply matching 512-dimensional embeddings, or use the optional UniMedCLIP checkpoint to compute them. The web application loads these assets locally on the first gallery request. [Catalog, data types and embedding contract](application/APPLICATION_GUIDE.md#gallery-catalog).
+
+From the repository root, install and launch with your prepared gallery.
+
+```bash
+bash application/medical_dashboard/run_local.sh --setup \
+  --gallery "/path/to/gallery.csv" --embeddings "/path/to/gallery_embeddings.npz"
+```
+
+Open [the local dashboard](http://127.0.0.1:5173). Subsequent starts use the same command without `--setup`. Upload a catalog image and ask to segment it and find similar cases. The dashboard uses stored model outputs and marks unmatched uploads **Not Evaluated**. [Prepare masks and entropy](application/APPLICATION_GUIDE.md#gallery-catalog) · [Prepare embeddings](application/APPLICATION_GUIDE.md#embeddings-and-search-index).
+
+## Notebooks
+
+Each notebook runs inside a local clone, independently of the web dashboard.
+
+| Notebook | What it reproduces | Inputs |
+| --- | --- | --- |
+| [01 · Complete system pipeline](research/notebooks/01_complete_system_pipeline.ipynb) | Runs the six software interfaces in Python with a synthetic segmentation adapter. Its example can exercise filtered lookup with demonstration data or a configured gallery. | A folder of PNG or JPEG images, with optional gallery and embeddings. [Requirements and configuration](research/notebooks/NOTEBOOK_GUIDE.md#complete-system-pipeline-notebook). |
+| [02 · Scientific benchmarking](research/notebooks/02_scientific_benchmarking.ipynb) | Redraws the archived study and can invoke the same reproduction runner from saved scores or from prepared images and model weights. | Bundled aggregate tables by default. Supply local scores or the prepared cohorts, prompts and checkpoint for a rerun. [Requirements and configuration](research/notebooks/NOTEBOOK_GUIDE.md#scientific-benchmarking-notebook). |
 
 ## Repository map
 
@@ -64,8 +88,14 @@ Dice measures overlap with the reference annotation. These gains describe the re
 | [shared/](shared/SHARED_COMPONENTS.md) | Frozen segmentation source, dataset YAMLs and offline commands. |
 | [docs/](docs/DOCUMENTATION_MAP.md) | Interactive walkthrough, dashboard preview, architecture guides and figure sources. |
 
-The root [requirements.txt](requirements.txt) defines the Python environment for the frozen segmentation and study workflows. The [application guide](application/APPLICATION_GUIDE.md#install-and-launch) lists the additional dashboard dependencies and configuration template.
+## See the dashboard
 
-## Upstream work
+[![MedCLIPSeg++ dashboard showing a synthetic ultrasound, mask overlay, review decision and similar reference cases](docs/learning/dashboard_preview.png)](application/medical_dashboard/DASHBOARD_GUIDE.md)
+
+The screenshot shows the mask overlay, the review decision and similar cases in the running dashboard with synthetic images, masks and embeddings. [Run the dashboard](application/APPLICATION_GUIDE.md) · [Follow the interactive walkthrough](docs/learning/LEARNING_GUIDE.md).
+
+## Upstream work and licensing
 
 MedCLIPSeg++ uses MedCLIPSeg as its segmentation backbone, UniMedCLIP for visual embeddings, and PABP for eligibility-filtered search. The project guide links the source works, methodological publications and evidence for the decisions made at each stage. [Attribution and references](ATTRIBUTION.md).
+
+[License and third-party terms](LICENSE) · [MedCLIPSeg Apache-2.0 license](shared/LICENSE-MedCLIPSeg).

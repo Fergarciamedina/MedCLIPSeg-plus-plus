@@ -12,7 +12,6 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 import numpy as np
-import torch
 from PIL import Image
 
 from .config import (
@@ -79,6 +78,7 @@ class EmbeddingExtractor:
     def extract_image_embedding(self, image_input: Union[str, Path, Image.Image]) -> np.ndarray:
         """Extract a single L2-normalized 512-dim embedding vector."""
         self._load_model()
+        import torch
 
         if isinstance(image_input, (str, Path)):
             img = Image.open(str(image_input)).convert("RGB")
@@ -122,6 +122,8 @@ class EmbeddingExtractor:
                 return vectors
 
         self._load_model()
+        import torch
+
         all_embeddings: List[np.ndarray] = []
 
         for i in range(0, len(manifest), batch_size):

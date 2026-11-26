@@ -15,9 +15,7 @@ Outputs go under `MEDCLIPSEG_OUTPUT`. For BUSI validation, the score table is at
 | Python script | Shell launcher | When to use it |
 | --- | --- | --- |
 | [compute_uncertainty_csv.py](compute_uncertainty_csv.py) | [run_compute_uncertainty_csv.sh](run_compute_uncertainty_csv.sh) | Create the per-image input to validation selection and locked tests. |
-| [run_aggregation.py](run_aggregation.py) | [run_aggregation.sh](run_aggregation.sh) | Explore score–quality correlations and failure AUROC. |
 | [visualize_aggregation.py](visualize_aggregation.py) | [run_visualize_aggregation.sh](run_visualize_aggregation.sh) | Plot image, mask and entropy checks and other aggregation diagnostics. |
-| [run_selective_prediction.py](run_selective_prediction.py) | [run_selective_prediction.sh](run_selective_prediction.sh) | Explore risk–coverage with random and oracle controls on saved scores. The locked analyses use their phase-specific evaluators. |
 
 ## Run
 
@@ -28,6 +26,6 @@ bash research/stage_4_selective_prediction/experiments/prepare_uncertainty_score
 bash research/stage_4_selective_prediction/experiments/prepare_uncertainty_scores/run_compute_uncertainty_csv.sh BUSI test 666
 ```
 
-[Explore aggregate correlations](run_aggregation.sh), [visualize spatial diagnostics](run_visualize_aggregation.sh), and [explore selective prediction on a saved cohort](run_selective_prediction.sh) are optional analysis tools. The validation-only selection and locked test use their own dedicated runners.
+Use the [visual diagnostics](run_visualize_aggregation.sh) to inspect how each summary uses the spatial uncertainty map. The phase-specific runners reproduce rank correlations and risk–coverage results from the per-image scores.
 
 [Next · Validation and selection](../validation_selection/VALIDATION_SELECTION.md) · [Stage 4 study](../../SELECTIVE_PREDICTION_STUDY.md)

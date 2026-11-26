@@ -1,0 +1,10 @@
+-r requirements.txt
+
+# Optional frozen UniMedCLIP encoder for local embedding generation
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.30.0,<5
+timm>=0.9.2
+ftfy>=6.1.1
+regex
+tqdm>=4.65.0

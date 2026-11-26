@@ -8,7 +8,7 @@ The [interactive walkthrough](../learning/LEARNING_GUIDE.md) follows the same se
 
 ![Six-stage MedCLIPSeg++ architecture](figures/block_diagram/complete_system_architecture.png)
 
-[Editable diagram](figures/block_diagram/complete_system_architecture.drawio) · [PDF](figures/block_diagram/complete_system_architecture.pdf) · [SVG](figures/block_diagram/complete_system_architecture.svg)
+[Editable diagram](figures/block_diagram/complete_system_architecture.drawio) · [SVG](figures/block_diagram/complete_system_architecture.svg)
 
 ## Follow a case through the system
 
@@ -25,7 +25,7 @@ The [application stage guides](../../application/stages/APPLICATION_STAGES.md) e
 
 ## How the repository runs it
 
-The dashboard is **React → FastAPI → shared application services**. React renders the current request and case gallery. FastAPI validates input, matches scans and calls the catalog, triage and retrieval services. The same services are available through the CLI and Streamlit interface. The six-stage notebook calls the stage interfaces explicitly so readers can inspect intermediate results. Its segmentation adapter generates synthetic outputs for the walkthrough.
+The dashboard is **React → FastAPI → shared application services**. React renders the current request and case gallery. FastAPI validates input, matches scans and calls the catalog, triage and retrieval services. The same services are available through the CLI. The six-stage notebook calls the stage interfaces explicitly so readers can inspect intermediate results. Its segmentation adapter generates synthetic outputs for the walkthrough.
 
 A dashboard upload can reuse a stored result when the decoded image matches a catalog entry. A new scan without stored outputs is marked **Not Evaluated**. Accepted query cases can retrieve accepted reference cases. The index is built in memory from the catalog and keyed embeddings. See the [application guide](../../application/APPLICATION_GUIDE.md) to configure data and launch the dashboard.
 
@@ -36,5 +36,5 @@ A dashboard upload can reuse a stored result when the decoded image matches a ca
 | Prepare an image catalog and embeddings | [Application setup](../../application/APPLICATION_GUIDE.md) |
 | Inspect each stage in Python | [Six-stage software notebook](../../research/notebooks/01_complete_system_pipeline.ipynb) |
 | Review the uncertainty experiment | [Stage 4 overview and reproduction](../../research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md) |
-| Find editable drawings and exports | [figures/](figures/ARCHITECTURE_FIGURES.md) |
-| Study the visual specifications | [Application flowchart](figures/flowcharts/application_operational_flowchart.pdf), [selective decision flowchart](figures/flowcharts/selective_decision_flowchart.pdf), and [PABP retrieval diagram](figures/block_diagram/pabp_accepted_case_retrieval.pdf). |
+| Find diagrams and the editable system source | [figures/](figures/ARCHITECTURE_FIGURES.md) |
+| Study the visual specifications | [Application flowchart](figures/flowcharts/application_operational_flowchart.svg), [selective decision flowchart](figures/flowcharts/selective_decision_flowchart.svg), and [PABP retrieval diagram](figures/block_diagram/pabp_accepted_case_retrieval.svg). |

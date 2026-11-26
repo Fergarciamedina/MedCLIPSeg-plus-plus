@@ -64,11 +64,4 @@ The [notebook folder guide](notebooks/NOTEBOOK_GUIDE.md) lists each notebook's i
 - [Scientific benchmarking](notebooks/02_scientific_benchmarking.ipynb) reads the bundled aggregate results. Optional local per-image artifacts enable qualitative examples and additional plots.
 - [Six-stage software walkthrough](notebooks/01_complete_system_pipeline.ipynb) uses synthetic segmentation outputs so you can inspect the interfaces. It accepts a local folder of PNG or JPEG inputs.
 
-Run from the repository root to open the notebooks.
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt -r application/uncertainty_aware_retrieval/requirements.txt jupyterlab
-python -m jupyterlab research/notebooks
-```
+See the [notebook instructions](notebooks/NOTEBOOK_GUIDE.md) for the separate environment, launch command and optional data inputs for each notebook.

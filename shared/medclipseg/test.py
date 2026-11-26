@@ -105,7 +105,10 @@ def logger_config(log_path):
 def main():
     cfg = get_arguments()
 
-    if not hasattr(cfg.MODEL, 'DEVICE') or cfg.MODEL.DEVICE == 'cuda':
+    requested_device = os.environ.get("MEDCLIPSEG_DEVICE")
+    if requested_device:
+        cfg.MODEL.DEVICE = requested_device
+    elif not hasattr(cfg.MODEL, 'DEVICE') or cfg.MODEL.DEVICE == 'cuda':
         if torch.backends.mps.is_available():
             cfg.MODEL.DEVICE = 'mps'
         elif not torch.cuda.is_available():

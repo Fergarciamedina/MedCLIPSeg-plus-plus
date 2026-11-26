@@ -82,6 +82,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=str, default="")
     parser.add_argument("--data-root", type=str, default="")
     parser.add_argument("--n-bootstrap", type=int, default=1000)
+    parser.add_argument("--scores-only", action="store_true", help="Skip the figure that needs case images, masks and raw entropy.")
     return parser.parse_args()
 
 
@@ -445,67 +446,68 @@ def main() -> None:
     # -------------------------------------------------------------------------
     # Figure 4: Diagnostic Case Comparison (45_malignant vs 120_benign)
     # -------------------------------------------------------------------------
-    fig4, axes4 = plt.subplots(2, 4, figsize=(15, 7.5))
+    if not args.scores_only:
+        fig4, axes4 = plt.subplots(2, 4, figsize=(15, 7.5))
 
-    val_img_dir = os.path.join(data_root, args.dataset, "Val_Folder", "img")
-    val_seg_dir = os.path.join(val_root, "seg_results", f"MedCLIPSeg_unimedclip_ViT-B-16_Prompt-{args.prompt_design}")
-    val_unc_dir = os.path.join(val_root, "unc_results", f"MedCLIPSeg_unimedclip_ViT-B-16_Prompt-{args.prompt_design}")
+        val_img_dir = os.path.join(data_root, args.dataset, "Val_Folder", "img")
+        val_seg_dir = os.path.join(val_root, "seg_results", f"MedCLIPSeg_unimedclip_ViT-B-16_Prompt-{args.prompt_design}")
+        val_unc_dir = os.path.join(val_root, "unc_results", f"MedCLIPSeg_unimedclip_ViT-B-16_Prompt-{args.prompt_design}")
 
-    cases = [
-        ("45_malignant.png", "Case 1: 45_malignant.png (Large Failure, Area=7,810 px, DSC=0.05)", 0),
-        ("120_benign.png", "Case 2: 120_benign.png (Small Diluted Failure, Area=753 px, DSC=0.37)", 1),
-    ]
+        cases = [
+            ("45_malignant.png", "Case 1: 45_malignant.png (Large Failure, Area=7,810 px, DSC=0.05)", 0),
+            ("120_benign.png", "Case 2: 120_benign.png (Small Diluted Failure, Area=753 px, DSC=0.37)", 1),
+        ]
 
-    ln2 = float(np.log(2.0))
-    for fname, title, row_idx in cases:
-        stem = os.path.splitext(fname)[0]
-        img_bgr = cv2.imread(os.path.join(val_img_dir, fname))
-        pred_m = cv2.imread(os.path.join(val_seg_dir, fname), cv2.IMREAD_GRAYSCALE)
-        u_arr = np.load(os.path.join(val_unc_dir, f"{stem}.npy"))
+        ln2 = float(np.log(2.0))
+        for fname, title, row_idx in cases:
+            stem = os.path.splitext(fname)[0]
+            img_bgr = cv2.imread(os.path.join(val_img_dir, fname))
+            pred_m = cv2.imread(os.path.join(val_seg_dir, fname), cv2.IMREAD_GRAYSCALE)
+            u_arr = np.load(os.path.join(val_unc_dir, f"{stem}.npy"))
 
-        img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB) if img_bgr is not None else np.zeros((224, 224, 3), dtype=np.uint8)
-        img_rgb_224 = cv2.resize(img_rgb, (224, 224), interpolation=cv2.INTER_LINEAR)
+            img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB) if img_bgr is not None else np.zeros((224, 224, 3), dtype=np.uint8)
+            img_rgb_224 = cv2.resize(img_rgb, (224, 224), interpolation=cv2.INTER_LINEAR)
 
-        # 1. Ultrasound
-        axes4[row_idx, 0].imshow(img_rgb_224)
-        axes4[row_idx, 0].set_title("Ultrasound (224×224)", fontsize=9)
-        axes4[row_idx, 0].axis("off")
+            # 1. Ultrasound
+            axes4[row_idx, 0].imshow(img_rgb_224)
+            axes4[row_idx, 0].set_title("Ultrasound (224×224)", fontsize=9)
+            axes4[row_idx, 0].axis("off")
 
-        # 2. Predicted Mask Overlay
-        overlay = img_rgb_224.copy()
-        fg = (pred_m > 0)
-        overlay[fg] = (overlay[fg] * 0.4 + np.array([255, 60, 60]) * 0.6).clip(0, 255).astype(np.uint8)
-        axes4[row_idx, 1].imshow(overlay)
-        axes4[row_idx, 1].set_title(f"Prediction (Area={np.sum(fg)})", fontsize=9)
-        axes4[row_idx, 1].axis("off")
+            # 2. Predicted Mask Overlay
+            overlay = img_rgb_224.copy()
+            fg = (pred_m > 0)
+            overlay[fg] = (overlay[fg] * 0.4 + np.array([255, 60, 60]) * 0.6).clip(0, 255).astype(np.uint8)
+            axes4[row_idx, 1].imshow(overlay)
+            axes4[row_idx, 1].set_title(f"Prediction (Area={np.sum(fg)})", fontsize=9)
+            axes4[row_idx, 1].axis("off")
 
-        # 3. Raw Predictive Entropy
-        im = axes4[row_idx, 2].imshow(u_arr, cmap="hot", vmin=0.0, vmax=ln2)
-        plt.colorbar(im, ax=axes4[row_idx, 2], fraction=0.046, pad=0.04)
-        axes4[row_idx, 2].set_title(f"Entropy Map [0, ln 2]", fontsize=9)
-        axes4[row_idx, 2].axis("off")
+            # 3. Raw Predictive Entropy
+            im = axes4[row_idx, 2].imshow(u_arr, cmap="hot", vmin=0.0, vmax=ln2)
+            plt.colorbar(im, ax=axes4[row_idx, 2], fraction=0.046, pad=0.04)
+            axes4[row_idx, 2].set_title(f"Entropy Map [0, ln 2]", fontsize=9)
+            axes4[row_idx, 2].axis("off")
 
-        # 4. Metric Profile Bar Chart
-        c_row = df_lesion[df_lesion["image_id"] == fname].iloc[0]
-        bar_names = [r"$U_{\mathrm{mean}}$", r"$U_{\mathrm{fg}}$", r"$U_{\mathrm{bound}}$", r"$U_{\mathrm{thresh}}$"]
-        bar_vals = [c_row["U_mean"], c_row["U_fg"], c_row["U_boundary"], c_row["U_threshold"]]
-        bar_colors = ["#1f77b4", "#2ca02c", "#d62728", "#9467bd"]
+            # 4. Metric Profile Bar Chart
+            c_row = df_lesion[df_lesion["image_id"] == fname].iloc[0]
+            bar_names = [r"$U_{\mathrm{mean}}$", r"$U_{\mathrm{fg}}$", r"$U_{\mathrm{bound}}$", r"$U_{\mathrm{thresh}}$"]
+            bar_vals = [c_row["U_mean"], c_row["U_fg"], c_row["U_boundary"], c_row["U_threshold"]]
+            bar_colors = ["#1f77b4", "#2ca02c", "#d62728", "#9467bd"]
 
-        ax_bar = axes4[row_idx, 3]
-        ax_bar.bar(bar_names, bar_vals, color=bar_colors, width=0.55, edgecolor="k")
-        ax_bar.set_ylim(0.0, 0.55)
-        ax_bar.set_ylabel("Uncertainty Score", fontsize=8)
-        ax_bar.set_title(f"Metric Profile (DSC={c_row['DSC']:.2f})", fontsize=9)
-        ax_bar.grid(True, linestyle=":", alpha=0.5, axis="y")
-        for b_idx, val in enumerate(bar_vals):
-            ax_bar.text(b_idx, val + 0.015, f"{val:.3f}", ha="center", fontsize=7.5, fontweight="bold")
+            ax_bar = axes4[row_idx, 3]
+            ax_bar.bar(bar_names, bar_vals, color=bar_colors, width=0.55, edgecolor="k")
+            ax_bar.set_ylim(0.0, 0.55)
+            ax_bar.set_ylabel("Uncertainty Score", fontsize=8)
+            ax_bar.set_title(f"Metric Profile (DSC={c_row['DSC']:.2f})", fontsize=9)
+            ax_bar.grid(True, linestyle=":", alpha=0.5, axis="y")
+            for b_idx, val in enumerate(bar_vals):
+                ax_bar.text(b_idx, val + 0.015, f"{val:.3f}", ha="center", fontsize=7.5, fontweight="bold")
 
-    fig4.suptitle("Diagnostic Case Comparison: High-Volume Failure vs. Small-Lesion Dilution Failure", fontsize=12, fontweight="bold", y=0.99)
-    plt.tight_layout()
-    fig4_path = os.path.join(figures_dir, "figure4_failure_case_diagnostics.png")
-    fig4.savefig(fig4_path, dpi=300, bbox_inches="tight")
-    plt.close(fig4)
-    print(f"  Saved Figure 4: {fig4_path}")
+        fig4.suptitle("Diagnostic Case Comparison: High-Volume Failure vs. Small-Lesion Dilution Failure", fontsize=12, fontweight="bold", y=0.99)
+        plt.tight_layout()
+        fig4_path = os.path.join(figures_dir, "figure4_failure_case_diagnostics.png")
+        fig4.savefig(fig4_path, dpi=300, bbox_inches="tight")
+        plt.close(fig4)
+        print(f"  Saved Figure 4: {fig4_path}")
 
     print("\n" + "=" * 75)
     print("  Stage 08 statistical analysis completed successfully!")

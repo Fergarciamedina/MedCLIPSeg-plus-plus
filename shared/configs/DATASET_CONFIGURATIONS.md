@@ -10,13 +10,8 @@ These YAML profiles tell the frozen MedCLIPSeg inference runner where to find im
 | --- | --- |
 | [BUSI](BUSI.yaml) | Source checkpoint, validation and locked in-domain test. |
 | [UDIAT](UDIAT.yaml), [BUID](BUID.yaml), [BUSUC](BUSUC.yaml), [BUSBRA](BUSBRA.yaml) | External breast ultrasound test cohorts evaluated with the frozen BUSI checkpoint. |
-| [BKAI](BKAI.yaml), [CVC300](CVC300.yaml), [ClinicDB](ClinicDB.yaml), [ColonDB](ColonDB.yaml), [Kvasir](Kvasir.yaml) | Retained colon endoscopy profiles. |
-| [BRISC](BRISC.yaml), [BTMRI](BTMRI.yaml) | Retained brain MRI profiles. |
-| [ISIC](ISIC.yaml), [UWaterlooSkinCancer](UWaterlooSkinCancer.yaml) | Retained skin-imaging profiles. |
-| [Covid19](Covid19.yaml) | Retained chest X-ray profile. |
-| [EUS](EUS.yaml) | Retained endoscopic ultrasound profile. |
 
-The five study profiles expand `${MEDCLIPSEG_DATA}` to the directory containing cohort folders. Each cohort follows the upstream `Train_Folder/`, `Val_Folder/`, `Test_Folder/` and `Prompts_Folder/` layout. The inherited profiles with `./data/...` resolve paths relative to the launch directory. See the [upstream dataset guide](https://github.com/HealthX-Lab/MedCLIPSeg/blob/main/assets/DATASETS.md).
+The five study profiles expand `${MEDCLIPSEG_DATA}` to the directory containing cohort folders. Each cohort follows the upstream `Train_Folder/`, `Val_Folder/`, `Test_Folder/` and `Prompts_Folder/` layout. Profiles for other modalities are available from the upstream project. See the [upstream dataset guide](https://github.com/HealthX-Lab/MedCLIPSeg/blob/main/assets/DATASETS.md).
 
 ## Read the settings
 

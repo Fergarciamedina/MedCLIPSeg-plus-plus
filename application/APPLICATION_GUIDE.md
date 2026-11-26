@@ -16,26 +16,17 @@ The text box controls the running application. Offline MedCLIPSeg inference uses
 
 ## Install and launch
 
-Use Python 3.9 or newer, Node.js 20 or newer, npm, Bash and curl. The browser and API run on your machine. From the repository root, install the Python and frontend dependencies with these commands.
+Use Python 3.9 or newer, Bash, and Node.js 20 or newer with npm for the first build. Setup needs access to a Python and npm package registry. With precomputed vectors, subsequent runs work offline. Run from the repository root. Prepare a [catalog CSV](#gallery-catalog) and either a [keyed embedding archive or the UniMedCLIP checkpoint](#embeddings-and-search-index).
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r application/medical_dashboard/backend/requirements.txt
-npm --prefix application/medical_dashboard/frontend ci
+bash application/medical_dashboard/run_local.sh --setup \
+  --gallery "/absolute/path/to/gallery.csv" \
+  --embeddings "/absolute/path/to/gallery_embeddings.npz"
 ```
 
-Export your case collection as [a CSV catalog](#gallery-catalog). If your database stores image blobs or artifact URLs, materialize them as files and point the CSV to them. The same contract works for a filesystem, SQL export or object-store snapshot. Expose only the case fields listed below and use identifiers suitable for display. Use file paths readable by the backend process.
+The launcher creates `.venv`, installs the [backend requirements](medical_dashboard/backend/requirements.txt), builds the frontend from its npm lockfile, and starts one loopback service. The precomputed path uses neither PyTorch nor model weights. For later runs, use the same command without `--setup`. The command also accepts the [equivalent environment variables](../.env.example) and `--port` to change the default port. Use `--help` for syntax.
 
-```bash
-export MEDCLIPSEG_GALLERY=/absolute/path/to/gallery.csv
-export MEDCLIPSEG_EMBEDDINGS=/absolute/path/to/gallery_embeddings.npz
-bash application/medical_dashboard/run_local.sh
-```
-
-Open [the local dashboard](http://127.0.0.1:5173). Upload a PNG or JPEG from the catalog and enter, for example, `Segment and find 3 similar cases`. A matching scan gets its stored mask and triage decision. Retrieval requires both a retrieval request and an accepted query, and excludes the query itself. An unmatched scan shows **Not Evaluated**. Model inference for new scans runs offline before onboarding them into the catalog.
-
-[API documentation](http://127.0.0.1:8000/docs) lists the HTTP operations. [Gallery summary](http://127.0.0.1:8000/api/summary) reports the number of loaded cases and their selective statuses and surfaces initialization errors. The [command-line interface](uncertainty_aware_retrieval/cli.py) also accepts the same environment settings.
+Open [the local dashboard](http://127.0.0.1:5173), upload a file from the catalog and enter `Segment and find 3 similar cases`. The application returns a stored mask and triage decision for a matching scan. Retrieval requires an accepted query and excludes that query from its references. Use [the local API documentation](http://127.0.0.1:5173/docs) for request schemas and [the gallery summary](http://127.0.0.1:5173/api/summary) to confirm that the configured cases loaded.
 
 ## Gallery catalog
 
@@ -93,19 +84,16 @@ vectors = np.stack([vector for _, _, vector in rows]).astype(np.float32)
 np.savez("gallery_embeddings.npz", keys=keys, embeddings=vectors)
 ```
 
-**Compute vectors locally.** Configure the [UniMedCLIP ViT-B/16 checkpoint](https://huggingface.co/UzairK/unimed-clip-vit-b16) and run the preparation command. This encoder checkpoint serves retrieval. Segmentation uses the full MedCLIPSeg checkpoint separately.
+**Compute vectors locally.** Download the [UniMedCLIP ViT-B/16 checkpoint](https://huggingface.co/UzairK/unimed-clip-vit-b16). With `--checkpoint`, setup adds the [encoder requirements](medical_dashboard/backend/requirements-encoder.txt). The first access to the gallery computes and caches vectors. Use the `HF_HUB_OFFLINE` and `TRANSFORMERS_OFFLINE` settings below for first-time initialization if the BiomedBERT configuration is absent from the local cache.
 
 ```bash
-unset MEDCLIPSEG_EMBEDDINGS
-export MEDCLIPSEG_CHECKPOINT=/absolute/path/to/unimed-clip-vit-b16.pt
-export MEDCLIPSEG_RUNTIME=/absolute/path/to/writable/gallery-cache
-# Enable downloads for first-time initialization if the BiomedBERT config is absent.
-export HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0
-.venv/bin/python application/uncertainty_aware_retrieval/cli.py --prepare
-bash application/medical_dashboard/run_local.sh
+HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0 \
+  bash application/medical_dashboard/run_local.sh --setup \
+    --gallery "/absolute/path/to/gallery.csv" \
+    --checkpoint "/absolute/path/to/unimed-clip-vit-b16.pt"
 ```
 
-Preparation validates the catalog and computes or reuses a keyed `gallery_embeddings-*.npz` file in `MEDCLIPSEG_RUNTIME`. The default runtime directory is `application/uncertainty_aware_retrieval/runtime/`. Subsequent starts reuse matching vectors. The API builds the in-memory search index on the first gallery request. After catalog updates, refresh externally supplied vectors when case membership or images change, and restart the service so it reloads the catalog and rebuilds its index.
+To warm the cache separately, export `MEDCLIPSEG_GALLERY` and `MEDCLIPSEG_CHECKPOINT` and run `.venv/bin/python application/uncertainty_aware_retrieval/cli.py --prepare`. The archive is stored in `MEDCLIPSEG_RUNTIME` or the default service runtime directory. The application builds its IVF/PABP index in memory. Restart after replacing the catalog or embeddings so the service reloads the assets and rebuilds the index. Keep all vectors in the same embedding space.
 
 For the original benchmark layout, unset `MEDCLIPSEG_GALLERY`. By default the app looks in the sibling `../data/raw` and `../data/outputs` folders. Set `MEDCLIPSEG_DATA` to the raw tree or its parent and `MEDCLIPSEG_OUTPUT` to the inference output tree to use another location. This path expects the five evaluated cohorts, their Stage 4 aggregation CSVs and corresponding images and masks at the original [experiment paths](../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_PROTOCOL.md).
 
@@ -116,7 +104,7 @@ The web path is **React → FastAPI → shared application services**. The noteb
 | Directory | What it does | Why it is separate |
 | --- | --- | --- |
 | [`medical_dashboard/`](medical_dashboard/DASHBOARD_GUIDE.md) | The [React frontend](medical_dashboard/frontend/FRONTEND_BUILD.md) and the [FastAPI backend](medical_dashboard/backend/API_BACKEND.md). | The browser presents results. The Python API owns gallery files and the search index and can be tested independently of the interface. |
-| [`uncertainty_aware_retrieval/`](uncertainty_aware_retrieval/RETRIEVAL_SERVICES.md) | Case loading, precomputed masks, triage, embeddings and PABP search. Also contains Streamlit and CLI entry points. | Shared services keep the case, score, and search behavior consistent across entry points. |
+| [`uncertainty_aware_retrieval/`](uncertainty_aware_retrieval/RETRIEVAL_SERVICES.md) | Case loading, precomputed masks, triage, embeddings and PABP search. Also contains a CLI for preparing and testing the gallery. | Shared services keep the case, score, and search behavior consistent across entry points. |
 | [`stages/`](stages/APPLICATION_STAGES.md) | Six modular interfaces used by the [software walkthrough](../research/notebooks/01_complete_system_pipeline.ipynb). | The notebook can inspect each stage and demonstrate it with a synthetic segmentation adapter. The application consumes precomputed model results through its services. |
 
 The [system design rationale](../docs/architecture/DESIGN_RATIONALE.md) covers the component boundaries, numerical contracts, and vector index. The [experimental rationale](../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_RATIONALE.md) covers the cohorts, hardware and Stage 4 methods.

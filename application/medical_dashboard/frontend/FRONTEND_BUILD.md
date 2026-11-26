@@ -13,4 +13,4 @@ This folder defines the browser build. Follow the [UI source guide](src/DASHBOAR
 | [postcss.config.js](postcss.config.js) · [tailwind.config.js](tailwind.config.js) | Configure CSS processing, source scanning, theme extension and vendor prefixes. |
 | [src/](src/DASHBOARD_UI.md) | The React workflow and styles. |
 
-Use the [dashboard guide](../DASHBOARD_GUIDE.md) to start both processes or verify the frontend build.
+Use the [dashboard guide](../DASHBOARD_GUIDE.md) to build and serve the interface from the FastAPI process. For frontend development, run the API on port 8000 and start Vite separately.

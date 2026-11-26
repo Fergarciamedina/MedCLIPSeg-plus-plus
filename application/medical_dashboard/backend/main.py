@@ -16,6 +16,7 @@ from urllib.parse import urlencode
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 
 APP_DIR = Path(__file__).resolve().parents[2] / "uncertainty_aware_retrieval"
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -49,7 +50,7 @@ def _parse_prompt(prompt: str, image_count: int = 1) -> dict[str, Any]:
 
 @lru_cache(maxsize=1)
 def get_system() -> dict[str, Any]:
-    """Initialize the exact manifest, triage service, and PABP index used by Streamlit."""
+    """Initialize the exact manifest, triage service, and PABP index used by the CLI."""
     try:
         from uncertainty_aware_retrieval import (
             DEFAULT_BLOCK_SIZE,
@@ -347,3 +348,9 @@ async def uploads_evaluate(
         "evaluated_count": sum(item["matched"] for item in items),
         "not_evaluated_count": sum(not item["matched"] for item in items),
     }
+
+
+# Register the built interface after the API and its documentation routes.
+frontend_build = Path(__file__).resolve().parents[1] / "frontend" / "dist"
+if (frontend_build / "index.html").is_file():
+    app.mount("/", StaticFiles(directory=frontend_build, html=True), name="dashboard")

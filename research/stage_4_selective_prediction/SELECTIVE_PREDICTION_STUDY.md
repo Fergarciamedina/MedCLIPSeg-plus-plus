@@ -52,18 +52,40 @@ Foreground mean had the lowest Dice-loss AURC on validation at **0.0839**. The v
 
 ## Reproduction
 
-Use the [benchmarking notebook](../notebooks/02_scientific_benchmarking.ipynb) to redraw the bundled aggregate results. For a rerun from prepared data, create the Python environment from the repository root and select your local data and output directories.
+### Inspect the archived study
+
+The [benchmarking notebook](../notebooks/02_scientific_benchmarking.ipynb) redraws the bundled aggregate results. See the [notebook dependencies](../notebooks/NOTEBOOK_GUIDE.md#scientific-benchmarking-notebook). This path requires no inference or dataset download.
+
+### Regenerate the study from prepared images
+
+Use Python 3.9 or newer, Bash, the [research requirements](../../requirements.txt), the prepared BUSI, UDIAT, BUID, BUSUC and BUSBRA partitions, and the released BUSI MedCLIPSeg checkpoint. The dataset tree contains PNG images, reference masks and lesion-description workbooks. Obtain the data under the terms of each provider. [Cohort sources](../stage_1_study_inputs/STUDY_INPUTS.md#dataset-sources) · [Dataset layout and model settings](../../shared/configs/DATASET_CONFIGURATIONS.md) · [Checkpoint and prompt protocol](study_reference/EXPERIMENTAL_PROTOCOL.md).
+
+From the repository root, configure a local output folder and a supported device. The study used Apple Silicon for inference. CPU is a slower fallback. Inference values can vary across devices and dependency versions. The saved-score path isolates the statistical analysis from those differences.
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-export MEDCLIPSEG_DATA=/path/to/data/raw
-export MEDCLIPSEG_OUTPUT=/path/to/experiment/outputs
-# Allow first-time model asset downloads if the cache is empty.
-export HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0
+.venv/bin/python -m pip install -r requirements.txt
+export MEDCLIPSEG_DATA="/absolute/path/to/prepared/cohorts"
+export MEDCLIPSEG_OUTPUT="/absolute/path/to/experiment/outputs"
+export MEDCLIPSEG_DEVICE=cpu  # or mps or cuda
+export HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0  # first initialization if needed
+bash shared/scripts/download_checkpoint.sh BUSI 666 100
+bash research/stage_4_selective_prediction/reproduce_study.sh
 ```
 
-Use the [prepared cohorts](../stage_1_study_inputs/STUDY_INPUTS.md), [checkpoint and prompts](study_reference/EXPERIMENTAL_PROTOCOL.md), and [configuration guide](../../shared/configs/DATASET_CONFIGURATIONS.md). Run the commands in [validation and selection](experiments/validation_selection/VALIDATION_SELECTION.md), [locked BUSI test](experiments/locked_busi_test/LOCKED_BUSI_TEST.md) and [external cohort test](experiments/external_test/EXTERNAL_TEST.md) in that order. Each writes to the local output tree. The archived policy and aggregate evidence remain in the phase where they were produced.
+If you already have the checkpoint, place it at `$MEDCLIPSEG_OUTPUT/BUSI/trained_models/seed666/MedCLIPSeg_unimedclip_ViT-B-16_latest.pth`. The [study launcher](reproduce_study.sh) runs the original phase commands in validation, held-out BUSI and external test order. It uses the selected validation policy for both test branches and writes regenerated results into the local output tree.
 
-Run `bash research/stage_4_selective_prediction/tests/run_tests.sh` for the full regression suite with local experiment artifacts available. The [standalone evaluation toolkit](uncertainty_selective_evaluation/EVALUATION_TOOLKIT.md) can also use synthetic data or an existing scores CSV.
+### Recalculate from per-image score tables
+
+This path uses the same Python environment. It skips segmentation inference and the illustrative figure that needs raw validation images and maps. Set `MEDCLIPSEG_OUTPUT` to a directory containing these six local input files:
+
+- `BUSI/validation/seed666/aggregation_results/uncertainty_scores_BUSI_val_seed666.csv`
+- `<cohort>/aggregation_results/seed666/uncertainty_scores_<cohort>_test_seed666.csv` for BUSI, UDIAT, BUID, BUSUC and BUSBRA
+
+```bash
+bash research/stage_4_selective_prediction/reproduce_study.sh --from-scores
+```
+
+The [benchmarking notebook](../notebooks/02_scientific_benchmarking.ipynb) can also start either run. For the individual commands and expected outputs, follow [validation and selection](experiments/validation_selection/VALIDATION_SELECTION.md), [locked BUSI test](experiments/locked_busi_test/LOCKED_BUSI_TEST.md) and [external cohort test](experiments/external_test/EXTERNAL_TEST.md).
+
+Run `bash research/stage_4_selective_prediction/tests/run_tests.sh` for the regression suite. The [standalone evaluation toolkit](uncertainty_selective_evaluation/EVALUATION_TOOLKIT.md) can also evaluate an existing score table from another collection.

@@ -2,7 +2,7 @@
 
 Location `application/uncertainty_aware_retrieval/uncertainty_aware_retrieval/` · [Up to uncertainty_aware_retrieval/](../RETRIEVAL_SERVICES.md)
 
-This Python package is the shared implementation used by the dashboard backend, the CLI and the Streamlit view. It runs over an image catalog and saved segmentation artifacts.
+This Python package is the shared implementation used by the dashboard backend and the CLI. It runs over an image catalog and saved segmentation artifacts.
 
 | Module | Responsibility |
 | --- | --- |

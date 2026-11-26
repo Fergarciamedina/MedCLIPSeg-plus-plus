@@ -2,7 +2,7 @@
 
 Location `application/uncertainty_aware_retrieval/tests/` · [Up to uncertainty_aware_retrieval/](../RETRIEVAL_SERVICES.md)
 
-Use this folder to verify contracts shared by the CLI, Streamlit, and dashboard. The [service guide](../RETRIEVAL_SERVICES.md) gives the test command and dataset requirements.
+Use this folder to verify contracts shared by the CLI and dashboard. The [service guide](../RETRIEVAL_SERVICES.md) gives the test command and dataset requirements.
 
 | File | What it checks |
 | --- | --- |

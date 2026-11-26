@@ -12,6 +12,7 @@
 set -euo pipefail
 
 SEED="${1:-666}"
+if [[ $# -gt 0 ]]; then shift; fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 VENV_PYTHON="${REPO_ROOT}/.venv/bin/python3"
@@ -33,5 +34,5 @@ echo "====================================================================="
     --dataset "BUSI" \
     --seed "${SEED}" \
     --prompt-design "original" \
-    --n-bootstrap 1000
+    --n-bootstrap 1000 "$@"
 

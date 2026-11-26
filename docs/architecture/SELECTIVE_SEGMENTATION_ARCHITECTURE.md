@@ -24,8 +24,8 @@ Low uncertainty can accompany an incorrect prediction. One poor BUSI segmentatio
 
 | Figure | What it shows |
 | --- | --- |
-| [Segmentation architecture](figures/block_diagram/selective_segmentation_architecture.pdf) | Frozen backbone, mask and entropy outputs, and image-level aggregation. |
-| [Selective decision flow](figures/flowcharts/selective_decision_flowchart.pdf) | The foreground and empty-mask branches and their review decisions. |
-| [Experimental validation framework](figures/framework/experimental_validation_framework.pdf) | Validation selection followed by locked BUSI and external testing. |
+| [Segmentation architecture](figures/block_diagram/selective_segmentation_architecture.svg) | Frozen backbone, mask and entropy outputs, and image-level aggregation. |
+| [Selective decision flow](figures/flowcharts/selective_decision_flowchart.svg) | The foreground and empty-mask branches and their review decisions. |
+| [Experimental validation framework](figures/framework/experimental_validation_framework.svg) | Validation selection followed by locked BUSI and external testing. |
 
-The [editable source files](figures) sit alongside the exported figures. The [experimental protocol](../../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_PROTOCOL.md) and [current application guide](../../application/APPLICATION_GUIDE.md) describe the settings of the evaluation and running software.
+The [figure collection](figures/ARCHITECTURE_FIGURES.md) also includes the editable system block diagram. The [experimental protocol](../../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_PROTOCOL.md) and [current application guide](../../application/APPLICATION_GUIDE.md) describe the settings of the evaluation and running software.
