@@ -6,9 +6,9 @@ MedCLIPSeg++ connects a breast ultrasound image and a request to a segmentation 
 
 The [interactive walkthrough](../learning/LEARNING_GUIDE.md) follows the same sequence using one synthetic image.
 
-![Six-stage MedCLIPSeg++ architecture](figures/block_diagram/complete_system_architecture.png)
+![Six-stage MedCLIPSeg++ architecture](figures/block_diagram/complete_system_architecture.svg)
 
-[Editable diagram](figures/block_diagram/complete_system_architecture.drawio) · [SVG](figures/block_diagram/complete_system_architecture.svg)
+[Editable diagram](figures/block_diagram/complete_system_architecture.drawio) · [Open full-size SVG](figures/block_diagram/complete_system_architecture.svg)
 
 ## Follow a case through the system
 

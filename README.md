@@ -6,9 +6,9 @@
 
 ## System architecture
 
-![Six-stage MedCLIPSeg++ system architecture showing inputs, intent routing, MedCLIPSeg, selective prediction, similarity retrieval and system output](docs/architecture/figures/block_diagram/complete_system_architecture.png)
+![Six-stage MedCLIPSeg++ system architecture showing inputs, intent routing, MedCLIPSeg, selective prediction, similarity retrieval and system output](docs/architecture/figures/block_diagram/complete_system_architecture.svg)
 
-[Vector diagram](docs/architecture/figures/block_diagram/complete_system_architecture.svg) · [Editable diagram](docs/architecture/figures/block_diagram/complete_system_architecture.drawio) · [Architecture guide](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Application stages](application/stages/APPLICATION_STAGES.md) · [Study stages](research/RESEARCH_GUIDE.md#explore-the-six-stages)
+[Open full-size SVG](docs/architecture/figures/block_diagram/complete_system_architecture.svg) · [Editable diagram](docs/architecture/figures/block_diagram/complete_system_architecture.drawio) · [Architecture guide](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Application stages](application/stages/APPLICATION_STAGES.md) · [Study stages](research/RESEARCH_GUIDE.md#explore-the-six-stages)
 
 ## Overview
 

@@ -4,7 +4,7 @@ Location `docs/architecture/figures/block_diagram/` · [Up to figures/](../ARCHI
 
 | Diagram | What it shows | Files |
 | --- | --- | --- |
-| Complete system | The six components and their inputs and outputs. The PNG is the diagram shown in the project overview. | [PNG](complete_system_architecture.png) · [SVG](complete_system_architecture.svg) · [Editable Draw.io source](complete_system_architecture.drawio) |
+| Complete system | The six components and their inputs and outputs. The project overview uses this SVG. | [SVG](complete_system_architecture.svg) · [Editable Draw.io source](complete_system_architecture.drawio) |
 | Selective segmentation | How the frozen backbone supplies the predicted mask and entropy map and how the policy uses them. | [Selective segmentation SVG](selective_segmentation_architecture.svg) |
 | Accepted-case retrieval | Which blocks and candidate vectors the eligibility predicate lets PABP skip. | [PABP retrieval SVG](pabp_accepted_case_retrieval.svg) |
 
