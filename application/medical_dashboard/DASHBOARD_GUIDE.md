@@ -4,6 +4,8 @@ Location `application/medical_dashboard/` · [Up to application/](../APPLICATION
 
 See the [application guide](../APPLICATION_GUIDE.md) for setup, the gallery contract, and embedding preparation. The [six-stage guide](../stages/APPLICATION_STAGES.md) traces what happens after a user submits an image and an instruction.
 
+See the [dashboard preview](../../README.md#see-the-dashboard) for the gallery layout with synthetic cases.
+
 From the repository root, start the React frontend and FastAPI backend on the loopback interface with the launcher below.
 
 ```bash

@@ -32,6 +32,6 @@ These papers provide methodological context for the code used here. The external
 
 The default limit is **5** reference matches. The router extracts explicit integers from **1 to 50** in supported patterns. It flags an empty or unrecognized request as ambiguous and falls back to the combined workflow. The backend still applies the same triage condition before retrieving cases. A matched case can expose its stored result for any route. Request text selects the operation; it does not rerun the segmentation model or change the mask.
 
-Five regression tests cover segmentation, retrieval, combined intent, ambiguity and a custom result count. A held-out evaluation of paraphrases and routing accuracy is outside the study scope. Stage 4 uses masks and entropy maps generated with fixed offline lesion descriptions. [Router tests](../../uncertainty_aware_retrieval/tests/test_intent_router.py) · [Study inputs](../../../research/stage_1/STUDY_INPUTS.md#which-inputs-were-used).
+Five regression tests cover segmentation, retrieval, combined intent, ambiguity and a custom result count. A held-out evaluation of paraphrases and routing accuracy is outside the study scope. Stage 4 uses masks and entropy maps generated with fixed offline lesion descriptions. [Router tests](../../uncertainty_aware_retrieval/tests/test_intent_router.py) · [Study inputs](../../../research/stage_1_study_inputs/STUDY_INPUTS.md#which-inputs-were-used).
 
 [Application stage map](../APPLICATION_STAGES.md) · [Next · Segmentation artifacts](../stage3_segmentation_backbone/SEGMENTATION_ARTIFACTS.md)

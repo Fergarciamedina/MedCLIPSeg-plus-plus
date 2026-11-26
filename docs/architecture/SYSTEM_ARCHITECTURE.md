@@ -4,6 +4,8 @@ Location `docs/architecture/` · [Up to docs/](../DOCUMENTATION_MAP.md)
 
 MedCLIPSeg++ connects a breast ultrasound image and a request to a segmentation overlay, a review decision and, when eligible, similar reference cases. The six-stage diagram describes the overall system. The web application serves precomputed segmentation artifacts. The [system design rationale](DESIGN_RATIONALE.md) explains the interfaces and engineering choices.
 
+The [interactive walkthrough](../learning/LEARNING_GUIDE.md) follows the same sequence using one synthetic image.
+
 ![Six-stage MedCLIPSeg++ architecture](figures/block_diagram/complete_system_architecture.png)
 
 [Editable diagram](figures/block_diagram/complete_system_architecture.drawio) · [PDF](figures/block_diagram/complete_system_architecture.pdf) · [SVG](figures/block_diagram/complete_system_architecture.svg)
@@ -33,6 +35,6 @@ A dashboard upload can reuse a stored result when the decoded image matches a ca
 | --- | --- |
 | Prepare an image catalog and embeddings | [Application setup](../../application/APPLICATION_GUIDE.md) |
 | Inspect each stage in Python | [Six-stage software notebook](../../research/notebooks/01_complete_system_pipeline.ipynb) |
-| Review the uncertainty experiment | [Stage 4 overview and reproduction](../../research/stage_4/SELECTIVE_PREDICTION_STUDY.md) |
+| Review the uncertainty experiment | [Stage 4 overview and reproduction](../../research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md) |
 | Find editable drawings and exports | [figures/](figures/ARCHITECTURE_FIGURES.md) |
 | Study the visual specifications | [Application flowchart](figures/flowcharts/application_operational_flowchart.pdf), [selective decision flowchart](figures/flowcharts/selective_decision_flowchart.pdf), and [PABP retrieval diagram](figures/block_diagram/pabp_accepted_case_retrieval.pdf). |

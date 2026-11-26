@@ -2,7 +2,7 @@
 
 Location `shared/medclipseg/trainers/` · [Up to medclipseg/](../BACKBONE_SOURCE.md)
 
-The builders assemble the upstream vision–language encoders and probabilistic segmentation adapters expected by the released checkpoints. [Stage 3](../../../research/stage_3/FROZEN_SEGMENTATION.md) documents the variant used for the experiment.
+The builders assemble the upstream vision–language encoders and probabilistic segmentation adapters expected by the released checkpoints. [Stage 3](../../../research/stage_3_medclipseg/FROZEN_SEGMENTATION.md) documents the variant used for the experiment.
 
 | File | Purpose |
 | --- | --- |

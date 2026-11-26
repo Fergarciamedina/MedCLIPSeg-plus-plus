@@ -11,4 +11,4 @@ The research workflow and offline application preparation use the same frozen se
 | [scripts/](scripts/SEGMENTATION_COMMANDS.md) | Launchers for checkpoints, predictions and reference-mask evaluation. |
 | [LICENSE-MedCLIPSeg](LICENSE-MedCLIPSeg) | Upstream Apache-2.0 license copy included for the MedCLIPSeg source. |
 
-[Project attribution](../ATTRIBUTION.md) · [Frozen study configuration](../research/stage_3/FROZEN_SEGMENTATION.md)
+[Project attribution](../ATTRIBUTION.md) · [Frozen study configuration](../research/stage_3_medclipseg/FROZEN_SEGMENTATION.md)

@@ -2,15 +2,17 @@
 
 Location `application/` · [Up to repository root](../README.md)
 
-The dashboard lets you upload a breast ultrasound image, review its precomputed segmentation and uncertainty decision, and request similar reference cases. It uses a local React frontend, FastAPI backend and an in-memory FAISS/PABP search index. To use your own collection, supply a case catalog and its saved model outputs. The [study overview](../research/stage_4/SELECTIVE_PREDICTION_STUDY.md) explains where the review rule comes from.
+The dashboard lets you upload a breast ultrasound image, review its precomputed segmentation and uncertainty decision, and request similar reference cases. It uses a local React frontend, FastAPI backend and an in-memory FAISS/PABP search index. To use your own collection, supply a case catalog and its saved model outputs. The [study overview](../research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md) explains where the review rule comes from.
 
 [Setup](#install-and-launch) · [Gallery inputs](#gallery-catalog) · [Embeddings](#embeddings-and-search-index) · [Six-stage walkthrough](stages/APPLICATION_STAGES.md) · [Software verification](#verification)
+
+See the [dashboard preview](../README.md#see-the-dashboard) or follow the [interactive walkthrough](../docs/learning/LEARNING_GUIDE.md) from the uploaded image to the final response.
 
 ## How a request is processed
 
 You provide an ultrasound image and an instruction. The instruction chooses segmentation, retrieval or both. The API looks up a matching case and its precomputed outputs, then applies the uncertainty policy. If the query passes and retrieval was requested, the backend searches the eligible gallery entries. The dashboard presents the source image, overlay, decision and any matching references. The [six-stage guide](stages/APPLICATION_STAGES.md) expands each step into inputs, configuration, rationale and checks.
 
-The text box controls the running application. Offline MedCLIPSeg inference uses the lesion descriptions recorded with the study data to produce the stored masks. The [Stage 1 study guide](../research/stage_1/STUDY_INPUTS.md) describes the cohorts, validation and test splits, and both kinds of text.
+The text box controls the running application. Offline MedCLIPSeg inference uses the lesion descriptions recorded with the study data to produce the stored masks. The [Stage 1 study guide](../research/stage_1_study_inputs/STUDY_INPUTS.md) describes the cohorts, validation and test splits, and both kinds of text.
 
 ## Install and launch
 
@@ -63,7 +65,7 @@ site-a,case-02,images/case-02.jpg,masks/case-02.png,,,0.042,0.018,,
 | `u_fg`, `u_mean` | Optional if a raw entropy map supplies them. Use the mean predictive entropy over the predicted foreground and over the full image, respectively. Provide `u_fg` for a nonempty mask or `u_mean` for an empty mask. Leave undefined values blank. |
 | `dsc`, `nsd` | Optional reference segmentation scores in `[0, 1]`. Ground-truth masks are needed only to compute these metrics offline. |
 
-The app derives foreground size and triage status from these fields. Stage 4's frozen thresholds apply to the entropy output and preprocessing specified in the [experiment protocol](../research/stage_4/study_reference/EXPERIMENTAL_PROTOCOL.md). Collections produced with different models or acquisition settings require a separate evaluation of that operating point.
+The app derives foreground size and triage status from these fields. Stage 4's frozen thresholds apply to the entropy output and preprocessing specified in the [experiment protocol](../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_PROTOCOL.md). Collections produced with different models or acquisition settings require a separate evaluation of that operating point.
 
 To create masks and raw entropy for the supported MedCLIPSeg dataset format, follow [upstream dataset preparation](https://github.com/HealthX-Lab/MedCLIPSeg/blob/main/assets/DATASETS.md) and the [local inference runner](../shared/scripts/run_inference.sh). The relevant cohort YAMLs under [shared/configs](../shared/configs) select the model, image size, and Monte Carlo sample count. Set your raw-data and output directories, select the compute device in the YAML, and provide the corresponding MedCLIPSeg segmentation checkpoint and text prompts. The runner writes masks and raw entropy arrays to the chosen output tree. Export their paths into the CSV above when they are ready. The following commands prepare the original BUSI layout.
 
@@ -105,7 +107,7 @@ bash application/medical_dashboard/run_local.sh
 
 Preparation validates the catalog and computes or reuses a keyed `gallery_embeddings-*.npz` file in `MEDCLIPSEG_RUNTIME`. The default runtime directory is `application/uncertainty_aware_retrieval/runtime/`. Subsequent starts reuse matching vectors. The API builds the in-memory search index on the first gallery request. After catalog updates, refresh externally supplied vectors when case membership or images change, and restart the service so it reloads the catalog and rebuilds its index.
 
-For the original benchmark layout, unset `MEDCLIPSEG_GALLERY`. By default the app looks in the sibling `../data/raw` and `../data/outputs` folders. Set `MEDCLIPSEG_DATA` to the raw tree or its parent and `MEDCLIPSEG_OUTPUT` to the inference output tree to use another location. This path expects the five evaluated cohorts, their Stage 4 aggregation CSVs and corresponding images and masks at the original [experiment paths](../research/stage_4/study_reference/EXPERIMENTAL_PROTOCOL.md).
+For the original benchmark layout, unset `MEDCLIPSEG_GALLERY`. By default the app looks in the sibling `../data/raw` and `../data/outputs` folders. Set `MEDCLIPSEG_DATA` to the raw tree or its parent and `MEDCLIPSEG_OUTPUT` to the inference output tree to use another location. This path expects the five evaluated cohorts, their Stage 4 aggregation CSVs and corresponding images and masks at the original [experiment paths](../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_PROTOCOL.md).
 
 ## Layout
 
@@ -117,7 +119,7 @@ The web path is **React → FastAPI → shared application services**. The noteb
 | [`uncertainty_aware_retrieval/`](uncertainty_aware_retrieval/RETRIEVAL_SERVICES.md) | Case loading, precomputed masks, triage, embeddings and PABP search. Also contains Streamlit and CLI entry points. | Shared services keep the case, score, and search behavior consistent across entry points. |
 | [`stages/`](stages/APPLICATION_STAGES.md) | Six modular interfaces used by the [software walkthrough](../research/notebooks/01_complete_system_pipeline.ipynb). | The notebook can inspect each stage and demonstrate it with a synthetic segmentation adapter. The application consumes precomputed model results through its services. |
 
-The [system design rationale](../docs/architecture/DESIGN_RATIONALE.md) covers the component boundaries, numerical contracts, and vector index. The [experimental rationale](../research/stage_4/study_reference/EXPERIMENTAL_RATIONALE.md) covers the cohorts, hardware and Stage 4 methods.
+The [system design rationale](../docs/architecture/DESIGN_RATIONALE.md) covers the component boundaries, numerical contracts, and vector index. The [experimental rationale](../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_RATIONALE.md) covers the cohorts, hardware and Stage 4 methods.
 
 ## Verification
 
@@ -128,4 +130,4 @@ The web API tests use synthetic image and gallery fixtures. The full shared serv
 .venv/bin/python -m unittest discover -s application/uncertainty_aware_retrieval/tests -v
 ```
 
-For the statistical evaluation and its separate 31-check regression suite, see the [Stage 4 validation guide](../research/stage_4/SELECTIVE_PREDICTION_STUDY.md#validation-and-test-design).
+For the statistical evaluation and its separate 31-check regression suite, see the [Stage 4 validation guide](../research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md#validation-and-test-design).

@@ -20,7 +20,7 @@ python application/uncertainty_aware_retrieval/cli.py --demo
 streamlit run application/uncertainty_aware_retrieval/app.py
 ```
 
-The CLI demonstration partitions a set of queries from the configured historical gallery. The canonical gallery has enough cases for ten representative queries. The [retrieval stage](../../research/stage_5/RETRIEVAL_IN_CONTEXT.md) attributes the PABP implementation and the [research guide](../../research/stage_4/SELECTIVE_PREDICTION_STUDY.md) describes the frozen uncertainty rule.
+The CLI demonstration partitions a set of queries from the configured historical gallery. The canonical gallery has enough cases for ten representative queries. The [retrieval stage](../../research/stage_5_similarity_retrieval/RETRIEVAL_IN_CONTEXT.md) attributes the PABP implementation and the [research guide](../../research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md) describes the frozen uncertainty rule.
 
 The following service tests use the original local data layout.
 

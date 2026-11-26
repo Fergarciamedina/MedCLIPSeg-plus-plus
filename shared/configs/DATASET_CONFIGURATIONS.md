@@ -2,7 +2,7 @@
 
 Location `shared/configs/` · [Up to shared/](../SHARED_COMPONENTS.md)
 
-These YAML profiles tell the frozen MedCLIPSeg inference runner where to find images and prompts, which model settings to load, and how to sample predictive uncertainty. Start here when preparing offline masks and entropy for the [Stage 4 experiment](../../research/stage_4/SELECTIVE_PREDICTION_STUDY.md) or the [application gallery](../../application/APPLICATION_GUIDE.md).
+These YAML profiles tell the frozen MedCLIPSeg inference runner where to find images and prompts, which model settings to load, and how to sample predictive uncertainty. Start here when preparing offline masks and entropy for the [Stage 4 experiment](../../research/stage_4_selective_prediction/SELECTIVE_PREDICTION_STUDY.md) or the [application gallery](../../application/APPLICATION_GUIDE.md).
 
 ## Choose a profile
 
@@ -30,4 +30,4 @@ The five study profiles expand `${MEDCLIPSEG_DATA}` to the directory containing 
 | `MODEL.DEVICE` | Inference backend. The study profiles use `mps` for Apple Silicon. Set the device for your environment when running a local copy. |
 | `TRAIN` | Upstream settings retained where present. The evaluation scripts load a checkpoint and run inference. |
 
-The model settings control image-to-mask inference. The [frozen Stage 4 policy](../../research/stage_4/experiments/RESULTS_GUIDE.md#how-to-read-the-frozen-yaml) controls the later review decision. See the [experimental rationale](../../research/stage_4/study_reference/EXPERIMENTAL_RATIONALE.md) for the model grid, sample count and hardware trade-offs.
+The model settings control image-to-mask inference. The [frozen Stage 4 policy](../../research/stage_4_selective_prediction/experiments/RESULTS_GUIDE.md#how-to-read-the-frozen-yaml) controls the later review decision. See the [experimental rationale](../../research/stage_4_selective_prediction/study_reference/EXPERIMENTAL_RATIONALE.md) for the model grid, sample count and hardware trade-offs.

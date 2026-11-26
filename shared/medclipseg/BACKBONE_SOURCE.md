@@ -15,4 +15,4 @@ This directory contains the adapted upstream segmentation code. Use the [offline
 | [open_clip_lib/](open_clip_lib/OPEN_CLIP_COMPONENTS.md) | Bundled model factory, encoder and tokenizer infrastructure used by the UniMedCLIP path. |
 | [biomedclip/](biomedclip/BIOMEDCLIP_COMPONENTS.md) | Model support files for the upstream BiomedCLIP alternative. |
 
-The reported experiments use the UniMedCLIP ViT-B/16 variant and its saved outputs. [Frozen segmentation settings](../../research/stage_3/FROZEN_SEGMENTATION.md).
+The reported experiments use the UniMedCLIP ViT-B/16 variant and its saved outputs. [Frozen segmentation settings](../../research/stage_3_medclipseg/FROZEN_SEGMENTATION.md).

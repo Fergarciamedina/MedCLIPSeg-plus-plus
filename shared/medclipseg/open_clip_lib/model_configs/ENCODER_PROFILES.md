@@ -2,7 +2,7 @@
 
 Location `shared/medclipseg/open_clip_lib/model_configs/` · [Up to open_clip_lib/](../OPEN_CLIP_COMPONENTS.md)
 
-The [OpenCLIP factory](../factory.py) discovers these JSON records by model name. The profiles supply feature dimensions and vision and text tower settings, while compatible checkpoints supply weights. Groups below distinguish the encoder architectures available in the bundled source. The breast ultrasound study uses [frozen UniMedCLIP ViT-B/16](../../../../research/stage_3/FROZEN_SEGMENTATION.md).
+The [OpenCLIP factory](../factory.py) discovers these JSON records by model name. The profiles supply feature dimensions and vision and text tower settings, while compatible checkpoints supply weights. Groups below distinguish the encoder architectures available in the bundled source. The breast ultrasound study uses [frozen UniMedCLIP ViT-B/16](../../../../research/stage_3_medclipseg/FROZEN_SEGMENTATION.md).
 
 | Encoder family | Profiles |
 | --- | --- |

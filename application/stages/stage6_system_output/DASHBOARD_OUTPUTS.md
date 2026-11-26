@@ -15,10 +15,10 @@ For an overlay, nearest-neighbor resizing places the binary mask on the original
 
 The dashboard layout and mask-overlay rendering are implemented in this repository. Keeping the original scan visible while presenting the decision up front allows a reader to inspect the result before opening detailed scores or reference cases. This progressive presentation follows the information-visualization principle of an overview with details available on demand. Nearest-neighbor display resizing selects an existing label value and preserves the binary label vocabulary. [Shneiderman, *The Eyes Have It*](https://doi.org/10.1109/VL.1996.545307) · [React dashboard](../../medical_dashboard/frontend/src/main.tsx) · [Mask response implementation](../../medical_dashboard/backend/main.py).
 
-The [API tests](../../medical_dashboard/backend/tests/test_api.py) cover case lists, mask responses, aligned binary overlays and retrieval gating. The [visualization tests](../../uncertainty_aware_retrieval/tests/test_visualizer.py) exercise real and synthetic overlays and uncertainty display. The [research results](../../../research/stage_4/experiments/RESULTS_GUIDE.md) provide the separate cohort-level tables and figures.
+The [API tests](../../medical_dashboard/backend/tests/test_api.py) cover case lists, mask responses, aligned binary overlays and retrieval gating. The [visualization tests](../../uncertainty_aware_retrieval/tests/test_visualizer.py) exercise real and synthetic overlays and uncertainty display. The [research results](../../../research/stage_4_selective_prediction/experiments/RESULTS_GUIDE.md) provide the separate cohort-level tables and figures.
 
 ## Notebook files in this folder
 
 [visual_composer.py](visual_composer.py) assembles the walkthrough figure from scans, masks, entropy, decisions and retrieved neighbors. [triage_reporter.py](triage_reporter.py) turns case telemetry into a summary DataFrame. [__init__.py](__init__.py) exports these two presentation helpers.
 
-[Application stage map](../APPLICATION_STAGES.md) · [Dashboard guide](../../medical_dashboard/DASHBOARD_GUIDE.md) · [Study outputs](../../../research/stage_6/STUDY_OUTPUTS.md)
+[Application stage map](../APPLICATION_STAGES.md) · [Dashboard guide](../../medical_dashboard/DASHBOARD_GUIDE.md) · [Study outputs](../../../research/stage_6_study_outputs/STUDY_OUTPUTS.md)

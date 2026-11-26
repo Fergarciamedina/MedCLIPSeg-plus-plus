@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedCLIPSeg++ | From Ultrasound to Mask Review</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #162638;
+    --muted: #4e5e6b;
+    --paper: #faf9fb;
+    --line: #d5ddd9;
+    --accent: #057d78;
+    --wash: #e4f2ec;
+    font: 17px/1.56 system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; color: var(--ink); background: var(--paper); }
+  main { max-width: 1240px; margin: 0 auto; padding: 3rem clamp(1rem, 5vw, 4rem); }
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 1.8rem; }
+  h1, h2 { font-family: Georgia, serif; line-height: 1.08; letter-spacing: -.025em; margin: 0; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4.2rem); max-width: 19ch; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+  p { max-width: 73ch; }
+  p, dl, figure { margin: .75rem 0; }
+  a { color: var(--accent); text-underline-offset: .18em; }
+  :focus-visible { outline: 3px solid #087a79; outline-offset: 4px; }
+  nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin-top: 1.1rem; }
+  section { padding: 2.25rem 0; border-bottom: 1px solid var(--line); }
+  .experiment { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: clamp(1rem, 3vw, 1.5rem); margin: 1rem 0; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 1.25rem; }
+  .formula { font: clamp(1rem, 3.4vw, 1.32rem)/1.7 Georgia, serif; overflow-wrap: anywhere; }
+  .drag {
+    border: 0; border-bottom: 2px dashed var(--accent); border-radius: 4px 4px 0 0;
+    background: var(--wash); color: var(--accent); font: inherit; padding: 0 .25em;
+    cursor: ew-resize; touch-action: none; user-select: none;
+  }
+  .hint, figcaption, footer { color: var(--muted); font-size: .9rem; }
+  input[type="range"] { display: block; width: 100%; accent-color: var(--accent); margin: .75rem 0; cursor: pointer; }
+  label { display: block; font-weight: 650; }
+  select { font: inherit; color: var(--ink); padding: .4rem .65rem; border: 1px solid #798e89; border-radius: 6px; background: white; }
+  dl { display: flex; flex-wrap: wrap; gap: .6rem 1.25rem; }
+  dt { color: var(--muted); font-size: .82rem; }
+  dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .area { height: 40px; display: flex; background: #e8ede8; border-radius: 6px; overflow: hidden; margin: .7rem 0; }
+  .area span { background: var(--accent); min-width: 1px; }
+  canvas { width: 100%; display: block; height: auto; }
+  .result { background: var(--wash); border-radius: 7px; padding: .65rem .85rem; margin-top: .85rem; }
+  .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 215px), 1fr)); gap: .85rem; }
+  .controls select { margin-top: .25rem; width: 100%; }
+  .map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: .75rem; }
+  .map { margin: .85rem 0 0; min-width: 0; }
+  .map canvas { image-rendering: pixelated; border: 1px solid var(--line); border-radius: 6px; cursor: crosshair; }
+  #surface-map { cursor: default; }
+  .map figcaption { margin-top: .35rem; }
+  .map strong { display: block; color: var(--ink); }
+  .legend { display: flex; flex-wrap: wrap; gap: .35rem 1rem; color: var(--muted); font-size: .85rem; }
+  .swatch { display: inline-block; width: .75em; height: .75em; border-radius: 2px; margin-right: .3em; }
+  .scale { display: flex; justify-content: space-between; margin-top: .2rem; font-size: .78rem; }
+  .scale i { flex: 1; margin: .35rem .4rem; border-radius: 4px; }
+  .probability-scale { background: linear-gradient(90deg, #172439, #4085b2, #e3f5f5); }
+  .entropy-scale { background: linear-gradient(90deg, #172439, #c56b33, #fff2bc); }
+  .quality { border-top: 1px solid var(--line); margin-top: .75rem; padding-top: .4rem; }
+  .chart { background: #f7f9f9; border-radius: 8px; padding: .3rem; }
+  .risk-chart { max-width: 520px; }
+  .table-scroll { overflow-x: auto; margin-top: .85rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { border-bottom: 1px solid var(--line); padding: .45rem .55rem; text-align: left; }
+  td.numeric, th.numeric { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tbody tr.active { background: var(--wash); }
+  .metric-choice { font: inherit; color: var(--accent); background: none; border: 0; text-align: left; padding: .15rem 0; text-decoration: underline; cursor: pointer; }
+  details { margin-top: 1rem; }
+  summary { color: var(--accent); cursor: pointer; font-weight: 650; }
+  footer { margin: 1.5rem 0; }
+  @media (max-width: 660px) { .split { grid-template-columns: 1fr; } main { padding-top: 2rem; } }
+
+  h2, h3 { color: #912338; }
+  h3 { font-size: 1.3rem; margin: .2rem 0 .45rem; }
+  section section { padding: 1.35rem 0 0; border: 0; }
+  .chapter { font-weight: 700; color: #573996; margin: 0 0 .45rem; }
+  .lede { font-size: 1.15rem; }
+  .illustration { max-width: 380px; }
+  .pipeline { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .85rem 0; }
+  .pipeline span, .blocks li { background: #eef0f8; padding: .4rem .75rem; border-radius: 6px; }
+  .blocks { display: grid; gap: .45rem; padding: 0; list-style: none; }
+  .blocks .skip { background: #f7e9ed; color: #912338; }
+  .blocks .scan { background: #e4f2ec; color: #135048; }
+  .comparison { min-width: 565px; }
+  .comparison th[scope=row] { width: 220px; }
+  .rank-track { height: .8rem; background: linear-gradient(90deg, #eef0f8 49.8%, #a2a7b3 49.8%, #a2a7b3 50.2%, #eef0f8 50.2%); position: relative; min-width: 132px; }
+  .rank-interval, .rank-dot { position: absolute; }
+  .rank-interval { top: .34rem; height: .13rem; background: #573996; }
+  .rank-dot { top: .09rem; width: .62rem; height: .62rem; border-radius: 50%; background: #912338; transform: translateX(-50%); }
+  footer p { max-width: 90ch; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="chapter">MedCLIPSeg++ · Interactive walkthrough</p>
+    <h1>From Ultrasound to Mask Review</h1>
+    <p class="lede">A model draws an outline around a lesion. How do we know which outlines deserve a second look?</p>
+    <p>Follow one synthetic ultrasound-style image through the system. Start with the image and its reference, then use the model’s uncertainty to decide what to review. The final chapters show how that decision affects a search for similar cases.</p>
+    <nav aria-label="Walkthrough chapters">
+      <a href="#study-inputs">1 · Image and reference</a>
+      <a href="#intent-routing">2 · Request routing</a>
+      <a href="#medclipseg">3 · Probabilistic segmentation</a>
+      <a href="#selective-review">4 · Selective segmentation review</a>
+      <a href="#similarity-retrieval">5 · Similar-case search</a>
+      <a href="#dashboard-output">6 · Dashboard and reproduction</a>
+    </nav>
+  </header>
+
+  <section id="study-inputs">
+    <p class="chapter">1 · Study inputs</p>
+    <h2>Which pixels belong to the lesion?</h2>
+    <div class="split experiment">
+      <div>
+        <p>Start with two dark regions in a grainy image. The lesion description identifies a target. Its reference mask represents an annotation of the target region. A predicted outline can include extra pixels (false positives) or miss part of the lesion (false negatives).</p>
+        <p><strong>Dice (DSC)</strong> measures overlap as twice the shared area divided by the sum of the predicted and reference areas. <strong>Normalized Surface Dice (NSD)</strong> measures what fraction of the two contours falls within a chosen distance of the other contour. High overlap can coexist with a displaced boundary. You can adjust the distance and see both measures in chapter 3.</p>
+      </div>
+      <figure class="map illustration">
+        <canvas id="opening-image" width="360" height="220" role="img" aria-label="Synthetic 36 by 22 grayscale image with two dark inclusions"></canvas>
+        <figcaption>A synthetic teaching image. Follow the same image into the model and review examples.</figcaption>
+      </figure>
+    </div>
+    <p>The study uses the prepared MedCLIPSeg breast ultrasound partitions. There are 78 BUSI validation images, 78 held-out BUSI images and 464 external images from UDIAT (25), BUID (35), BUSUC (122) and BUSBRA (282). Preparation checks record membership, image and annotation pairing, prompts and usable artifacts. The study uses one modality and reuses frozen outputs across methods to fit the inference budget and keep the comparison paired. The counts come from the available partitions.</p>
+    <p class="hint"><a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_1_study_inputs/STUDY_INPUTS.md">Cohort sources and integrity checks</a> · <a href="https://arxiv.org/abs/1809.04430">Nikolov et al., Surface Dice</a></p>
+  </section>
+
+  <section id="intent-routing">
+    <p class="chapter">2 · Intent routing</p>
+    <h2>Tell the dashboard what to show</h2>
+    <p>The dashboard identifies an uploaded image by hashing its decoded RGB pixels and dimensions. Its router reads the user’s instruction and chooses an action, optionally extracting a requested number of similar cases. The model saw a different text input, a lesion description supplied offline when the cached mask was generated.</p>
+    <div class="experiment">
+      <label for="request">Dashboard instruction</label>
+      <select id="request">
+        <option value="both">Segment this lesion and find 3 similar cases</option>
+        <option value="segment">Show the segmentation</option>
+        <option value="retrieve">Find 2 similar cases</option>
+        <option value="fallback">Take a look at this</option>
+      </select>
+      <p class="result" id="route" aria-live="polite"></p>
+    </div>
+    <p>The research comparison uses the saved masks and maps without the dashboard router. Some offline descriptions in the prepared dataset include diagnostic terms. That conditioning applies to the study and is a limitation when considering a setting where the diagnosis is unknown.</p>
+    <p class="hint"><a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/application/stages/stage2_intent_router/INTENT_ROUTER.md">Implementation credit, routing rules and prior work</a> · <a href="https://arxiv.org/html/2602.20423v1#A3">MedCLIPSeg prompt generation</a></p>
+  </section>
+
+
+  <section id="medclipseg">
+    <p class="chapter">3 · MedCLIPSeg</p>
+    <h2>One image and prompt, many predictions</h2>
+    <p>A deterministic segmentation network in ordinary inference returns the same output for fixed inputs and weights. MedCLIPSeg encodes the image and the lesion description, then uses probabilistic cross-modal attention to let the two influence each other. It samples attention value features, so repeated passes can yield different predictions even with fixed inputs. This is the upstream model of Koleilat et al. MedCLIPSeg++ reuses its published weights.</p>
+    <div class="pipeline" aria-label="Segmentation flow"><span>Image + lesion description</span> → <span>30 stochastic passes</span> → <span>Mean probability per pixel</span> → <span>Mask + predictive entropy</span></div>
+    <section id="pixel">
+      <h3>What does an uncertain pixel mean?</h3>
+      <p>Given an image and a fixed lesion description, MedCLIPSeg averages stochastic model
+         outputs to estimate the probability <i>p</i> that a pixel belongs to the lesion.
+         We use 30 samples and mark the pixel as lesion when <i>p</i> exceeds 0.5.</p>
+      <div class="experiment split">
+        <div>
+          <p class="formula">
+            <i>H</i>(<i>p</i>) = &minus;<i>p</i> ln <i>p</i> &minus; (1 &minus; <i>p</i>) ln(1 &minus; <i>p</i>)
+          </p>
+          <p class="formula">
+            <i>H</i>(<button type="button" id="drag-p" class="drag"
+              aria-label="Lesion probability, drag or use arrow keys">0.51</button>) = <span id="entropy-expression"></span> nats
+          </p>
+          <label for="probability">Lesion probability</label>
+          <input id="probability" type="range" min="0" max="1" step="0.01" value="0.51">
+          <p class="hint">Drag the value or use the slider. Compare 0.51 with 0.99.</p>
+          <dl>
+            <div><dt>Predicted class</dt><dd id="class-name"></dd></div>
+            <div><dt>Model-implied error</dt><dd id="pixel-error"></dd></div>
+            <div><dt>Entropy</dt><dd id="entropy"></dd></div>
+          </dl>
+        </div>
+        <figure>
+          <canvas width="480" height="286" id="entropy-curve" role="img"
+                  aria-label="Binary entropy curve with a marker at the selected probability">
+            Binary entropy peaks at probability 0.5.
+          </canvas>
+          <figcaption>Binary predictive entropy in nats. The marker tracks the selected probability.</figcaption>
+        </figure>
+      </div>
+      <details>
+        <summary>Derive the link to error</summary>
+        <p>The model assigns its chosen label probability max(<i>p</i>, 1 &minus; <i>p</i>), so its
+           implied probability of error is <i>q</i> = min(<i>p</i>, 1 &minus; <i>p</i>).
+           Binary entropy is symmetric, so <i>H</i>(<i>q</i>) = <i>H</i>(<i>p</i>).
+           For 0 &lt; <i>q</i> &lt; 0.5, <i>H</i>&prime;(<i>q</i>) =
+           ln((1 &minus; <i>q</i>)/<i>q</i>) &gt; 0. The link is monotonic under the model.
+           The relationship to observed errors is a separate empirical question.</p>
+      </details>
+      <p>Figure S5 in the original paper reports that higher uncertainty bins had higher observed pixel-error rates. Calibration would additionally compare quantities such as <i>q</i> = 0.2 with a 20% observed error rate across comparable predictions. Scan-level Dice asks a different question.</p>
+      <p class="hint"><a href="https://arxiv.org/html/2602.20423v1">Koleilat et al., MedCLIPSeg, Sections 3 and O</a> · <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_3_medclipseg/FROZEN_SEGMENTATION.md">Local checkpoint and inference settings</a></p>
+    </section>
+
+    <section id="image">
+      <h3>See probability, entropy and errors on the same image</h3>
+      <p>In MedCLIPSeg, the image and lesion description condition stochastic predictions.
+         For each pixel, the pipeline averages 30 sigmoid outputs to get <i>p</i>, labels the pixel
+         as lesion if <i>p</i> &gt; 0.5, and computes entropy <i>H</i>(<i>p</i>). Here, a small
+         synthetic image and an analytical probability field let us inspect those steps pixel by pixel.
+         The prompt selects the target used to generate the field and its reference mask.</p>
+      <div class="experiment">
+        <div class="controls">
+          <label for="image-prompt">Lesion description
+            <select id="image-prompt">
+              <option value="left">Segment the lesion on the left</option>
+              <option value="right">Segment the lesion on the right</option>
+            </select>
+          </label>
+          <label for="image-scenario">Prediction example
+            <select id="image-scenario">
+              <option value="aligned">Well-aligned boundary</option>
+              <option value="ambiguous" selected>Ambiguous, shifted boundary</option>
+              <option value="confident">Confidently wrong mask</option>
+            </select>
+          </label>
+          <label for="image-region">Uncertainty map region
+            <select id="image-region"><option value="all">Whole map</option></select>
+          </label>
+        </div>
+        <div class="map-grid">
+          <figure class="map">
+            <canvas id="input-map" width="360" height="220" role="img" aria-label="Synthetic image with two lesions"></canvas>
+            <figcaption><strong>Input image</strong> Two dark targets on a 36 × 22 grid.</figcaption>
+          </figure>
+          <figure class="map">
+            <canvas id="probability-map" width="360" height="220" role="img" aria-label="Predicted lesion probability at each pixel"></canvas>
+            <figcaption><strong>Mean probability</strong>
+              <span class="scale">0<i class="probability-scale" aria-hidden="true"></i>1</span>
+            </figcaption>
+          </figure>
+          <figure class="map">
+            <canvas id="uncertainty-map" width="360" height="220" role="img" aria-label="Predictive entropy at each pixel"></canvas>
+            <figcaption><strong>Uncertainty map</strong>
+              <span class="scale">0<i class="entropy-scale" aria-hidden="true"></i>ln 2 nats</span>
+              <span id="region-caption">Displaying all pixels.</span>
+            </figcaption>
+          </figure>
+          <figure class="map">
+            <canvas id="mask-map" width="360" height="220" role="img" aria-label="Predicted and reference segmentation masks and their errors"></canvas>
+            <figcaption><strong>Predicted vs. reference mask</strong> Each color shows membership for one pixel.</figcaption>
+          </figure>
+        </div>
+        <div class="legend" aria-label="Mask legend">
+          <span><i class="swatch" style="background:#427daa"></i>Overlap (TP)</span>
+          <span><i class="swatch" style="background:#d8733d"></i>Extra prediction (FP)</span>
+          <span><i class="swatch" style="background:#ad529a"></i>Missed reference (FN)</span>
+        </div>
+        <p class="hint">Click a pixel in any panel or use the sliders. The crosshair and horizontal profile use the same coordinates.</p>
+        <div class="controls">
+          <label for="selected-row">Image row <output id="selected-row-value"></output>
+            <input type="range" id="selected-row" min="0" max="21" value="10" step="1">
+          </label>
+          <label for="selected-column">Image column <output id="selected-column-value"></output>
+            <input type="range" id="selected-column" min="0" max="35" value="16" step="1">
+          </label>
+        </div>
+        <figure class="chart">
+          <canvas id="profile-plot" width="840" height="275" role="img" aria-label="Horizontal cross-section of probability and entropy along the chosen image row"></canvas>
+          <figcaption>Blue is probability <i>p</i>. Orange is entropy divided by ln 2 to share a 0–1 axis.
+            The dashed horizontal line is the 0.5 probability cutoff.</figcaption>
+        </figure>
+        <dl aria-live="polite">
+          <div><dt>Pixel probability</dt><dd id="profile-p"></dd></div>
+          <div><dt>Pixel entropy</dt><dd id="profile-h"></dd></div>
+          <div><dt>Predicted class</dt><dd id="profile-class"></dd></div>
+          <div><dt>Reference class</dt><dd id="profile-reference"></dd></div>
+        </dl>
+        <div class="quality">
+          <dl aria-live="polite">
+            <div><dt>Overlapping pixels</dt><dd id="pixel-tp"></dd></div>
+            <div><dt>Extra pixels</dt><dd id="pixel-fp"></dd></div>
+            <div><dt>Missed pixels</dt><dd id="pixel-fn"></dd></div>
+            <div><dt>Dice (DSC)</dt><dd id="image-dice"></dd></div>
+            <div><dt>Surface Dice (toy NSD)</dt><dd id="image-nsd"></dd></div>
+          </dl>
+          <label for="surface-tolerance">Surface tolerance <output id="tolerance-value"></output>
+            <input type="range" id="surface-tolerance" min="0" max="4" step="0.5" value="2">
+          </label>
+          <p class="hint">Dice compares mask regions. Surface Dice compares contour agreement within a tolerance.
+            The toy calculation matches midpoints of unit-length grid edges. The research implementation uses
+            its own surface-distance weighting with a two-pixel grid tolerance.</p>
+          <p class="formula">DSC =
+            <math aria-label="Twice the true positives divided by twice the true positives plus false positives and false negatives">
+              <mfrac><mrow><mn>2</mn><mi>TP</mi></mrow>
+                <mrow><mn>2</mn><mi>TP</mi><mo>+</mo><mi>FP</mi><mo>+</mo><mi>FN</mi></mrow></mfrac>
+            </math>
+            = <span id="dice-calculation"></span>
+          </p>
+          <div class="split">
+            <figure class="map">
+              <canvas id="surface-map" width="360" height="220" role="img" aria-label="Predicted and reference contours with agreement highlighted"></canvas>
+              <figcaption>Predicted contour is solid. Reference contour is dashed.
+                Teal edges agree within the tolerance. Orange edges are outside it.</figcaption>
+            </figure>
+            <div>
+              <p class="formula">Toy NSD = <span id="surface-calculation"></span></p>
+              <p class="hint">Count agreeing edges in both directions and divide by the total number
+                of edges in both contours. Try a tolerance of zero and then two pixels.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Same image and prompt</th><th scope="col" class="numeric">Foreground entropy</th>
+            <th scope="col" class="numeric">Dice</th><th scope="col" class="numeric">Toy surface Dice</th></tr></thead>
+          <tbody id="scenario-comparison"></tbody>
+        </table>
+      </div>
+      <p>Use the ambiguous example to find a bright ring near the probability crossing.
+         Then compare it with the confidently wrong example, which places a sharp boundary in the wrong location.
+         Dice and Surface Dice need the reference mask. In the study, they measure quality offline.</p>
+    </section>
+
+  </section>
+
+  <section id="selective-review">
+    <p class="chapter">4 · Research contribution</p>
+    <h2>Selective segmentation review</h2>
+    <p>The goal is to rank completed masks for review without requiring a reference annotation at runtime. Our hypothesis was that pixels inside the predicted lesion would provide a stronger signal about mask quality than averaging over the entire frame. Region choice matters. An ambiguous boundary can belong to a good mask, and a missed region contributes no pixels to a foreground-only mean.</p>
+    <section id="methods">
+      <h3>Seven ways to score one uncertainty map</h3>
+      <p>Each method converts a whole map into one number per image. Select a method to highlight its contributing pixels
+         in the <a href="#uncertainty-map">uncertainty map above</a>. The same choice highlights the corresponding result from BUSI validation below.</p>
+      <div class="experiment table-scroll">
+        <label><input type="checkbox" id="highlight-region"> Highlight the selected summary region in the uncertainty map</label>
+        <table>
+          <thead><tr><th scope="col">Method</th><th scope="col">Pixels and operation</th>
+            <th scope="col" class="numeric">Toy value</th></tr></thead>
+          <tbody id="methods-table"></tbody>
+        </table>
+      </div>
+      <details>
+        <summary>Derive why foreground entropy can track Dice</summary>
+        <p>Let <i>F</i> be the predicted lesion and <i>G</i> the reference. Dice loss is
+           (FP + FN)/(|<i>F</i>| + |<i>G</i>|). Within <i>F</i>, an error is a false positive,
+           and the model-implied expected count is Σ<sub><i>i</i> ∈ <i>F</i></sub>(1 &minus; <i>p</i><sub><i>i</i></sub>).
+           On predicted foreground, entropy increases as the model's chance of a false positive increases.</p>
+        <p class="formula">DSC = 2(<i>P</i> − FP)/(2<i>P</i> − FP + FN), with <i>P</i> = |<i>F</i>|</p>
+        <p>Holding <i>P</i> and FN fixed, the derivative with respect to FP is
+           −2(<i>P</i> + FN)/(2<i>P</i> − FP + FN)<sup>2</sup>, which is negative for a nonempty prediction. Together these facts explain why foreground entropy can be associated with lower Dice.</p>
+        <p>The Dice denominator varies across scans, false negatives are outside <i>F</i>, and confidence can be miscalibrated.
+           The average of entropy and the average probability of error can also rank scans differently.
+           These are reasons to test the relationship on data.</p>
+      </details>
+    </section>
+
+    <section id="aggregation">
+      <h3>Why global averaging can dilute the signal</h3>
+      <p>Imagine two masks with the same mean entropy inside the predicted lesion, but with
+         different lesion areas. Vary only the fraction <i>α</i> of pixels predicted as lesion.</p>
+      <div class="experiment">
+        <p class="formula">
+          <i>U</i><sub>mean</sub> =
+          <button type="button" id="drag-area" class="drag" aria-label="Foreground fraction, drag or use arrow keys">0.10</button>
+          × <i>U</i><sub>fg</sub> + (1 &minus; <i>α</i>) × <i>U</i><sub>bg</sub>
+        </p>
+        <label for="area">Predicted foreground fraction <i>α</i></label>
+        <input id="area" type="range" min="1" max="60" step="1" value="10">
+        <div class="area" aria-hidden="true"><span id="foreground"></span></div>
+        <dl>
+          <div><dt>Foreground fraction</dt><dd id="area-display"></dd></div>
+          <div><dt>Foreground mean</dt><dd>0.300 nats</dd></div>
+          <div><dt>Background mean</dt><dd>0.010 nats</dd></div>
+          <div><dt>Whole-image mean</dt><dd id="global-entropy"></dd></div>
+        </dl>
+        <p class="hint">Controlled example with synthetic values. Dark green represents foreground.</p>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <h3>Does the relationship hold across scans?</h3>
+      <p>We held the backbone, prompts and predictions fixed across seven summaries. The comparison uses the 65 of 78 BUSI validation images with nonempty predicted masks. An empty mask has no foreground to average, so the remaining 13 were evaluated separately with whole-image entropy. Choose Dice or NSD to compare rank associations. Each dot is the association for one method, with a bootstrap interval from resampling cases.</p>
+      <div class="experiment">
+        <div class="controls">
+          <label for="validation-method">Uncertainty summary
+            <select id="validation-method"></select>
+          </label>
+          <label for="validation-quality">Quality measure
+            <select id="validation-quality">
+              <option value="DSC">Dice (DSC)</option><option value="NSD">Surface Dice (NSD)</option>
+            </select>
+          </label>
+        </div>
+        <dl aria-live="polite">
+          <div><dt>Spearman correlation</dt><dd id="validation-rho"></dd></div>
+          <div><dt>95% bootstrap interval for the correlation</dt><dd id="validation-ci"></dd></div>
+          <div><dt>Area under the risk–coverage curve</dt><dd id="validation-aurc"></dd></div>
+        </dl>
+        <div class="table-scroll">
+          <table class="comparison">
+            <caption>BUSI validation · Spearman correlations from −1 to +1 and 95% bootstrap intervals</caption>
+            <thead><tr><th scope="col">Uncertainty score</th><th scope="col">Correlation and interval</th><th scope="col" class="numeric">ρ</th></tr></thead>
+            <tbody id="validation-plot"></tbody>
+          </table>
+        </div>
+      </div>
+      <p>Compare foreground mean with global mean. For Dice, the observed rank correlations
+         were &minus;0.720 and &minus;0.045. The negative foreground association means that
+         images with greater foreground uncertainty tended to have worse masks in validation.
+         Its Dice-loss AURC was 0.0839, compared with 0.1438 for global mean and
+         0.0850 for foreground standard deviation. The paired AURC interval for the two
+         foreground methods crossed zero. Six of seven Dice correlations were negative, but only the two foreground methods had Dice correlation intervals entirely below zero. The high-entropy mean was near zero and slightly positive. The global mean is the full-frame control and foreground mean is the selected policy score. Foreground spread remains a close comparator.</p>
+      <p>At one threshold, <strong>coverage</strong> is the fraction retained and
+         <strong>risk</strong> is the average loss among the retained masks. AURC
+         summarizes this loss across coverage levels. Lower values indicate that the
+         ranking tends to keep better masks at the measured coverage levels. The paired
+         bootstrap resamples the same validation scans for both methods when estimating
+         uncertainty in their AURC difference.</p>
+      <p class="hint">
+        <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_4_selective_prediction/experiments/validation_selection/results/spearman_validation_65_lesion.csv">Rank correlations and intervals</a>
+        · <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_4_selective_prediction/experiments/validation_selection/results/validation_method_comparison_N65.csv">Validation ranking results</a>
+        · <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_4_selective_prediction/experiments/validation_selection/results/paired_bootstrap_aurc_ci.csv">Paired AURC comparisons</a>
+        · <a href="https://arxiv.org/abs/1705.08500">Geifman and El-Yaniv, selective prediction</a>
+      </p>
+    </section>
+
+    <section id="coverage">
+      <h3>What happens when we freeze the threshold?</h3>
+      <p>Explore six archived operating points from the 65 BUSI validation cases with
+         nonempty predictions. Each point uses a threshold fitted on that validation split.</p>
+      <div class="experiment">
+        <label for="target">Nominal validation coverage</label>
+        <select id="target">
+          <option value="0">95%</option><option value="1">90%</option><option value="2">85%</option>
+          <option value="3" selected>80%</option><option value="4">75%</option><option value="5">70%</option>
+        </select>
+        <dl>
+          <div><dt>Threshold</dt><dd id="tau"></dd></div>
+          <div><dt>Retained in validation</dt><dd id="retained"></dd></div>
+          <div><dt>Retained mean Dice</dt><dd id="dice"></dd></div>
+          <div><dt>Retained mean surface Dice</dt><dd id="nsd"></dd></div>
+        </dl>
+        <figure class="chart risk-chart">
+          <canvas id="risk-coverage" width="500" height="210" role="img" aria-label="Risk versus realized coverage at the six archived BUSI validation operating points">
+            Risk at each point is one minus the retained mean Dice shown above.
+          </canvas>
+          <figcaption>Six archived operating points for foreground mean. The highlighted point follows the coverage menu.</figcaption>
+        </figure>
+        <p class="result">The 80% target represents an illustrative review budget of one in five. It was fixed before testing at <strong>0.064058324 nats</strong> (52/65 retained in validation). The empty-mask rule uses a separate whole-image threshold of 0.0001 nats.</p>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <caption>Dice and coverage with the same cutoff in held-out testing</caption>
+          <thead><tr><th scope="col">Cohort</th><th scope="col">Retained</th><th scope="col">Dice before selection</th><th scope="col">Dice of retained masks</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">BUSI, nonempty predictions</th><td>47/65 (72.3%)</td><td>0.8286</td><td>0.9031</td></tr>
+            <tr><th scope="row">Four external cohorts pooled</th><td>238/464 (51.3%)</td><td>0.7780</td><td>0.8718</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Dice compares region overlap. Surface Dice compares contours within a tolerance.
+         The study used a two-pixel contour tolerance with unit pixel spacing. Both scores describe the retained masks against a reference. Coverage tells us how many masks that comparison represents.</p>
+      <p>One held-out BUSI case passed the frozen rule despite a Dice of 0.219.
+         The uncertainty score ranks cases for review, and low entropy can occur even
+         when the model predicts a poor mask. Try the confidently wrong case in chapter 3 for a synthetic illustration. Lower coverage on the external cohorts means more review work. Higher retained Dice describes a selected subset of the same predictions.</p>
+      <p class="hint"><a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_4_selective_prediction/experiments/validation_selection/results/calibrated_abstention_thresholds.csv">Archived validation operating points</a>
+         · <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/stage_4_selective_prediction/experiments/RESULTS_GUIDE.md">Research results guide</a>
+         · <a href="https://arxiv.org/abs/1809.04430">Nikolov et al., Surface Dice</a></p>
+    </section>
+
+  </section>
+
+  <section id="similarity-retrieval">
+    <p class="chapter">5 · Similarity retrieval</p>
+    <h2>Search within eligible reference cases</h2>
+    <p>When a catalog match passes the review rule and the user asks for similar cases, the system searches among accepted reference cases. Each scan has a 512-dimensional, unit-normalized UniMedCLIP visual embedding. The dot product between two such vectors is cosine similarity.</p>
+    <p>A full search would score every eligible reference. FAISS’s inverted file (IVF) first chooses the <i>nprobe</i> nearest clusters. Within those lists, Predicate-Aware Block Pruning (PABP) reads an eligibility summary for each block. A block containing only cases marked for review is skipped before computing any vector distances. In a mixed block, only eligible IDs are scored. The query itself is excluded.</p>
+    <div class="experiment">
+      <label for="probes">IVF lists to probe</label>
+      <select id="probes"><option value="1">1 · nearest list</option><option value="2" selected>2 · nearest lists</option><option value="3">3 · all lists</option></select>
+      <ul id="search-blocks" class="blocks" aria-label="Toy search blocks"></ul>
+      <p class="result" id="search-result" aria-live="polite"></p>
+      <p class="hint">Synthetic vectors and review labels. An unprobed list can contain an eligible case more similar than any result already found.</p>
+    </div>
+    <p>The research contribution supplies the eligibility signal. PABP comes from a separate project. The integration is checked against exact filtered search at full probe and tests eligibility, with no clinical relevance or retrieval speed claim from this example.</p>
+    <p class="hint"><a href="https://github.com/mbzuai-oryx/UniMed-CLIP">UniMedCLIP</a> · <a href="https://faiss.ai/">FAISS</a> · <a href="https://github.com/Fergarciamedina/pabp-filtered-ivf">Original PABP project</a> · <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/application/stages/stage5_similarity_retrieval/SIMILARITY_SEARCH.md">Index configuration and tests</a></p>
+  </section>
+
+  <section id="dashboard-output">
+    <p class="chapter">6 · System outputs</p>
+    <h2>From the review decision to the dashboard</h2>
+    <p>Return to the original image and the request to segment it and find similar cases. The prototype presents the scan, available mask and entropy map, the frozen review decision and eligible reference matches when search is allowed.</p>
+    <div class="experiment">
+      <label for="dashboard-case">Try a dashboard outcome</label>
+      <select id="dashboard-case">
+        <option value="accepted">Catalog match · low foreground entropy</option>
+        <option value="review">Catalog match · high foreground entropy</option>
+        <option value="unmatched">No matching catalog image</option>
+      </select>
+      <p class="result" id="dashboard-result" aria-live="polite"></p>
+    </div>
+    <ol>
+      <li>Open the <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/notebooks/02_scientific_benchmarking.ipynb">benchmark notebook</a> to reproduce the study tables with the bundled aggregates.</li>
+      <li>Run the <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/research/notebooks/01_complete_system_pipeline.ipynb">software walkthrough notebook</a> to follow the interfaces with synthetic predictions.</li>
+      <li>Follow the <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/application/APPLICATION_GUIDE.md">application guide</a> to supply your own catalog, masks, entropy maps and keyed embeddings or generate the embeddings locally.</li>
+    </ol>
+    <p class="hint"><a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/docs/architecture/SYSTEM_ARCHITECTURE.md">Complete architecture and handoffs</a> · <a href="https://github.com/Fergarciamedina/MedCLIPSeg-plus-plus/blob/main/ATTRIBUTION.md">Sources for each system component</a></p>
+  </section>
+
+  <footer>
+    <p><strong>Credits.</strong> This MedCLIPSeg++ walkthrough, its HTML interactions and synthetic examples were created with generative AI assistance for teaching. Published study values come from the linked result tables. The MedCLIPSeg paper and checkpoint are the work of Koleilat et al.</p>
+    <p>The scroll-through presentation was inspired by <a href="https://github.com/rajshah6/arXivisual#creators">arXivisual by Armaan Gupta, Raj Shah, Nikhil Hooda and Ajith Bondili</a>. Its <a href="https://www.arxivisual.org/abs/2602.20423">AI-generated MedCLIPSeg explainer</a> is an independent companion to the <a href="https://arxiv.org/html/2602.20423v1">original paper</a>. The draggable formulas were inspired by <a href="https://koaning.github.io/wigglystuff/reference/tangle-latex/">Vincent D. Warmerdam’s WigglyStuff TangleLatex</a>.</p>
+  </footer>
+</main>
+<script>
+  const element = id => document.getElementById(id);
+
+  function connectDrag(button, slider) {
+    let origin;
+    button.addEventListener("pointerdown", event => {
+      if (event.button !== 0) return;
+      origin = { id: event.pointerId, x: event.clientX, value: slider.valueAsNumber };
+      button.setPointerCapture(event.pointerId);
+    });
+    function moveTo(value) {
+      slider.value = value;
+      slider.dispatchEvent(new Event("input"));
+    }
+    button.addEventListener("pointermove", event => {
+      if (origin?.id !== event.pointerId) return;
+      const steps = Math.round((event.clientX - origin.x) / 4);
+      moveTo(origin.value + steps * Number(slider.step));
+    });
+    button.addEventListener("lostpointercapture", () => { origin = undefined; });
+    button.addEventListener("keydown", event => {
+      const step = Number(slider.step);
+      const change = { ArrowLeft: -step, ArrowDown: -step, ArrowRight: step, ArrowUp: step }[event.key];
+      if (change === undefined) return;
+      event.preventDefault();
+      moveTo(slider.valueAsNumber + change);
+    });
+  }
+
+  function entropy(p) {
+    return p === 0 || p === 1 ? 0 : -p * Math.log(p) - (1 - p) * Math.log1p(-p);
+  }
+
+  function drawEntropy(selected) {
+    const canvas = element("entropy-curve");
+    const ctx = canvas.getContext("2d");
+    const x = p => 45 + p * 410;
+    const y = h => 225 - h / Math.log(2) * 178;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#c2cec9";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x(0), y(Math.log(2))); ctx.lineTo(x(0), y(0)); ctx.lineTo(x(1), y(0));
+    ctx.stroke();
+    ctx.fillStyle = "#4e5e6b";
+    ctx.font = "15px system-ui";
+    ctx.textAlign = "center";
+    for (const tick of [0, 0.5, 1]) ctx.fillText(String(tick), x(tick), 248);
+    ctx.fillText("Lesion probability p", x(0.5), 272);
+    ctx.fillText("Entropy (nats)", 87, 24);
+    ctx.fillText("ln 2", 22, 53);
+    ctx.beginPath();
+    ctx.moveTo(x(0), y(0));
+    for (let i = 1; i <= 200; i++) ctx.lineTo(x(i / 200), y(entropy(i / 200)));
+    ctx.strokeStyle = "#075d53";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x(selected), y(entropy(selected)), 7, 0, 2 * Math.PI);
+    ctx.fillStyle = "#b84d24";
+    ctx.fill();
+  }
+
+  const probability = element("probability");
+  function displayPixel() {
+    const p = probability.valueAsNumber;
+    const h = entropy(p).toFixed(3);
+    element("drag-p").textContent = p.toFixed(2);
+    element("entropy-expression").textContent = h;
+    element("class-name").textContent = p > 0.5 ? "Lesion" : "Background";
+    element("pixel-error").textContent = (100 * Math.min(p, 1 - p)).toFixed(0) + "%";
+    element("entropy").textContent = h + " nats";
+    drawEntropy(p);
+  }
+  probability.addEventListener("input", displayPixel);
+  connectDrag(element("drag-p"), probability);
+  displayPixel();
+
+  const area = element("area");
+  function displayArea() {
+    const alpha = area.valueAsNumber / 100;
+    element("drag-area").textContent = alpha.toFixed(2);
+    element("area-display").textContent = area.value + "%";
+    element("foreground").style.width = area.value + "%";
+    element("global-entropy").textContent = (alpha * 0.300 + (1 - alpha) * 0.010).toFixed(3) + " nats";
+  }
+  area.addEventListener("input", displayArea);
+  connectDrag(element("drag-area"), area);
+  displayArea();
+
+  // Rounded display values from the archived BUSI validation CSV linked above.
+  const operatingPoints = [
+    [0.101927518, 61, 0.8622, 0.8949],
+    [0.083463000, 58, 0.8680, 0.9007],
+    [0.072696542, 55, 0.8753, 0.9085],
+    [0.064058324, 52, 0.8910, 0.9252],
+    [0.059689360, 49, 0.8909, 0.9255],
+    [0.056208188, 45, 0.8942, 0.9286],
+  ];
+  function drawRiskCoverage(selected) {
+    const canvas = element("risk-coverage");
+    const ctx = canvas.getContext("2d");
+    const x = coverage => 48 + 406 * (coverage - 0.65) / 0.35;
+    const y = risk => 160 - 122 * (risk - 0.10) / 0.05;
+    const points = operatingPoints.map(([, count, dice]) => [x(count / 65), y(1 - dice)]);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "14px system-ui, sans-serif";
+    ctx.fillStyle = "#4e5e6b";
+    ctx.fillText("Mean Dice loss (1 − DSC)", 48, 21);
+    ctx.fillText("Realized validation coverage", 168, 202);
+    ctx.strokeStyle = "#c4d2d4";
+    for (const risk of [0.10, 0.125, 0.15]) {
+      ctx.fillText(risk.toFixed(3), 3, y(risk) + 4);
+      ctx.beginPath();
+      ctx.moveTo(x(0.65), y(risk));
+      ctx.lineTo(x(1), y(risk));
+      ctx.stroke();
+    }
+    for (const coverage of [0.7, 0.8, 0.9, 1]) {
+      ctx.fillText(Math.round(100 * coverage) + "%", x(coverage) - 14, 181);
+    }
+    ctx.strokeStyle = "#057d78";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    points.forEach(([px, py], index) => {
+      if (index === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+    points.forEach(([px, py], index) => {
+      ctx.fillStyle = index === selected ? "#912338" : "#057d78";
+      ctx.beginPath();
+      ctx.arc(px, py, index === selected ? 6 : 3.5, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+    ctx.lineWidth = 1;
+  }
+
+  function displayCoverage() {
+    const selected = Number(element("target").value);
+    const [threshold, n, dice, nsd] = operatingPoints[selected];
+    element("tau").textContent = threshold.toFixed(9) + " nats";
+    element("retained").textContent = n + "/65 (" + (100 * n / 65).toFixed(1) + "%)";
+    element("dice").textContent = dice.toFixed(4);
+    element("nsd").textContent = nsd.toFixed(4);
+    drawRiskCoverage(selected);
+  }
+  element("target").addEventListener("change", displayCoverage);
+  displayCoverage();
+</script>
+<script>
+  // Aggregate statistics from the linked validation CSV files.
+  const validationStats = {
+  "U_mean": {
+    "DSC": [
+      -0.04508451984021394,
+      -0.2852910124031916,
+      0.20268625911940888,
+      0.14384247293304298
+    ],
+    "NSD": [
+      -0.2569521083207183,
+      -0.47201033392582487,
+      -0.018285259462708616,
+      0.09686560406495089
+    ]
+  },
+  "U_positive": {
+    "DSC": [
+      -0.020673754614077746,
+      -0.25876636723571717,
+      0.21878630405498556,
+      0.1455038772481111
+    ],
+    "NSD": [
+      -0.2360165648804012,
+      -0.4465494900580135,
+      0.0011679400391722931,
+      0.09841024204395873
+    ]
+  },
+  "U_fg": {
+    "DSC": [
+      -0.7201940626923172,
+      -0.8328197483516158,
+      -0.5567134927984705,
+      0.08390595889013833
+    ],
+    "NSD": [
+      -0.692533790838881,
+      -0.8136551608875149,
+      -0.5250470326231221,
+      0.05633167030119916
+    ]
+  },
+  "U_boundary": {
+    "DSC": [
+      -0.22732388530194153,
+      -0.4682548381104756,
+      0.028472096895108535,
+      0.13015236326606427
+    ],
+    "NSD": [
+      -0.4173778122824799,
+      -0.6012901784478093,
+      -0.18422870230342614,
+      0.08476891743418509
+    ]
+  },
+  "U_threshold": {
+    "DSC": [
+      0.017789044667927363,
+      -0.25555664115386995,
+      0.26978233016203296,
+      0.1750377978255529
+    ],
+    "NSD": [
+      0.018619084562787207,
+      -0.24335964256477224,
+      0.2640937762332387,
+      0.14123547422624605
+    ]
+  },
+  "U_std_fg": {
+    "DSC": [
+      -0.7067976445333006,
+      -0.8235253048413114,
+      -0.5395411931053284,
+      0.08500332880872147
+    ],
+    "NSD": [
+      -0.6767774997945505,
+      -0.8001237242276728,
+      -0.5037848520808086,
+      0.057342799635151945
+    ]
+  },
+  "U_ratio": {
+    "DSC": [
+      -0.18744058491008966,
+      -0.4096386859576226,
+      0.04558525387215752,
+      0.13678279239426644
+    ],
+    "NSD": [
+      0.04989127940944037,
+      -0.19211845246098422,
+      0.2666480552456349,
+      0.11589454448022701
+    ]
+  }
+};
+</script>
+<script>
+(() => {
+  const width = 36;
+  const height = 22;
+  const grid = Array.from({ length: width * height }, (_, i) =>
+    [i % width, Math.floor(i / width)]
+  );
+  const targets = {
+    left: { x: 10, y: 10, rx: 5.4, ry: 4.6 },
+    right: { x: 25, y: 11, rx: 4.9, ry: 5.4 },
+  };
+  const methods = [
+    ["U_mean", "Global mean", "Mean H across all pixels"],
+    ["U_positive", "Positive entropy mean", "Mean H over pixels where H > 0"],
+    ["U_fg", "Foreground mean", "Mean H over the predicted lesion F"],
+    ["U_boundary", "Boundary mean", "Mean H over dilate(F) minus erode(F), using a 5 × 5 square"],
+    ["U_threshold", "High entropy mean", "Mean H over pixels where H > 0.1 nats"],
+    ["U_std_fg", "Foreground standard deviation", "Population standard deviation of H over F"],
+    ["U_ratio", "Foreground / global ratio", "Foreground mean ÷ (whole-image mean + 10⁻⁶)"],
+  ];
+  const probabilityColors = [[23, 36, 57], [64, 133, 178], [227, 245, 245]];
+  const entropyColors = [[23, 36, 57], [197, 107, 51], [255, 242, 188]];
+  const mapIds = ["input-map", "probability-map", "uncertainty-map", "mask-map"];
+  const prompt = element("image-prompt");
+  const scenario = element("image-scenario");
+  const selectedRow = element("selected-row");
+  const selectedColumn = element("selected-column");
+  const tolerance = element("surface-tolerance");
+  const imageRegion = element("image-region");
+  const validationMethod = element("validation-method");
+  const validationQuality = element("validation-quality");
+  const highlightRegion = element("highlight-region");
+  let selectedMethod = "U_fg";
+  let scene;
+  let scenarios;
+
+  function signedDistance(x, y, target) {
+    const radius = Math.hypot((x - target.x) / target.rx, (y - target.y) / target.ry);
+    return (1 - radius) * Math.min(target.rx, target.ry);
+  }
+
+  function syntheticIntensity(x, y) {
+    const darkLeft = 105 / (1 + Math.exp(-3 * signedDistance(x, y, targets.left)));
+    const darkRight = 94 / (1 + Math.exp(-3 * signedDistance(x, y, targets.right)));
+    const stripedTexture = 17 * Math.sin(y * 0.9) + 11 * Math.cos(x * 1.2 + y * 0.36);
+    return Math.round(150 + stripedTexture - darkLeft - darkRight);
+  }
+
+  function simulatedProbability(x, y, target, example) {
+    if (example === "confident") {
+      const offset = { ...target, x: target.x + 5.4, y: target.y - 2.4 };
+      return signedDistance(x, y, offset) > 0 ? 0.995 : 0.005;
+    }
+    const ambiguous = example === "ambiguous";
+    const center = ambiguous
+      ? { ...target, x: target.x + 2.2, y: target.y - 1.1, rx: target.rx + 1.3 }
+      : target;
+    const d = signedDistance(x, y, center);
+    const p = 1 / (1 + Math.exp(-(ambiguous ? 0.68 : 1.85) * d));
+    return p < 0.002 ? 0 : p;
+  }
+
+  function boundaryBand(mask) {
+    return grid.map(([x, y]) => {
+      let hasForeground = false;
+      let hasBackground = false;
+      for (let j = Math.max(0, y - 2); j <= Math.min(height - 1, y + 2); j++) {
+        for (let i = Math.max(0, x - 2); i <= Math.min(width - 1, x + 2); i++) {
+          if (mask[j * width + i]) hasForeground = true;
+          else hasBackground = true;
+        }
+      }
+      return hasForeground && hasBackground;
+    });
+  }
+
+  function surfaceEdges(mask) {
+    return grid.flatMap(([x, y], index) => {
+      if (!mask[index]) return [];
+      const edges = [];
+      if (x === 0 || !mask[index - 1]) edges.push([x, y + 0.5]);
+      if (x === width - 1 || !mask[index + 1]) edges.push([x + 1, y + 0.5]);
+      if (y === 0 || !mask[index - width]) edges.push([x + 0.5, y]);
+      if (y === height - 1 || !mask[index + width]) edges.push([x + 0.5, y + 1]);
+      return edges;
+    });
+  }
+
+  function agreeingEdges(from, to, radius) {
+    const r2 = radius ** 2;
+    return from.map(([x, y]) =>
+      to.some(([xx, yy]) => (x - xx) ** 2 + (y - yy) ** 2 <= r2)
+    );
+  }
+
+  function surfaceAgreement(a, b, radius) {
+    const prediction = agreeingEdges(a, b, radius);
+    const reference = agreeingEdges(b, a, radius);
+    const matched = prediction.filter(Boolean).length + reference.filter(Boolean).length;
+    const total = a.length + b.length;
+    return { prediction, reference, matched, total, score: total ? matched / total : NaN };
+  }
+
+  function mean(values) {
+    return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : NaN;
+  }
+
+  function measureSummaries(h, mask) {
+    const regions = {
+      U_mean: grid.map(() => true),
+      U_positive: h.map(value => value > 0),
+      U_fg: mask,
+      U_boundary: boundaryBand(mask),
+      U_threshold: h.map(value => value > 0.1),
+      U_std_fg: mask,
+      U_ratio: mask,
+    };
+    const stats = {};
+    for (const [method] of methods) {
+      const values = h.filter((_, i) => regions[method][i]);
+      const center = mean(values);
+      let value = center;
+      if (method === "U_std_fg") value = Math.sqrt(mean(values.map(u => (u - center) ** 2)));
+      if (method === "U_ratio") value = center / (stats.U_mean.value + 1e-6);
+      stats[method] = { value, region: regions[method] };
+    }
+    return stats;
+  }
+
+  function makeScene(target, example) {
+    const p = grid.map(([x, y]) => simulatedProbability(x, y, target, example));
+    const h = p.map(entropy);
+    const mask = p.map(value => value > 0.5);
+    const reference = grid.map(([x, y]) => signedDistance(x, y, target) > 0);
+    const tp = mask.filter((value, i) => value && reference[i]).length;
+    const fp = mask.filter((value, i) => value && !reference[i]).length;
+    const fn = reference.filter((value, i) => value && !mask[i]).length;
+    return {
+      p, h, mask, reference, tp, fp, fn,
+      dice: 2 * tp / (2 * tp + fp + fn),
+      edges: surfaceEdges(mask),
+      referenceEdges: surfaceEdges(reference),
+      scores: measureSummaries(h, mask),
+    };
+  }
+
+  function colorRamp(value, colors) {
+    const level = Math.max(0, Math.min(1, value)) * 2;
+    const start = Math.min(Math.floor(level), 1);
+    const channels = colors[start].map((channel, i) =>
+      Math.round(channel + (level - start) * (colors[start + 1][i] - channel))
+    );
+    return "rgb(" + channels.join(",") + ")";
+  }
+
+  function drawMap(id, colors, column, row) {
+    const canvas = element(id);
+    const ctx = canvas.getContext("2d");
+    const cellWidth = canvas.width / width;
+    const cellHeight = canvas.height / height;
+    grid.forEach(([x, y], i) => {
+      ctx.fillStyle = colors[i];
+      ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+    });
+    ctx.fillStyle = "rgba(255,255,255,0.2)";
+    ctx.fillRect(0, row * cellHeight, canvas.width, 1);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#fff";
+    ctx.strokeRect(column * cellWidth + 1, row * cellHeight + 1, cellWidth - 2, cellHeight - 2);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#111827";
+    ctx.strokeRect(column * cellWidth + 3, row * cellHeight + 3, cellWidth - 6, cellHeight - 6);
+  }
+
+  function drawProfile(column, row) {
+    const canvas = element("profile-plot");
+    const ctx = canvas.getContext("2d");
+    const xAt = i => 50 + i * (canvas.width - 80) / (width - 1);
+    const yAt = value => 218 - value * 176;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillStyle = "#4e5e6b";
+    ctx.strokeStyle = "#c4d2d4";
+    ctx.lineWidth = 1;
+    for (const tick of [0, 0.5, 1]) {
+      ctx.setLineDash(tick === 0.5 ? [6, 5] : []);
+      ctx.beginPath();
+      ctx.moveTo(xAt(0), yAt(tick));
+      ctx.lineTo(xAt(width - 1), yAt(tick));
+      ctx.stroke();
+      ctx.fillText(String(tick), 14, yAt(tick) + 5);
+    }
+    ctx.setLineDash([]);
+    ctx.fillText("Column along image row " + (row + 1), xAt(12), 263);
+    for (const col of [0, 9, 17, 26, 35]) ctx.fillText(String(col + 1), xAt(col) - 6, 240);
+    ctx.strokeStyle = "#647789";
+    ctx.beginPath();
+    ctx.moveTo(xAt(column), yAt(0));
+    ctx.lineTo(xAt(column), yAt(1));
+    ctx.stroke();
+    for (const [color, values, scale] of [
+      ["#235f92", scene.p, 1],
+      ["#b45024", scene.h, Math.log(2)],
+    ]) {
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(xAt(0), yAt(values[row * width] / scale));
+      for (let i = 1; i < width; i++) ctx.lineTo(xAt(i), yAt(values[row * width + i] / scale));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(xAt(column), yAt(values[row * width + column] / scale), 5, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+
+  function showImage() {
+    const row = selectedRow.valueAsNumber;
+    const column = selectedColumn.valueAsNumber;
+    const index = row * width + column;
+    const region = scene.scores[selectedMethod].region;
+    drawMap("input-map", grid.map(([x, y]) => {
+      const gray = syntheticIntensity(x, y);
+      return "rgb(" + [gray, gray, gray].join(",") + ")";
+    }), column, row);
+    drawMap("probability-map", scene.p.map(value => colorRamp(value, probabilityColors)), column, row);
+    drawMap("uncertainty-map", scene.h.map((value, i) =>
+      colorRamp(value / Math.log(2) * (highlightRegion.checked && !region[i] ? 0.17 : 1), entropyColors)
+    ), column, row);
+    drawMap("mask-map", scene.mask.map((value, i) => {
+      if (value) return scene.reference[i] ? "#427daa" : "#d8733d";
+      return scene.reference[i] ? "#ad529a" : "#172439";
+    }), column, row);
+    drawProfile(column, row);
+    element("selected-row-value").textContent = row + 1;
+    element("selected-column-value").textContent = column + 1;
+    element("profile-p").textContent = scene.p[index].toFixed(3);
+    element("profile-h").textContent = scene.h[index].toFixed(3) + " nats";
+    element("profile-class").textContent = scene.mask[index] ? "Lesion" : "Background";
+    element("profile-reference").textContent = scene.reference[index] ? "Lesion" : "Background";
+    const [_, title] = methods.find(([id]) => id === selectedMethod);
+    const count = region.filter(Boolean).length;
+    const caption = element("region-caption");
+    if (!highlightRegion.checked) caption.textContent = "Displaying all pixels.";
+    else if (selectedMethod === "U_ratio") caption.textContent = "Highlights the numerator region. The denominator uses all pixels.";
+    else caption.textContent = title + " includes " + count + " / " + grid.length + " pixels.";
+  }
+
+  function drawContours(agreement) {
+    const canvas = element("surface-map");
+    const ctx = canvas.getContext("2d");
+    const dx = canvas.width / width;
+    const dy = canvas.height / height;
+    ctx.fillStyle = "#172439";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const trace = (edges, matches, dashed) => {
+      ctx.lineWidth = dashed ? 2 : 4;
+      ctx.setLineDash(dashed ? [3, 2] : []);
+      edges.forEach(([x, y], i) => {
+        const horizontal = !Number.isInteger(x);
+        const halfWidth = horizontal ? dx / 2 : 0;
+        const halfHeight = horizontal ? 0 : dy / 2;
+        const offset = dashed ? 2 : 0;
+        ctx.strokeStyle = matches[i] ? (dashed ? "#b7f2eb" : "#5acfc1") : (dashed ? "#ffd299" : "#f29354");
+        ctx.beginPath();
+        ctx.moveTo(x * dx - halfWidth + (horizontal ? 0 : offset), y * dy - halfHeight + (horizontal ? offset : 0));
+        ctx.lineTo(x * dx + halfWidth + (horizontal ? 0 : offset), y * dy + halfHeight + (horizontal ? offset : 0));
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+    };
+    trace(scene.edges, agreement.prediction, false);
+    trace(scene.referenceEdges, agreement.reference, true);
+  }
+
+  function showQuality() {
+    const radius = tolerance.valueAsNumber;
+    const agreement = surfaceAgreement(scene.edges, scene.referenceEdges, radius);
+    element("pixel-tp").textContent = scene.tp;
+    element("pixel-fp").textContent = scene.fp;
+    element("pixel-fn").textContent = scene.fn;
+    element("image-dice").textContent = scene.dice.toFixed(3);
+    element("image-nsd").textContent = agreement.score.toFixed(3);
+    element("surface-calculation").textContent = agreement.matched + " / " + agreement.total;
+    element("tolerance-value").textContent = radius + " px";
+    element("dice-calculation").textContent = (2 * scene.tp) + " / " + (2 * scene.tp + scene.fp + scene.fn);
+    drawContours(agreement);
+    const table = element("scenario-comparison");
+    table.replaceChildren();
+    for (const option of scenario.options) {
+      const example = scenarios[option.value];
+      const row = table.insertRow();
+      row.classList.toggle("active", option.value === scenario.value);
+      row.insertCell().textContent = option.textContent;
+      const values = [
+        example.scores.U_fg.value.toFixed(3) + " nats",
+        example.dice.toFixed(3),
+        surfaceAgreement(example.edges, example.referenceEdges, radius).score.toFixed(3),
+      ];
+      for (const value of values) {
+        const cell = row.insertCell();
+        cell.className = "numeric";
+        cell.textContent = value;
+      }
+    }
+  }
+
+  const methodRows = new Map();
+  for (const [id, title, description] of methods) {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = title;
+    validationMethod.append(option);
+    imageRegion.append(option.cloneNode(true));
+    const row = element("methods-table").insertRow();
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "metric-choice";
+    button.textContent = title;
+    button.addEventListener("click", () => {
+      highlightRegion.checked = true;
+      chooseMethod(id);
+    });
+    row.insertCell().append(button);
+    row.insertCell().textContent = description;
+    const score = row.insertCell();
+    score.className = "numeric";
+    methodRows.set(id, { row, button, score });
+  }
+
+  function showMethodValues() {
+    for (const [id, { row, button, score }] of methodRows) {
+      const value = scene.scores[id].value;
+      score.textContent = Number.isFinite(value)
+        ? value.toFixed(3) + (id === "U_ratio" ? "" : " nats")
+        : "Undefined";
+      row.classList.toggle("active", id === selectedMethod);
+      button.setAttribute("aria-pressed", String(id === selectedMethod));
+    }
+  }
+
+  function showValidation() {
+    const quality = validationQuality.value;
+    const [rho, low, high, aurc] = validationStats[selectedMethod][quality];
+    element("validation-rho").textContent = rho.toFixed(3);
+    element("validation-ci").textContent = "[" + low.toFixed(3) + ", " + high.toFixed(3) + "]";
+    element("validation-aurc").textContent = aurc.toFixed(4);
+
+    const graph = element("validation-plot");
+    graph.replaceChildren();
+    const position = rho => (1 + rho) * 50;
+    for (const [id, name] of methods) {
+      const [estimate, lower, upper] = validationStats[id][quality];
+      const row = graph.insertRow();
+      row.classList.toggle("active", selectedMethod === id);
+      const heading = document.createElement("th");
+      heading.scope = "row";
+      heading.textContent = name;
+      row.append(heading);
+      const interval = row.insertCell();
+      interval.setAttribute("aria-label", `95% interval ${lower.toFixed(3)} to ${upper.toFixed(3)}`);
+      const track = document.createElement("div");
+      track.className = "rank-track";
+      track.setAttribute("aria-hidden", "true");
+      track.title = `95% interval [${lower.toFixed(3)}, ${upper.toFixed(3)}]`;
+      const whisker = document.createElement("span");
+      whisker.className = "rank-interval";
+      whisker.style.left = position(lower) + "%";
+      whisker.style.width = (upper - lower) * 50 + "%";
+      const dot = document.createElement("span");
+      dot.className = "rank-dot";
+      dot.style.left = position(estimate) + "%";
+      track.append(whisker, dot);
+      interval.append(track);
+      const value = row.insertCell();
+      value.className = "numeric";
+      value.textContent = estimate.toFixed(3);
+    }
+  }
+
+  function chooseMethod(id) {
+    selectedMethod = id;
+    validationMethod.value = id;
+    imageRegion.value = highlightRegion.checked ? id : "all";
+    showMethodValues();
+    showImage();
+    showValidation();
+  }
+
+  function refreshScene() {
+    scene = scenarios[scenario.value];
+    showImage();
+    showQuality();
+    showMethodValues();
+  }
+
+  function refreshPrompt() {
+    const target = targets[prompt.value];
+    scenarios = Object.fromEntries(Array.from(scenario.options, option => [
+      option.value, makeScene(target, option.value),
+    ]));
+    refreshScene();
+  }
+
+  prompt.addEventListener("change", () => {
+    const target = targets[prompt.value];
+    selectedRow.value = target.y;
+    selectedColumn.value = Math.round(target.x + target.rx);
+    refreshPrompt();
+  });
+  scenario.addEventListener("change", refreshScene);
+  selectedRow.addEventListener("input", showImage);
+  selectedColumn.addEventListener("input", showImage);
+  tolerance.addEventListener("input", showQuality);
+  highlightRegion.addEventListener("change", () => chooseMethod(selectedMethod));
+  imageRegion.addEventListener("change", () => {
+    highlightRegion.checked = imageRegion.value !== "all";
+    chooseMethod(highlightRegion.checked ? imageRegion.value : selectedMethod);
+  });
+  validationMethod.addEventListener("change", () => chooseMethod(validationMethod.value));
+  validationQuality.addEventListener("change", showValidation);
+  for (const id of mapIds) {
+    const canvas = element(id);
+    canvas.addEventListener("click", event => {
+      const bounds = canvas.getBoundingClientRect();
+      const column = Math.floor(width * (event.clientX - bounds.left) / bounds.width);
+      const row = Math.floor(height * (event.clientY - bounds.top) / bounds.height);
+      selectedColumn.value = Math.min(width - 1, Math.max(0, column));
+      selectedRow.value = Math.min(height - 1, Math.max(0, row));
+      showImage();
+    });
+  }
+  refreshPrompt();
+  chooseMethod(selectedMethod);
+  const opening = element("opening-image");
+  const ctx = opening.getContext("2d");
+  for (const [x, y] of grid) {
+    const gray = syntheticIntensity(x, y);
+    ctx.fillStyle = `rgb(${gray}, ${gray}, ${gray})`;
+    ctx.fillRect(x * 10, y * 10, 10, 10);
+  }
+})();
+
+  function showConcept(id, output, choices) {
+    const field = element(id);
+    const update = () => { element(output).textContent = choices[field.value]; };
+    field.addEventListener("change", update);
+    update();
+  }
+
+  showConcept("request", "route", {
+    both: "Segmentation and retrieval · Request up to 3 similar cases if the query is eligible.",
+    segment: "Segmentation · Show the stored mask and review decision.",
+    retrieve: "Retrieval · Request up to 2 similar cases if the query is eligible.",
+    fallback: "Ambiguous instruction · The router defaults to segmentation and retrieval with the default result limit of 5.",
+  });
+
+  showConcept("dashboard-case", "dashboard-result", {
+    accepted: "Accepted by policy · Show the stored overlay and entropy map. Similar accepted references can be returned.",
+    review: "Needs Review · Show the stored overlay and entropy map. Similar-case search is gated off.",
+    unmatched: "Not Evaluated · Show the uploaded image. A stored mask and uncertainty score are unavailable.",
+  });
+
+  const blocks = [
+    { name: "Block A", list: 1, members: ["Accepted", "Needs Review"], scores: [["A1", 0.87]] },
+    { name: "Block B", list: 1, members: ["Needs Review", "Needs Review"], scores: [] },
+    { name: "Block C", list: 2, members: ["Needs Review", "Accepted", "Needs Review"], scores: [["C2", 0.82]] },
+    { name: "Block D", list: 3, members: ["Accepted"], scores: [["D1", 0.91]] },
+  ];
+
+  const probes = element("probes");
+  function showSearch() {
+    const list = element("search-blocks");
+    list.replaceChildren();
+    const candidates = [];
+    let skipped = 0;
+    for (const block of blocks) {
+      const entry = document.createElement("li");
+      const scanned = block.list <= Number(probes.value);
+      const canPass = block.scores.length > 0;
+      let outcome = "Not probed by IVF";
+      if (scanned && canPass) {
+        outcome = "Score " + block.scores.length + " eligible vector";
+        entry.className = "scan";
+        candidates.push(...block.scores);
+      } else if (scanned) {
+        outcome = "Skip entire block (PABP)";
+        entry.className = "skip";
+        skipped++;
+      }
+      entry.textContent = `List ${block.list} · ${block.name} [${block.members.join(", ")}] → ${outcome}`;
+      list.append(entry);
+    }
+    candidates.sort((a, b) => b[1] - a[1]);
+    const [id, score] = candidates[0];
+    element("search-result").textContent =
+      `Top match: ${id} (cosine ${score.toFixed(2)}) · ${candidates.length} vector${candidates.length === 1 ? "" : "s"} scored · ${skipped} block pruned`;
+  }
+  probes.addEventListener("change", showSearch);
+  showSearch();
+
+</script>
+</body>
+</html>
