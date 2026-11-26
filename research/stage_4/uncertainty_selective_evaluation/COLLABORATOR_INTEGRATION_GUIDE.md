@@ -1,78 +1,32 @@
-# Collaborator Integration Guide: Uncertainty-Based Selective Prediction
+# Integrate selective prediction into an evaluation workflow
 
-## 1. Executive Summary
+Use the toolkit after your segmentation model has produced predictions. The minimum CSV input is one uncertainty score and one reference-quality value per image. The optional helper functions can compute both from a predicted mask, a raw entropy map and a reference mask. The [toolkit guide](EVALUATION_TOOLKIT.md) gives CLI commands and output formats.
 
-This package provides a post-hoc selective prediction and quality triage module for MedCLIPSeg. It evaluates test-time predictions without modifying network weights, retraining, or test-time adaptation.
+## Produce per-image scores
 
-By aggregating dense predictive entropy maps strictly over the predicted lesion ($U_{\mathrm{fg}}$), the module mitigates the background area dilution effect inherent to global spatial averages ($U_{\mathrm{mean}}$), enabling reliable quality filtering under cross-domain distribution shifts.
+Run Python with `research/stage_4` on `PYTHONPATH`, or import the toolkit from its enclosing research package when working from the repository root.
 
-### Frozen Operating Point
-- **Primary Aggregator:** $U_{\mathrm{fg}}$ (Foreground Mean Entropy)
-- **Calibrated Decision Threshold:** $\tau = 0.064058324$ (calibrated on BUSI validation at nominal 80% coverage)
-- **Screening Empty Fallback:** $\tau_{\mathrm{neg}} = 10^{-4}$ ($U_{\mathrm{mean}}$ gate for empty predicted masks)
-
----
-
-## 2. Package Architecture
-
-```
-uncertainty_selective_evaluation/
-├── __init__.py                       # Package exports
-├── metrics.py                        # Self-contained aggregators, DSC, NSD, RC curves, AURC
-├── model_adapter.py                  # Standardized inference adapter contracts
-├── evaluate.py                       # CLI evaluation tool (supports CSVs and demo mode)
-├── test_reproducibility.py           # Clean-room verification suite
-├── requirements.txt                  # Minimal dependencies (numpy, scipy, pandas, matplotlib)
-├── README.md                         # Detailed documentation and API reference
-└── COLLABORATOR_INTEGRATION_GUIDE.md # This integration document
-```
-
----
-
-## 3. How to Integrate Into MedCLIPSeg Test Pipelines
-
-### Option A: Direct Post-Hoc Evaluation on Existing CSVs
-If your evaluation scripts already dump per-image metrics to CSV (e.g. columns `image_id`, `DSC`, `u_fg`):
-```bash
-python research/stage_4/uncertainty_selective_evaluation/evaluate.py \
-  --input_csv /path/to/test_predictions.csv \
-  --threshold 0.064058324 \
-  --output_dir ./selective_results
-```
-
-### Option B: Seamless Integration in Python Evaluation Loops
 ```python
-from uncertainty_selective_evaluation import (
-    compute_u_fg,
-    compute_dice,
-    apply_selective_rejection,
-    compute_risk_coverage_curve,
-    compute_aurc,
-)
+from research.stage_4.uncertainty_selective_evaluation import compute_dice, compute_u_fg
 
-# During test evaluation:
-# entropy_map: 2D numpy array of predictive entropy from MC passes
-# pred_mask: 2D binary numpy array of model prediction
-# gt_mask: 2D binary numpy array of ground truth
-
-u_fg = compute_u_fg(entropy_map, pred_mask)
-dsc = compute_dice(pred_mask, gt_mask)
-
-# Selective triage decision
-tau = 0.064058324
-is_accepted = u_fg <= tau  # True = Retain for autonomous review, False = Refer
+score = compute_u_fg(entropy_map, predicted_mask)
+dice = compute_dice(predicted_mask, reference_mask)
 ```
 
----
+The entropy map and predicted mask must share a grid. The entropy map uses raw values in nats. Use the reference mask to measure Dice. The predicted mask defines the foreground used by `U_fg`.
 
-## 4. Verification and Clean-Room Testing
+## Move from validation to test
 
-To verify that the evaluation toolkit functions correctly on your local machine:
+Save the scores and reference quality as a CSV with columns such as `image_id`, `U_fg`, and `DSC`. Fit the cutoff on validation and carry the same numeric value to test. The [project protocol](../study_reference/EXPERIMENTAL_PROTOCOL.md) shows this process for BUSI and the external cohorts.
+
+If you use the optional two-stage example in the toolkit, include `U_mean` and use a missing foreground score for empty predictions. The [frozen policy guide](../experiments/RESULTS_GUIDE.md#how-to-read-the-frozen-yaml) describes the observed empty-mask analysis. The [application guide](../../../application/APPLICATION_GUIDE.md) describes the separate catalog and runtime contract.
+
+## Verify the setup
+
+From the repository root, the following command tests the synthetic workflow and compares the saved external cohorts when their local case-level CSVs are available.
+
 ```bash
 python research/stage_4/uncertainty_selective_evaluation/test_reproducibility.py
 ```
-This runs synthetic verification and matches all published multi-center cross-domain benchmarks.
 
----
-
-See the [Stage 4 protocol](../EXPERIMENTAL_PROTOCOL.md) for calibration and provenance.
+Set `MEDCLIPSEG_OUTPUT` to the directory that holds the original per-cohort output trees. Use the [synthetic demo](EVALUATION_TOOLKIT.md#quick-start) to try the toolkit with the checkout alone.

@@ -1,3 +1,7 @@
+# ColonDB profile inherited from MedCLIPSeg.
+# This profile supports the upstream inference workflow. Stage 4 uses the five breast ultrasound profiles.
+# See DATASET_CONFIGURATIONS.md in this directory for the model and data settings.
+
 DATASET:
   NAME: "ColonDB"
   TRAIN_PATH: "./data/ColonDB/Train_Folder/"

@@ -1,3 +1,7 @@
+# BUSUC external breast ultrasound cohort.
+# Set MEDCLIPSEG_DATA to the directory containing the cohort folders.
+# See DATASET_CONFIGURATIONS.md in this directory for the model and data settings.
+
 DATASET:
   NAME: BUSUC
   TRAIN_PATH: ${MEDCLIPSEG_DATA}/BUSUC/Train_Folder/
@@ -5,6 +9,7 @@ DATASET:
   TEST_PATH: ${MEDCLIPSEG_DATA}/BUSUC/Test_Folder/
   TEXT_PROMPT_PATH: ${MEDCLIPSEG_DATA}/BUSUC/Prompts_Folder/
   SIZE: 224
+# Frozen inference settings that produce the mask and entropy artifacts.
 TEST:
   NUM_SAMPLES: 30
   USE_LATEST: true

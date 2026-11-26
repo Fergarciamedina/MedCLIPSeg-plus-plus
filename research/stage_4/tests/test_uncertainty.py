@@ -613,10 +613,11 @@ def test_frozen_config_loading():
     import yaml
     import json
     
-    cfg_dir = os.path.abspath(os.path.join(
-        os.environ.get("MEDCLIPSEG_OUTPUT", os.path.join(os.path.dirname(__file__), "..", "results")),
-        "BUSI", "validation", "seed666", "selective_prediction"
-    ))
+    output_dir = os.environ.get("MEDCLIPSEG_OUTPUT")
+    if output_dir:
+        cfg_dir = os.path.join(output_dir, "BUSI", "validation", "seed666", "selective_prediction")
+    else:
+        cfg_dir = os.path.join(REPO_ROOT, "research", "stage_4", "experiments", "validation_selection")
     yaml_path = os.path.join(cfg_dir, "frozen_selective_prediction_config.yaml")
     json_path = os.path.join(cfg_dir, "frozen_selective_prediction_config.json")
     
